@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   BarChart3, Link2, TrendingUp, MessageSquare, Clock, Bell,
   ExternalLink, Search, Send, Settings, Plus, ChevronDown, ArrowDownUp, X,
-  LineChart, List, Activity,
+  LineChart, List, Activity, PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import AppNav from "@/components/AppNav";
@@ -776,122 +776,136 @@ const Agents = () => {
       ) : (
       /* === DESKTOP LAYOUT === */
       <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex overflow-hidden">
+          {/* Watchlist toggle button */}
+          {watchlistCollapsed && (
+            <div className="shrink-0 border-r border-border flex flex-col items-center pt-2">
+              <button onClick={() => setWatchlistCollapsed(false)} className="p-1.5 hover:bg-card/50 transition-colors" title="Show Watchlist">
+                <PanelLeftOpen size={14} className="text-muted-foreground hover:text-foreground" />
+              </button>
+            </div>
+          )}
+
         <ResizablePanelGroup direction="horizontal" className="flex-1">
           {/* LEFT: Watchlist */}
-          <ResizablePanel defaultSize={18} minSize={12} maxSize={28}>
-            <div className="h-full flex flex-col overflow-hidden">
-              <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0 cursor-pointer" onClick={() => setWatchlistCollapsed(!watchlistCollapsed)}>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[9px] font-mono font-semibold tracking-[1px] text-status-active">WATCHLIST</span>
-                  <ChevronDown size={10} className={`text-muted-foreground transition-transform ${watchlistCollapsed ? "-rotate-90" : ""}`} />
-                </div>
-                <Settings size={12} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" onClick={(e) => e.stopPropagation()} />
-              </div>
-
-              {!watchlistCollapsed && (
-                <>
-                  <div className="shrink-0 px-2 py-1 border-b border-border">
-                    <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-[3px]">
-                      <Search size={9} className="text-muted-foreground" />
-                      <input type="text" placeholder="search ..." className="bg-transparent text-[9px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50" />
-                    </div>
-                  </div>
-
-                  <div className="shrink-0 flex items-center px-3 py-[3px] border-b border-border text-[7px] font-mono text-muted-foreground tracking-wider">
-                    <span className="flex-1">Ticker</span>
-                    <span className="w-14 text-right">% 1D</span>
-                    <span className="w-16 text-right">Price</span>
-                  </div>
-
-                  <div className="flex-1 overflow-y-auto">
-                    <div className="px-3 py-[3px] border-b border-border bg-card/50">
-                      <span className="text-[7px] font-mono font-semibold text-muted-foreground tracking-wider">CRYPTO</span>
-                    </div>
-                    {sharedWatchlist.map((item) => (
-                      <div key={item.ticker} className={`flex items-center px-3 py-[5px] cursor-pointer transition-colors border-b border-border/30 ${item.ticker === selectedTicker?.ticker ? "bg-accent/10" : "hover:bg-card/50"}`}>
-                        <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
-                        <span className={`w-14 text-right font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                          {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
-                        </span>
-                        <span className="w-16 text-right font-mono text-[9px] text-foreground/70">{item.price}</span>
-                      </div>
-                    ))}
-
-                    <div className="px-3 py-[3px] border-b border-border bg-card/50 border-t">
-                      <span className="text-[7px] font-mono font-semibold text-muted-foreground tracking-wider">MOST ACTIVE</span>
-                    </div>
-                    {[
-                      { ticker: "PEPE", change: 12.44, price: "0.00001842" },
-                      { ticker: "WIF", change: -5.23, price: "2.4100" },
-                      { ticker: "BONK", change: 8.91, price: "0.00003150" },
-                    ].map((item) => (
-                      <div key={item.ticker} className="flex items-center px-3 py-[5px] cursor-pointer hover:bg-card/50 transition-colors border-b border-border/30">
-                        <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
-                        <span className={`w-14 text-right font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                          {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
-                        </span>
-                        <span className="w-16 text-right font-mono text-[9px] text-foreground/70">{item.price}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="border-t border-border p-1.5 shrink-0">
-                    <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
-                      <Plus size={9} /><span>Add Ticker</span>
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {/* Alerts */}
-              <div className="shrink-0 border-t border-border flex flex-col max-h-[45%] overflow-hidden">
+          {!watchlistCollapsed && (
+            <>
+            <ResizablePanel defaultSize={18} minSize={12} maxSize={28}>
+              <div className="h-full flex flex-col overflow-hidden">
                 <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
                   <div className="flex items-center gap-1.5">
-                    <Bell size={10} className="text-[hsl(45_90%_55%)]" />
-                    <span className="text-[9px] font-mono font-semibold tracking-[1px] text-[hsl(45_90%_55%)]">ALERTS</span>
+                    <span className="text-[9px] font-mono font-semibold tracking-[1px] text-status-active">WATCHLIST</span>
                   </div>
-                  <div className="flex gap-[1px]">
-                    {(["all", "mine"] as const).map((f) => (
-                      <button key={f} onClick={() => setAlertFilter(f)} className={`font-mono text-[8px] px-[7px] py-[2px] transition-colors ${alertFilter === f ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
-                        {f === "all" ? "ALL" : "MINE"}
-                      </button>
-                    ))}
+                  <div className="flex items-center gap-1">
+                    <Settings size={12} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
+                    <button onClick={() => setWatchlistCollapsed(true)} className="hover:bg-card/50 p-0.5 transition-colors" title="Hide Watchlist">
+                      <PanelLeftClose size={12} className="text-muted-foreground hover:text-foreground" />
+                    </button>
                   </div>
                 </div>
-                <div className="flex-1 overflow-y-auto" ref={alertScrollRef}>
-                  <AnimatePresence initial={false}>
-                    {filteredAlerts.map((alert) => (
-                      <motion.div key={alert.id} initial={{ opacity: 0, height: 0, x: -20 }} animate={{ opacity: 1, height: "auto", x: 0 }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeOut" }} className="overflow-hidden">
-                        <div className="px-3 py-[6px] border-b border-border/50 hover:bg-card/50 cursor-pointer transition-colors">
-                          <div className="flex items-center gap-1.5 mb-[2px]">
-                            <span className="text-[9px] font-mono text-accent">{alert.exchange}</span>
-                            <span className="text-[7px] font-mono text-muted-foreground uppercase">{alert.type}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className={`w-2 h-2 rounded-full ${alert.side === "BUY" ? "bg-status-active" : "bg-status-hot"}`} />
-                            <span className="font-mono text-[10px] text-foreground/90">{alert.pair} {alert.side} {alert.amount} @ {alert.price}</span>
-                          </div>
-                          <div className="flex items-center justify-end mt-[2px]">
-                            <span className="text-[7px] font-mono text-muted-foreground">{alert.time}</span>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+
+                <div className="shrink-0 px-2 py-1 border-b border-border">
+                  <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-[3px]">
+                    <Search size={9} className="text-muted-foreground" />
+                    <input type="text" placeholder="search ..." className="bg-transparent text-[9px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50" />
+                  </div>
                 </div>
+
+                <div className="shrink-0 flex items-center px-3 py-[3px] border-b border-border text-[7px] font-mono text-muted-foreground tracking-wider">
+                  <span className="flex-1">Ticker</span>
+                  <span className="w-14 text-right">% 1D</span>
+                  <span className="w-16 text-right">Price</span>
+                </div>
+
+                <div className="flex-1 overflow-y-auto">
+                  <div className="px-3 py-[3px] border-b border-border bg-card/50">
+                    <span className="text-[7px] font-mono font-semibold text-muted-foreground tracking-wider">CRYPTO</span>
+                  </div>
+                  {sharedWatchlist.map((item) => (
+                    <div key={item.ticker} className={`flex items-center px-3 py-[5px] cursor-pointer transition-colors border-b border-border/30 ${item.ticker === selectedTicker?.ticker ? "bg-accent/10" : "hover:bg-card/50"}`}>
+                      <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
+                      <span className={`w-14 text-right font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                        {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
+                      </span>
+                      <span className="w-16 text-right font-mono text-[9px] text-foreground/70">{item.price}</span>
+                    </div>
+                  ))}
+
+                  <div className="px-3 py-[3px] border-b border-border bg-card/50 border-t">
+                    <span className="text-[7px] font-mono font-semibold text-muted-foreground tracking-wider">MOST ACTIVE</span>
+                  </div>
+                  {[
+                    { ticker: "PEPE", change: 12.44, price: "0.00001842" },
+                    { ticker: "WIF", change: -5.23, price: "2.4100" },
+                    { ticker: "BONK", change: 8.91, price: "0.00003150" },
+                  ].map((item) => (
+                    <div key={item.ticker} className="flex items-center px-3 py-[5px] cursor-pointer hover:bg-card/50 transition-colors border-b border-border/30">
+                      <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
+                      <span className={`w-14 text-right font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                        {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
+                      </span>
+                      <span className="w-16 text-right font-mono text-[9px] text-foreground/70">{item.price}</span>
+                    </div>
+                  ))}
+                </div>
+
                 <div className="border-t border-border p-1.5 shrink-0">
                   <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
-                    <Plus size={9} /><span>Add Alert</span>
+                    <Plus size={9} /><span>Add Ticker</span>
                   </button>
                 </div>
-              </div>
-            </div>
-          </ResizablePanel>
 
-          <ResizableHandle withHandle />
+                {/* Alerts */}
+                <div className="shrink-0 border-t border-border flex flex-col max-h-[45%] overflow-hidden">
+                  <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-1.5">
+                      <Bell size={10} className="text-[hsl(45_90%_55%)]" />
+                      <span className="text-[9px] font-mono font-semibold tracking-[1px] text-[hsl(45_90%_55%)]">ALERTS</span>
+                    </div>
+                    <div className="flex gap-[1px]">
+                      {(["all", "mine"] as const).map((f) => (
+                        <button key={f} onClick={() => setAlertFilter(f)} className={`font-mono text-[8px] px-[7px] py-[2px] transition-colors ${alertFilter === f ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                          {f === "all" ? "ALL" : "MINE"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex-1 overflow-y-auto" ref={alertScrollRef}>
+                    <AnimatePresence initial={false}>
+                      {filteredAlerts.map((alert) => (
+                        <motion.div key={alert.id} initial={{ opacity: 0, height: 0, x: -20 }} animate={{ opacity: 1, height: "auto", x: 0 }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeOut" }} className="overflow-hidden">
+                          <div className="px-3 py-[6px] border-b border-border/50 hover:bg-card/50 cursor-pointer transition-colors">
+                            <div className="flex items-center gap-1.5 mb-[2px]">
+                              <span className="text-[9px] font-mono text-accent">{alert.exchange}</span>
+                              <span className="text-[7px] font-mono text-muted-foreground uppercase">{alert.type}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className={`w-2 h-2 rounded-full ${alert.side === "BUY" ? "bg-status-active" : "bg-status-hot"}`} />
+                              <span className="font-mono text-[10px] text-foreground/90">{alert.pair} {alert.side} {alert.amount} @ {alert.price}</span>
+                            </div>
+                            <div className="flex items-center justify-end mt-[2px]">
+                              <span className="text-[7px] font-mono text-muted-foreground">{alert.time}</span>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                  <div className="border-t border-border p-1.5 shrink-0">
+                    <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
+                      <Plus size={9} /><span>Add Alert</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ResizablePanel>
+
+            <ResizableHandle withHandle />
+            </>
+          )}
 
           {/* CENTER: Feed + Prompt */}
-          <ResizablePanel defaultSize={52} minSize={35}>
+          <ResizablePanel defaultSize={watchlistCollapsed ? 55 : 52} minSize={35}>
             <div className="h-full flex flex-col overflow-hidden">
               {/* Header bar */}
               <div className="px-5 py-2.5 border-b border-border shrink-0 flex items-center justify-between">
@@ -1046,173 +1060,167 @@ const Agents = () => {
 
           {/* RIGHT: Market + Agent Breakdowns */}
           <ResizablePanel defaultSize={30} minSize={18} maxSize={40}>
-            <div className="h-full flex flex-col overflow-y-auto border-l border-border">
-              {/* TradingView Chart */}
-              <div className="p-3 border-b border-border shrink-0">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-mono tracking-wider text-accent">MARKET LIVE</span>
-                  <ExternalLink size={10} className="text-muted-foreground" />
-                </div>
-                <div className="border border-border bg-card overflow-hidden">
-                  <div className="flex items-center gap-2 px-2.5 pt-2 pb-1">
-                    <span className="font-bold text-xs text-accent">{selectedTicker?.ticker}</span>
-                    <span className="text-[9px] font-mono text-muted-foreground truncate">{selectedTicker?.name}</span>
-                    <span className={`text-[9px] font-mono font-semibold ml-auto ${selectedTicker.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                      {selectedTicker.change > 0 ? "+" : ""}{selectedTicker.change}%
-                    </span>
-                  </div>
-                  <TradingViewChart symbol={selectedTicker?.ticker || "BTC"} height={220} />
-                </div>
-              </div>
-
-              {/* Headlines — scrollable, compact */}
-              <div className="p-3 border-b border-border shrink-0 max-h-[120px] overflow-y-auto">
-                <div className="mb-1.5">
-                  <span className="font-mono text-[9px] tracking-wider text-muted-foreground">HEADLINES</span>
-                </div>
-                <div className="space-y-1">
-                  {agents.flatMap((a) => a.headlines.map((h) => ({ ...h, agentEmoji: a.emoji, agentColor: a.color }))).slice(0, 6).map((h, i) => (
-                    <div key={i} className="flex gap-2 group cursor-pointer">
-                      <span className="text-[8px] font-mono text-muted-foreground shrink-0">{h.time}</span>
-                      <p className={`text-[9px] leading-snug group-hover:underline ${h.sentiment === "bull" ? "text-status-active" : (h.sentiment as string) === "bear" ? "text-status-hot" : "text-foreground/70"}`}>{h.text}</p>
+            <div className="h-full border-l border-border">
+              <ResizablePanelGroup direction="vertical">
+                {/* Chart section */}
+                <ResizablePanel defaultSize={45} minSize={25} maxSize={70}>
+                  <div className="h-full flex flex-col overflow-hidden">
+                    <div className="px-3 pt-2 pb-1 flex items-center justify-between shrink-0">
+                      <span className="text-[10px] font-mono tracking-wider text-accent">MARKET LIVE</span>
+                      <ExternalLink size={10} className="text-muted-foreground" />
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Agent Breakdowns — from orchestration result */}
-              <div className="p-3 border-b border-border">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-mono text-[9px] font-semibold tracking-[1px]">AGENT ANALYSIS</span>
-                  <span className="font-mono text-[8px] text-muted-foreground">{selectedAgents.size}/{agents.length} ACTIVE</span>
-                </div>
-
-                {/* Agent selector checkboxes */}
-                {agents.map((agent) => {
-                  const isSelected = selectedAgents.has(agent.id);
-                  const breakdown = activeBreakdowns.find((b) => b.agentId === agent.id);
-                  const isExpanded = expandedBreakdown === agent.id;
-
-                  return (
-                    <div key={agent.id} className="border-b border-border last:border-0">
-                      <div
-                        className={`flex items-center justify-between py-[6px] cursor-pointer transition-colors ${isSelected ? "bg-accent/10" : "hover:bg-card/50 opacity-50"}`}
-                        onClick={() => {
-                          if (breakdown) setExpandedBreakdown(isExpanded ? null : agent.id);
-                        }}
-                      >
-                        <div className="flex items-center gap-[7px]">
-                          <button
-                            onClick={(e) => { e.stopPropagation(); toggleAgent(agent.id); }}
-                            className={`w-3 h-3 border flex items-center justify-center text-[7px] transition-colors ${isSelected ? "border-accent bg-accent/20 text-accent" : "border-muted-foreground"}`}
-                          >
-                            {isSelected && "✓"}
-                          </button>
-                          <span className="text-[11px]">{agent.emoji}</span>
-                          <span className={`font-mono text-[9px] font-semibold tracking-[0.5px] ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
-                            {agent.fullName.toUpperCase()}
+                    <div className="flex-1 min-h-0 px-3 pb-1">
+                      <div className="border border-border bg-card overflow-hidden h-full flex flex-col">
+                        <div className="flex items-center gap-2 px-2.5 pt-2 pb-1 shrink-0">
+                          <span className="font-bold text-xs text-accent">{selectedTicker?.ticker}</span>
+                          <span className="text-[9px] font-mono text-muted-foreground truncate">{selectedTicker?.name}</span>
+                          <span className={`text-[9px] font-mono font-semibold ml-auto ${selectedTicker.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                            {selectedTicker.change > 0 ? "+" : ""}{selectedTicker.change}%
                           </span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          {breakdown && (
-                            <span className="font-mono text-[7px] text-accent px-1 border border-accent/30">DATA</span>
-                          )}
-                          <span className={`w-[6px] h-[6px] rounded-full ${agent.status !== "idle" ? "bg-status-active" : "bg-muted-foreground"}`} />
+                        <div className="flex-1 min-h-0">
+                          <TradingViewChart symbol={selectedTicker?.ticker || "BTC"} fillHeight />
                         </div>
                       </div>
-
-                      {/* Expanded breakdown from orchestrated result */}
-                      {isExpanded && breakdown && (
-                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="pb-2 px-1 overflow-hidden">
-                          <p className="text-[10px] leading-relaxed text-foreground/80 mb-2 px-1">{breakdown.summary}</p>
-                          {breakdown.keyData.map((d, i) => (
-                            <div key={i} className="flex justify-between py-[2px] text-[9px] px-1">
-                              <span className="text-muted-foreground">{d.label}</span>
-                              <span className="font-mono text-[9px] text-accent">{d.value}</span>
-                            </div>
-                          ))}
-                        </motion.div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Unified Intelligence — Enhanced */}
-              <div className="px-3 py-3 bg-[hsl(45_90%_55%/0.08)] border-t border-[hsl(45_90%_55%/0.2)]">
-                <div className="font-mono text-[7px] text-muted-foreground tracking-[2px] mb-3">UNIFIED INTELLIGENCE</div>
-                
-                {/* Gauge */}
-                <div className="flex items-center justify-center mb-3">
-                  <div className="relative w-[120px] h-[60px]">
-                    <svg viewBox="0 0 120 60" className="w-full h-full overflow-visible">
-                      {/* Background arc */}
-                      <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(var(--border))" strokeWidth="6" strokeLinecap="round" />
-                      {/* Score arc — 73% of semicircle */}
-                      <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(45 90% 55%)" strokeWidth="6" strokeLinecap="round" strokeDasharray={`${Math.PI * 50 * 0.73} ${Math.PI * 50}`} />
-                      {/* Tick marks */}
-                      {[0, 25, 50, 75, 100].map((tick) => {
-                        const angle = Math.PI - (tick / 100) * Math.PI;
-                        const x1 = 60 + 42 * Math.cos(angle);
-                        const y1 = 55 - 42 * Math.sin(angle);
-                        const x2 = 60 + 47 * Math.cos(angle);
-                        const y2 = 55 - 47 * Math.sin(angle);
-                        return <line key={tick} x1={x1} y1={y1} x2={x2} y2={y2} stroke="hsl(var(--muted-foreground))" strokeWidth="1" opacity="0.4" />;
-                      })}
-                      {/* Needle */}
-                      {(() => {
-                        const angle = Math.PI - (73 / 100) * Math.PI;
-                        const nx = 60 + 36 * Math.cos(angle);
-                        const ny = 55 - 36 * Math.sin(angle);
-                        return <line x1="60" y1="55" x2={nx} y2={ny} stroke="hsl(45 90% 55%)" strokeWidth="2" strokeLinecap="round" />;
-                      })()}
-                      <circle cx="60" cy="55" r="3" fill="hsl(45 90% 55%)" />
-                    </svg>
-                    <div className="absolute bottom-[-2px] left-1/2 -translate-x-1/2 text-center">
-                      <div className="font-mono text-[20px] font-black leading-none">73</div>
                     </div>
                   </div>
-                </div>
+                </ResizablePanel>
 
-                {/* Signal label */}
-                <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="w-2 h-2 rounded-full bg-status-active animate-pulse" />
-                  <span className="font-mono text-[11px] font-bold tracking-[2px]">LONG SIGNAL</span>
-                </div>
+                <ResizableHandle />
 
-                {/* Agent confidence bars */}
-                <div className="space-y-[5px]">
-                  {[
-                    { emoji: "📐", name: "CHART", score: 88, color: "268 35% 72%" },
-                    { emoji: "⛓", name: "CHAIN", score: 65, color: "142 70% 45%" },
-                    { emoji: "📡", name: "DERIV", score: 78, color: "0 84% 60%" },
-                    { emoji: "💬", name: "SOCIAL", score: 72, color: "280 60% 65%" },
-                  ].map((a) => (
-                    <div key={a.name} className="flex items-center gap-2">
-                      <span className="text-[9px] w-3">{a.emoji}</span>
-                      <span className="font-mono text-[7px] w-10 text-muted-foreground">{a.name}</span>
-                      <div className="flex-1 h-[4px] bg-border overflow-hidden">
-                        <div className="h-full transition-all" style={{ width: `${a.score}%`, backgroundColor: `hsl(${a.color})` }} />
+                {/* Bottom scrollable sections: Headlines + Agent Analysis + Unified Intelligence */}
+                <ResizablePanel defaultSize={55} minSize={30}>
+                  <div className="h-full overflow-y-auto">
+                    {/* Headlines */}
+                    <div className="p-3 border-b border-border">
+                      <div className="mb-1.5">
+                        <span className="font-mono text-[9px] tracking-wider text-muted-foreground">HEADLINES</span>
                       </div>
-                      <span className="font-mono text-[8px] w-5 text-right text-foreground/70">{a.score}</span>
+                      <div className="space-y-1">
+                        {agents.flatMap((a) => a.headlines.map((h) => ({ ...h, agentEmoji: a.emoji, agentColor: a.color }))).slice(0, 6).map((h, i) => (
+                          <div key={i} className="flex gap-2 group cursor-pointer">
+                            <span className="text-[8px] font-mono text-muted-foreground shrink-0">{h.time}</span>
+                            <p className={`text-[9px] leading-snug group-hover:underline ${h.sentiment === "bull" ? "text-status-active" : (h.sentiment as string) === "bear" ? "text-status-hot" : "text-foreground/70"}`}>{h.text}</p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
-                </div>
 
-                {/* Bottom bar */}
-                <div className="flex items-center justify-between mt-3 pt-2 border-t border-[hsl(45_90%_55%/0.15)]">
-                  <div className="text-[7px] font-mono text-muted-foreground">
-                    COMPOSITE <span className="text-foreground font-semibold">73/100</span>
-                  </div>
-                  <div className="text-[7px] font-mono text-muted-foreground">
-                    CONSENSUS <span className="text-status-active font-semibold">BULLISH</span>
-                  </div>
-                </div>
-              </div>
+                    {/* Agent Breakdowns */}
+                    <div className="p-3 border-b border-border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-mono text-[9px] font-semibold tracking-[1px]">AGENT ANALYSIS</span>
+                        <span className="font-mono text-[8px] text-muted-foreground">{selectedAgents.size}/{agents.length} ACTIVE</span>
+                      </div>
+                      {agents.map((agent) => {
+                        const isSelected = selectedAgents.has(agent.id);
+                        const breakdown = activeBreakdowns.find((b) => b.agentId === agent.id);
+                        const isExpanded = expandedBreakdown === agent.id;
+                        return (
+                          <div key={agent.id} className="border-b border-border last:border-0">
+                            <div
+                              className={`flex items-center justify-between py-[6px] cursor-pointer transition-colors ${isSelected ? "bg-accent/10" : "hover:bg-card/50 opacity-50"}`}
+                              onClick={() => { if (breakdown) setExpandedBreakdown(isExpanded ? null : agent.id); }}
+                            >
+                              <div className="flex items-center gap-[7px]">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); toggleAgent(agent.id); }}
+                                  className={`w-3 h-3 border flex items-center justify-center text-[7px] transition-colors ${isSelected ? "border-accent bg-accent/20 text-accent" : "border-muted-foreground"}`}
+                                >
+                                  {isSelected && "✓"}
+                                </button>
+                                <span className="text-[11px]">{agent.emoji}</span>
+                                <span className={`font-mono text-[9px] font-semibold tracking-[0.5px] ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
+                                  {agent.fullName.toUpperCase()}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {breakdown && <span className="font-mono text-[7px] text-accent px-1 border border-accent/30">DATA</span>}
+                                <span className={`w-[6px] h-[6px] rounded-full ${agent.status !== "idle" ? "bg-status-active" : "bg-muted-foreground"}`} />
+                              </div>
+                            </div>
+                            {isExpanded && breakdown && (
+                              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="pb-2 px-1 overflow-hidden">
+                                <p className="text-[10px] leading-relaxed text-foreground/80 mb-2 px-1">{breakdown.summary}</p>
+                                {breakdown.keyData.map((d, i) => (
+                                  <div key={i} className="flex justify-between py-[2px] text-[9px] px-1">
+                                    <span className="text-muted-foreground">{d.label}</span>
+                                    <span className="font-mono text-[9px] text-accent">{d.value}</span>
+                                  </div>
+                                ))}
+                              </motion.div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
 
+                    {/* Unified Intelligence */}
+                    <div className="px-3 py-3 bg-[hsl(45_90%_55%/0.08)] border-t border-[hsl(45_90%_55%/0.2)]">
+                      <div className="font-mono text-[7px] text-muted-foreground tracking-[2px] mb-3">UNIFIED INTELLIGENCE</div>
+                      <div className="flex items-center justify-center mb-3">
+                        <div className="relative w-[120px] h-[60px]">
+                          <svg viewBox="0 0 120 60" className="w-full h-full overflow-visible">
+                            <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(var(--border))" strokeWidth="6" strokeLinecap="round" />
+                            <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(45 90% 55%)" strokeWidth="6" strokeLinecap="round" strokeDasharray={`${Math.PI * 50 * 0.73} ${Math.PI * 50}`} />
+                            {[0, 25, 50, 75, 100].map((tick) => {
+                              const angle = Math.PI - (tick / 100) * Math.PI;
+                              const x1 = 60 + 42 * Math.cos(angle);
+                              const y1 = 55 - 42 * Math.sin(angle);
+                              const x2 = 60 + 47 * Math.cos(angle);
+                              const y2 = 55 - 47 * Math.sin(angle);
+                              return <line key={tick} x1={x1} y1={y1} x2={x2} y2={y2} stroke="hsl(var(--muted-foreground))" strokeWidth="1" opacity="0.4" />;
+                            })}
+                            {(() => {
+                              const angle = Math.PI - (73 / 100) * Math.PI;
+                              const nx = 60 + 36 * Math.cos(angle);
+                              const ny = 55 - 36 * Math.sin(angle);
+                              return <line x1="60" y1="55" x2={nx} y2={ny} stroke="hsl(45 90% 55%)" strokeWidth="2" strokeLinecap="round" />;
+                            })()}
+                            <circle cx="60" cy="55" r="3" fill="hsl(45 90% 55%)" />
+                          </svg>
+                          <div className="absolute bottom-[-2px] left-1/2 -translate-x-1/2 text-center">
+                            <div className="font-mono text-[20px] font-black leading-none">73</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center gap-2 mb-3">
+                        <span className="w-2 h-2 rounded-full bg-status-active animate-pulse" />
+                        <span className="font-mono text-[11px] font-bold tracking-[2px]">LONG SIGNAL</span>
+                      </div>
+                      <div className="space-y-[5px]">
+                        {[
+                          { emoji: "📐", name: "CHART", score: 88, color: "268 35% 72%" },
+                          { emoji: "⛓", name: "CHAIN", score: 65, color: "142 70% 45%" },
+                          { emoji: "📡", name: "DERIV", score: 78, color: "0 84% 60%" },
+                          { emoji: "💬", name: "SOCIAL", score: 72, color: "280 60% 65%" },
+                        ].map((a) => (
+                          <div key={a.name} className="flex items-center gap-2">
+                            <span className="text-[9px] w-3">{a.emoji}</span>
+                            <span className="font-mono text-[7px] w-10 text-muted-foreground">{a.name}</span>
+                            <div className="flex-1 h-[4px] bg-border overflow-hidden">
+                              <div className="h-full transition-all" style={{ width: `${a.score}%`, backgroundColor: `hsl(${a.color})` }} />
+                            </div>
+                            <span className="font-mono text-[8px] w-5 text-right text-foreground/70">{a.score}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex items-center justify-between mt-3 pt-2 border-t border-[hsl(45_90%_55%/0.15)]">
+                        <div className="text-[7px] font-mono text-muted-foreground">
+                          COMPOSITE <span className="text-foreground font-semibold">73/100</span>
+                        </div>
+                        <div className="text-[7px] font-mono text-muted-foreground">
+                          CONSENSUS <span className="text-status-active font-semibold">BULLISH</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
+        </div>
       </div>
       )}
 
