@@ -527,8 +527,22 @@ const Agents = () => {
                   </AnimatePresence>
                 </div>
 
+                {/* Mini chart above prompt */}
+                <div className="shrink-0 border-t border-border px-3 pt-2">
+                  <div className="border border-border bg-card overflow-hidden mb-2">
+                    <div className="flex items-center gap-2 px-2.5 pt-1.5 pb-0.5">
+                      <span className="font-bold text-[10px] text-accent">{selectedTicker?.ticker}</span>
+                      <span className="text-[8px] font-mono text-muted-foreground">{selectedTicker?.name}</span>
+                      <span className={`text-[8px] font-mono font-semibold ml-auto ${selectedTicker.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                        {selectedTicker.change > 0 ? "+" : ""}{selectedTicker.change}%
+                      </span>
+                    </div>
+                    <TradingViewChart symbol={selectedTicker?.ticker || "BTC"} height={100} />
+                  </div>
+                </div>
+
                 {/* Mobile prompt */}
-                <div className="px-3 pt-2 pb-3 border-t border-border shrink-0">
+                <div className="px-3 pt-1 pb-3 shrink-0">
                   <div className="flex items-center gap-1 mb-2 flex-wrap">
                     {agents.map((a) => (
                       <button key={a.id} type="button" onClick={() => toggleAgent(a.id)} className={`text-[9px] px-[5px] py-[2px] transition-colors ${selectedAgents.has(a.id) ? "text-accent-foreground" : "text-muted-foreground/40"}`} style={selectedAgents.has(a.id) ? { backgroundColor: `hsl(${a.color})` } : undefined}>
