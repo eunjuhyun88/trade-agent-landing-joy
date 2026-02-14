@@ -219,6 +219,20 @@ const Agents = () => {
   const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
   const [selectedTf, setSelectedTf] = useState("1H");
   const [alertFilter, setAlertFilter] = useState<"all" | "mine">("all");
+  const dataSources = ["On-Chain", "Derivatives", "Social", "Technical", "News", "Private Data"];
+  const [selectedSources, setSelectedSources] = useState<Set<string>>(new Set(["On-Chain", "Derivatives", "Social", "Technical"]));
+
+  const toggleSource = useCallback((source: string) => {
+    setSelectedSources((prev) => {
+      const next = new Set(prev);
+      if (next.has(source)) {
+        next.delete(source);
+      } else {
+        next.add(source);
+      }
+      return next;
+    });
+  }, []);
   const [liveAlerts, setLiveAlerts] = useState(initialAlertEvents);
   const alertCounter = useRef(0);
   const alertScrollRef = useRef<HTMLDivElement>(null);
@@ -426,15 +440,17 @@ const Agents = () => {
                 {/* Source selector chips */}
                 <div className="flex items-center gap-2 mb-3 flex-wrap">
                   <span className="text-[9px] font-mono text-muted-foreground">Searching from :</span>
-                  {["On-Chain", "Derivatives", "Social", "Technical", "News", "Private Data"].map((source, i) => (
+                  {dataSources.map((source) => (
                     <button
                       key={source}
-                      className={`text-[8px] font-mono px-2 py-[3px] border transition-colors ${
-                        i < 4
-                          ? "border-accent/50 text-foreground bg-accent/5 hover:bg-accent/15"
-                          : "border-border text-muted-foreground hover:text-foreground hover:border-accent/30"
+                      onClick={() => toggleSource(source)}
+                      className={`text-[8px] font-mono px-2 py-[3px] border transition-all ${
+                        selectedSources.has(source)
+                          ? "border-accent/50 text-foreground bg-accent/10"
+                          : "border-border text-muted-foreground/50 hover:text-muted-foreground hover:border-border"
                       }`}
                     >
+                      {selectedSources.has(source) && <span className="mr-1">✓</span>}
                       {source}
                     </button>
                   ))}
