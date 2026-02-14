@@ -3,11 +3,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Search, ArrowLeft, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/contexts/WalletContext";
+import { useToast } from "@/hooks/use-toast";
 
 const AppNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { connected, address, wallets, connectedWallet, connect, disconnect } = useWallet();
+  const { toast } = useToast();
   const [walletOpen, setWalletOpen] = useState(false);
 
   const handleConnect = (walletId: string) => {
@@ -60,7 +62,7 @@ const AppNav = () => {
           <div className="font-mono text-[10px] font-bold bg-[hsl(45_90%_55%/0.15)] border border-[hsl(45_90%_55%)] text-[hsl(45_90%_55%)] px-2 py-[3px]">
             ENTRY SCORE 73
           </div>
-          <div className="hidden sm:flex items-center gap-[5px] bg-card border border-border px-2 py-1 text-[10px] text-muted-foreground">
+          <div onClick={() => toast({ title: "🔍 Search", description: "Market search coming soon!" })} className="hidden sm:flex items-center gap-[5px] bg-card border border-border px-2 py-1 text-[10px] text-muted-foreground cursor-pointer hover:border-accent/50 transition-colors">
             <Search size={10} />
             <span>Search Markets</span>
           </div>

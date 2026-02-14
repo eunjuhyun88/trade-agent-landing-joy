@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const tiers = [
   {
@@ -58,6 +60,17 @@ const tiers = [
 ];
 
 const Pricing = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleCta = (tierName: string) => {
+    if (tierName === "FREE") {
+      navigate("/agents");
+    } else {
+      toast({ title: "🔒 Coming Soon", description: `${tierName} subscription will be available soon via $SHO token.` });
+    }
+  };
+
   return (
     <section className="px-6 md:px-12 py-20">
       <motion.div
@@ -82,7 +95,6 @@ const Pricing = () => {
         <span className="text-accent">ACCESS LEVEL.</span>
       </motion.h2>
 
-      {/* Cards — 3 columns */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 border border-border max-w-5xl">
         {tiers.map((tier, i) => (
           <motion.div
@@ -95,69 +107,38 @@ const Pricing = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.1 }}
           >
-            <span
-              className={`text-xs font-mono tracking-[0.2em] mb-6 ${
-                tier.highlight ? "text-primary-foreground/70" : "text-muted-foreground"
-              }`}
-            >
+            <span className={`text-xs font-mono tracking-[0.2em] mb-6 ${tier.highlight ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
               {tier.name}
             </span>
-
             <div className="mb-1">
               <span className="text-4xl md:text-5xl font-bold tracking-tighter">{tier.price}</span>
-              <span
-                className={`text-sm font-mono ml-1 ${
-                  tier.highlight ? "text-primary-foreground/70" : "text-muted-foreground"
-                }`}
-              >
-                {tier.token}
-                {tier.period}
+              <span className={`text-sm font-mono ml-1 ${tier.highlight ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                {tier.token}{tier.period}
               </span>
             </div>
             {tier.usd && (
-              <span
-                className={`text-xs font-mono mb-1 ${
-                  tier.highlight ? "text-primary-foreground/50" : "text-muted-foreground"
-                }`}
-              >
+              <span className={`text-xs font-mono mb-1 ${tier.highlight ? "text-primary-foreground/50" : "text-muted-foreground"}`}>
                 {tier.usd}
               </span>
             )}
             {tier.save ? (
-              <span className="text-xs font-mono text-status-active font-bold mb-6">
-                {tier.save}
-              </span>
+              <span className="text-xs font-mono text-status-active font-bold mb-6">{tier.save}</span>
             ) : (
               <div className="mb-6" />
             )}
-
-            <div
-              className={`h-[1px] mb-6 ${
-                tier.highlight ? "bg-primary-foreground/20" : "bg-border"
-              }`}
-            />
-
+            <div className={`h-[1px] mb-6 ${tier.highlight ? "bg-primary-foreground/20" : "bg-border"}`} />
             <ul className="space-y-3 flex-1 mb-8">
               {tier.features.map((feature) => (
                 <li key={feature} className="flex items-start gap-2.5">
-                  <Check
-                    size={14}
-                    className={`shrink-0 mt-0.5 ${
-                      tier.highlight ? "text-accent" : "text-status-active"
-                    }`}
-                  />
-                  <span
-                    className={`text-sm leading-snug ${
-                      tier.highlight ? "text-primary-foreground/90" : "text-foreground"
-                    }`}
-                  >
+                  <Check size={14} className={`shrink-0 mt-0.5 ${tier.highlight ? "text-accent" : "text-status-active"}`} />
+                  <span className={`text-sm leading-snug ${tier.highlight ? "text-primary-foreground/90" : "text-foreground"}`}>
                     {feature}
                   </span>
                 </li>
               ))}
             </ul>
-
             <button
+              onClick={() => handleCta(tier.name)}
               className={`w-full py-3 text-xs font-mono tracking-wider transition-colors ${
                 tier.highlight
                   ? "bg-accent text-accent-foreground hover:opacity-90"

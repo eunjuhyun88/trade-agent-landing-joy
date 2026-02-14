@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+
   return (
     <section className="pt-24 sm:pt-32 pb-12 sm:pb-16 px-4 sm:px-6 md:px-12">
       <motion.div
@@ -52,7 +55,10 @@ const HeroSection = () => {
           VIEW LIVE STATE
           <span>→</span>
         </button>
-        <button className="border border-foreground px-6 py-3 text-xs font-mono tracking-wider hover:bg-secondary transition-colors">
+        <button
+          onClick={() => toast({ title: "📄 Documentation", description: "Docs page coming soon. Stay tuned!" })}
+          className="border border-foreground px-6 py-3 text-xs font-mono tracking-wider hover:bg-secondary transition-colors"
+        >
           DOCUMENTATION
         </button>
       </motion.div>

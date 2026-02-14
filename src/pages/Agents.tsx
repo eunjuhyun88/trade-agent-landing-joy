@@ -684,7 +684,7 @@ const Agents = () => {
               <div className="h-full flex flex-col overflow-hidden">
                 <div className="p-3 border-b border-border flex items-center justify-between shrink-0">
                   <span className="text-[9px] font-mono font-semibold tracking-[1px] text-status-active">WATCHLIST</span>
-                  <Settings size={12} className="text-muted-foreground" />
+                  <Settings size={12} className="text-muted-foreground cursor-pointer hover:text-foreground" onClick={() => toast({ title: "⚙️ Settings", description: "Watchlist settings coming soon!" })} />
                 </div>
                 <div className="shrink-0 flex items-center px-3 py-[4px] border-b border-border text-[8px] font-mono text-muted-foreground tracking-wider">
                   <span className="flex-1">Ticker</span>
@@ -800,7 +800,7 @@ const Agents = () => {
                     <span className="text-[9px] font-mono font-semibold tracking-[1px] text-status-active">WATCHLIST</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Settings size={12} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
+                    <Settings size={12} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" onClick={() => toast({ title: "⚙️ Settings", description: "Watchlist settings coming soon!" })} />
                     <button onClick={() => setWatchlistCollapsed(true)} className="hover:bg-card/50 p-0.5 transition-colors" title="Hide Watchlist">
                       <PanelLeftClose size={12} className="text-muted-foreground hover:text-foreground" />
                     </button>
@@ -853,7 +853,7 @@ const Agents = () => {
                 </div>
 
                 <div className="border-t border-border p-1.5 shrink-0">
-                  <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
+                  <button onClick={() => toast({ title: "➕ Add Ticker", description: "Custom ticker tracking coming soon!" })} className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
                     <Plus size={9} /><span>Add Ticker</span>
                   </button>
                 </div>
@@ -895,7 +895,7 @@ const Agents = () => {
                     </AnimatePresence>
                   </div>
                   <div className="border-t border-border p-1.5 shrink-0">
-                    <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
+                    <button onClick={() => toast({ title: "🔔 Add Alert", description: "Custom alert creation coming soon!" })} className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
                       <Plus size={9} /><span>Add Alert</span>
                     </button>
                   </div>
@@ -928,7 +928,7 @@ const Agents = () => {
                           {tf}
                         </button>
                       ))}
-                      <ExternalLink size={10} className="text-muted-foreground ml-1" />
+                      <ExternalLink size={10} className="text-muted-foreground ml-1 cursor-pointer hover:text-foreground" onClick={() => toast({ title: "📊 Full Chart", description: "Opening full chart view..." })} />
                     </div>
                   </div>
                   <div className="flex-1 min-h-0">
