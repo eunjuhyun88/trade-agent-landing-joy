@@ -38,17 +38,17 @@ const TerminalSection = () => {
   }, [isInView]);
 
   return (
-    <section className="px-6 md:px-12 py-20">
+    <section className="px-4 sm:px-6 md:px-12 py-16 sm:py-20">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
         <motion.div
-          className="bg-card border border-border p-8 md:p-12 flex flex-col justify-center"
+          className="bg-card border border-border p-6 sm:p-8 md:p-12 flex flex-col justify-center"
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6 }}
         >
           <span className="text-xs font-mono tracking-wider text-accent mb-4">CORE_ENGINE</span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tighter mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tighter mb-6">
             THE TERMINAL
             <br />
             <span className="text-accent">INTERFACE.</span>
@@ -56,8 +56,8 @@ const TerminalSection = () => {
           <p className="text-sm leading-relaxed text-muted-foreground max-w-md mb-8">
             No clutter. No noise. Just the raw data vectors you need to make professional-grade decisions in real-time.
           </p>
-          <div className="flex gap-3">
-            <button className="bg-primary text-primary-foreground px-6 py-3 text-xs font-mono tracking-wider hover:opacity-90 transition-opacity flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button className="bg-primary text-primary-foreground px-6 py-3 text-xs font-mono tracking-wider hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
               VIEW LIVE STATE
               <span>→</span>
             </button>
@@ -70,7 +70,7 @@ const TerminalSection = () => {
         {/* Floating icons → converge animation */}
         <motion.div
           ref={containerRef}
-          className="bg-primary border border-border relative overflow-hidden min-h-[400px] md:min-h-[500px]"
+          className="bg-primary border border-border relative overflow-hidden min-h-[300px] sm:min-h-[400px] md:min-h-[500px]"
           initial={{ opacity: 0, x: 40 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-80px" }}

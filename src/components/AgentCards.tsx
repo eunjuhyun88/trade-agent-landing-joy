@@ -125,11 +125,11 @@ const AgentCards = () => {
 
   return (
     <section className="px-6 md:px-12 py-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-0 border border-border">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-0 border border-border">
         {agents.map((agent, i) => (
           <motion.div
             key={agent.id}
-            className={`border border-border p-5 flex flex-col justify-between min-h-[280px] transition-colors cursor-pointer ${
+            className={`border border-border p-4 sm:p-5 flex flex-col justify-between min-h-[220px] sm:min-h-[280px] transition-colors cursor-pointer ${
               agent.highlighted
                 ? "bg-primary text-primary-foreground"
                 : "bg-card hover:bg-secondary"
@@ -190,7 +190,7 @@ const AgentCards = () => {
 
             {/* Modal Content */}
             <motion.div
-              className={`relative w-full max-w-3xl border border-border shadow-2xl ${
+              className={`relative w-full max-w-3xl border border-border shadow-2xl max-h-[90vh] overflow-y-auto ${
                 agent.highlighted ? "bg-primary text-primary-foreground" : "bg-card"
               }`}
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -209,7 +209,7 @@ const AgentCards = () => {
                 <X size={16} />
               </button>
 
-              <div className="p-6 md:p-8">
+              <div className="p-5 sm:p-6 md:p-8">
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-6">
                   <div

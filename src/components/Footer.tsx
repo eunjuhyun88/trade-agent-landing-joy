@@ -3,22 +3,22 @@ import { motion } from "framer-motion";
 const Footer = () => {
   return (
     <motion.footer
-      className="px-6 md:px-12 py-12 border-t border-border"
+      className="px-4 sm:px-6 md:px-12 py-8 sm:py-12 border-t border-border"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 mb-8">
+      <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 sm:gap-8 mb-8">
         <div>
-          <span className="text-2xl font-bold tracking-tight">STOCKCLAW.</span>
-          <div className="flex items-center gap-6 mt-4 text-xs font-mono tracking-wider text-muted-foreground">
+          <span className="text-xl sm:text-2xl font-bold tracking-tight">STOCKCLAW.</span>
+          <div className="flex items-center gap-4 sm:gap-6 mt-4 text-xs font-mono tracking-wider text-muted-foreground">
             <span className="hover:text-foreground cursor-pointer transition-colors">TWITTER / X</span>
             <span className="hover:text-foreground cursor-pointer transition-colors">DISCORD</span>
             <span className="hover:text-foreground cursor-pointer transition-colors">DOCS</span>
           </div>
         </div>
-        <div className="flex flex-col items-end gap-2">
+        <div className="flex flex-col items-start md:items-end gap-2">
           <span className="text-xs font-mono tracking-wider text-muted-foreground">© 2024 STOCKCLAW</span>
           <div className="border border-border p-3 flex items-center gap-4">
             <div className="text-[10px] font-mono tracking-wider text-muted-foreground space-y-0.5">
@@ -33,7 +33,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Disclaimer */}
       <div className="border-t border-border pt-6">
         <p className="text-[10px] font-mono text-muted-foreground/70 leading-relaxed max-w-xl">
           This is not financial advice. Entry Score measures condition favorability, not price direction. Trade at your own risk.

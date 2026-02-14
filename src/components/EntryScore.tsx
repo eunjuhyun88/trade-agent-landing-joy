@@ -12,7 +12,7 @@ const EntryScore = () => {
   return (
     <section className="px-6 md:px-12 py-20">
       <motion.div
-        className="border border-border bg-card p-8 md:p-12 max-w-4xl mx-auto"
+        className="border border-border bg-card p-5 sm:p-8 md:p-12 max-w-4xl mx-auto"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
@@ -20,18 +20,18 @@ const EntryScore = () => {
       >
         <span className="text-xs font-mono tracking-wider text-accent mb-6 block">UNIFIED INTELLIGENCE</span>
 
-        <div className="flex items-end gap-6 mb-10">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-2 sm:gap-6 mb-8 sm:mb-10">
           <div>
             <span className="text-sm font-mono text-muted-foreground">LONG SIGNAL</span>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-6xl md:text-7xl font-bold tracking-tighter">73</span>
+              <span className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tighter">73</span>
               <span className="text-xl text-muted-foreground font-mono">SCORE</span>
             </div>
           </div>
         </div>
 
         {/* Score bars */}
-        <div className="space-y-3 mb-10 border border-border p-5">
+        <div className="space-y-3 mb-8 sm:mb-10 border border-border p-3 sm:p-5">
           {scoreData.map((item, i) => (
             <motion.div
               key={item.label}
@@ -41,7 +41,7 @@ const EntryScore = () => {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
             >
-              <span className="text-[10px] font-mono tracking-wider text-muted-foreground w-32 shrink-0">{item.label}</span>
+              <span className="text-[9px] sm:text-[10px] font-mono tracking-wider text-muted-foreground w-24 sm:w-32 shrink-0">{item.label}</span>
               <div className="flex-1 h-4 bg-border/50 overflow-hidden">
                 {item.hasScore ? (
                   <motion.div

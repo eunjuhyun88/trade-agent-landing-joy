@@ -50,7 +50,7 @@ const Roadmap = () => {
         {roadmapItems.map((item, i) => (
           <motion.div
             key={item.status}
-            className={`flex items-center gap-6 px-6 py-5 border-b border-border last:border-b-0 ${
+            className={`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 px-4 sm:px-6 py-4 sm:py-5 border-b border-border last:border-b-0 ${
               item.active ? "bg-card" : ""
             }`}
             initial={{ opacity: 0, x: -20 }}
