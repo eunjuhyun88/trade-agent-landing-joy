@@ -25,12 +25,24 @@ const Roadmap = () => {
   return (
     <section className="px-6 md:px-12 py-20">
       <motion.div
+        className="mb-4"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <span className="text-xs font-mono tracking-wider text-accent">ROADMAP</span>
+      </motion.div>
+
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="text-4xl md:text-5xl font-bold tracking-tighter mb-2">ROADMAP.</h2>
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-2">
+          WHAT'S <span className="text-accent">NEXT.</span>
+        </h2>
         <div className="w-full h-[1px] bg-border mb-10" />
       </motion.div>
 

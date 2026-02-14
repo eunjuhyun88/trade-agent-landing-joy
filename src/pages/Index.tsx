@@ -5,6 +5,7 @@ import AgentCards from "@/components/AgentCards";
 import EntryScore from "@/components/EntryScore";
 import YourEdge from "@/components/YourEdge";
 import TerminalSection from "@/components/TerminalSection";
+import Pricing from "@/components/Pricing";
 import Roadmap from "@/components/Roadmap";
 import TickerBar from "@/components/TickerBar";
 import Footer from "@/components/Footer";
@@ -20,6 +21,7 @@ const Index = () => {
         <EntryScore />
         <YourEdge />
         <TerminalSection />
+        <Pricing />
         <Roadmap />
       </main>
       <TickerBar />
