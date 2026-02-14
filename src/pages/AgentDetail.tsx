@@ -200,7 +200,7 @@ const AgentDetail = () => {
 
   return (
     <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
-      <AppNav activeTab="trade" />
+      <AppNav />
 
       {/* Agent Info Bar */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
