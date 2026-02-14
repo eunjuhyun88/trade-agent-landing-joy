@@ -187,14 +187,14 @@ const agents = [
 ];
 
 const initialAlertEvents = [
-  { id: "e1", exchange: "Binance", type: "liquidation", side: "BUY", pair: "BTCUSDT", amount: "0.542", price: "101,890.30", time: "오후 8:32", mine: true },
-  { id: "e2", exchange: "Binance", type: "liquidation", side: "SELL", pair: "ETHUSDT", amount: "25.000", price: "3,842.55", time: "오후 8:32", mine: false },
-  { id: "e3", exchange: "Binance", type: "liquidation", side: "BUY", pair: "SOLUSDT", amount: "1,200", price: "248.50", time: "오후 8:31", mine: true },
-  { id: "e4", exchange: "OKX", type: "liquidation", side: "SELL", pair: "BTCUSDT", amount: "0.003", price: "101,885.10", time: "오후 8:31", mine: false },
-  { id: "e5", exchange: "Binance", type: "liquidation", side: "BUY", pair: "DOGEUSDT", amount: "52,000", price: "0.1820", time: "오후 8:30", mine: true },
-  { id: "e6", exchange: "Bybit", type: "liquidation", side: "BUY", pair: "ETHUSDT", amount: "8.500", price: "3,841.20", time: "오후 8:30", mine: false },
-  { id: "e7", exchange: "Binance", type: "whale", side: "BUY", pair: "BTCUSDT", amount: "15.000", price: "101,900.00", time: "오후 8:29", mine: true },
-  { id: "e8", exchange: "Binance", type: "liquidation", side: "SELL", pair: "XRPUSDT", amount: "45,000", price: "2.4100", time: "오후 8:29", mine: false },
+  { id: "e1", exchange: "Binance", type: "liquidation", side: "BUY", pair: "BTCUSDT", amount: "0.542", price: "101,890.30", time: "8:32 PM", mine: true },
+  { id: "e2", exchange: "Binance", type: "liquidation", side: "SELL", pair: "ETHUSDT", amount: "25.000", price: "3,842.55", time: "8:32 PM", mine: false },
+  { id: "e3", exchange: "Binance", type: "liquidation", side: "BUY", pair: "SOLUSDT", amount: "1,200", price: "248.50", time: "8:31 PM", mine: true },
+  { id: "e4", exchange: "OKX", type: "liquidation", side: "SELL", pair: "BTCUSDT", amount: "0.003", price: "101,885.10", time: "8:31 PM", mine: false },
+  { id: "e5", exchange: "Binance", type: "liquidation", side: "BUY", pair: "DOGEUSDT", amount: "52,000", price: "0.1820", time: "8:30 PM", mine: true },
+  { id: "e6", exchange: "Bybit", type: "liquidation", side: "BUY", pair: "ETHUSDT", amount: "8.500", price: "3,841.20", time: "8:30 PM", mine: false },
+  { id: "e7", exchange: "Binance", type: "whale", side: "BUY", pair: "BTCUSDT", amount: "15.000", price: "101,900.00", time: "8:29 PM", mine: true },
+  { id: "e8", exchange: "Binance", type: "liquidation", side: "SELL", pair: "XRPUSDT", amount: "45,000", price: "2.4100", time: "8:29 PM", mine: false },
 ];
 
 const randomPairs = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "DOGEUSDT", "XRPUSDT", "AVAXUSDT", "BNBUSDT"];
@@ -209,7 +209,7 @@ const generateRandomAlert = (id: number) => {
   const amount = (Math.random() * 100).toFixed(3);
   const price = (Math.random() * 100000 + 1000).toFixed(2);
   const now = new Date();
-  const time = `오후 ${now.getHours() > 12 ? now.getHours() - 12 : now.getHours()}:${now.getMinutes().toString().padStart(2, "0")}`;
+  const time = `${now.getHours() > 12 ? now.getHours() - 12 : now.getHours()}:${now.getMinutes().toString().padStart(2, "0")} ${now.getHours() >= 12 ? "PM" : "AM"}`;
   return { id: `live-${id}`, exchange, type, side, pair, amount, price, time, mine: Math.random() > 0.5 };
 };
 
@@ -231,43 +231,43 @@ type OrchestratedResponse = {
 
 const orchestratedResponses: Record<string, OrchestratedResponse> = {
   default: {
-    conclusion: "BTC는 현재 $101,890 저항대를 테스트 중입니다. 4H 하락 웨지 + RSI 32.4 과매도 다이버전스, CVD 양전환(매수 우위), 거래량 프로파일 $99K-$101K 고밀도 구간, 온체인 -$492M 순유출(축적), OI +12% 숏스퀴즈 빌드업, 소셜 극단적 탐욕을 종합할 때 **단기 상승 돌파 가능성이 높습니다.** 핵심 저항 $102,350 돌파 시 $108,500 목표. $103K 청산 클러스터가 핵심 변수.",
+    conclusion: "BTC is currently testing the $101,890 resistance zone. Combining the 4H descending wedge + RSI 32.4 oversold divergence, CVD turning positive (buy-side dominant), volume profile high-density zone at $99K-$101K, on-chain net outflow -$492M (accumulation), OI +12% short squeeze buildup, and extreme social greed — **short-term bullish breakout probability is elevated.** Key resistance $102,350 breakout targets $108,500. $103K liquidation cluster is the key variable.",
     signal: "LONG",
     confidence: 73,
     agentBreakdowns: [
-      { agentId: "chart", summary: "4H 하락 웨지 패턴. RSI 32.4 과매도 다이버전스 + MACD 불리시 크로스. 0.618 피보나치에서 반등 시도. CVD 양전환으로 실질 매수세 유입 확인. 볼륨 프로파일 POC $100,200.", keyData: [{ label: "패턴", value: "Descending Wedge" }, { label: "RSI (4H)", value: "32.4 과매도" }, { label: "CVD", value: "+$82M (양전환)" }, { label: "지지", value: "$99,180 (S1)" }, { label: "저항", value: "$102,350 (R1)" }, { label: "거래량", value: "1.8x 평균 대비" }, { label: "볼린저", value: "하단 터치 후 수축" }, { label: "목표가", value: "$108,500" }] },
-      { agentId: "chain", summary: "콜드 월렛 → 거래소 15,000 BTC 이동 감지. 순 유출 -$492M으로 축적 국면. 장기 보유자 공급량 ATH. 거래소 보유량 3.2% 감소 — 매도 압력 완화.", keyData: [{ label: "순유출", value: "-$492M" }, { label: "고래 활동", value: "HIGH (3건/$1B+)" }, { label: "LTH 공급", value: "ATH" }, { label: "거래소 보유량", value: "-3.2% (주간)" }, { label: "SOPR", value: "1.02 (수익 실현 미미)" }] },
-      { agentId: "deriv", summary: "OI 4시간 내 12% 급증, $38.2B 도달. 펀딩 레이트 0.0122% — 숏 스퀴즈 빌드업. $103K 청산 클러스터 $245M 규모. 옵션 Put/Call 비율 0.42로 콜 편향.", keyData: [{ label: "OI", value: "$38.2B (+12%)" }, { label: "펀딩", value: "0.0122%" }, { label: "청산 클러스터", value: "$103K ($245M)" }, { label: "P/C 비율", value: "0.42 (콜 편향)" }, { label: "최대 고통 가격", value: "$96K" }] },
-      { agentId: "social", summary: "15+ 채널 극단적 탐욕. X 언급량 4.2K/min. 기관 채택 사이클 내러티브 지배적. Fear & Greed Index 82. 역발상 신호 임계치 접근.", keyData: [{ label: "감성 지수", value: "82/100 (극단적 탐욕)" }, { label: "언급량", value: "4.2K/min (+120%)" }, { label: "내러티브", value: "기관 채택" }, { label: "인플루언서", value: "85% BULLISH" }] },
+      { agentId: "chart", summary: "4H descending wedge pattern. RSI 32.4 oversold divergence + MACD bullish cross. Bounce attempt at 0.618 Fibonacci retracement. CVD turning positive confirms real buy-side inflow. Volume Profile POC $100,200.", keyData: [{ label: "Pattern", value: "Descending Wedge" }, { label: "RSI (4H)", value: "32.4 Oversold" }, { label: "CVD", value: "+$82M (Positive)" }, { label: "Support", value: "$99,180 (S1)" }, { label: "Resistance", value: "$102,350 (R1)" }, { label: "Volume", value: "1.8x vs Avg" }, { label: "Bollinger", value: "Lower touch, contracting" }, { label: "Target", value: "$108,500" }] },
+      { agentId: "chain", summary: "Cold wallet → exchange transfer of 15,000 BTC detected. Net outflow -$492M indicates accumulation phase. Long-term holder supply at ATH. Exchange reserves down 3.2% — sell pressure easing.", keyData: [{ label: "Net Flow", value: "-$492M" }, { label: "Whale Activity", value: "HIGH (3/$1B+)" }, { label: "LTH Supply", value: "ATH" }, { label: "Exchange Reserves", value: "-3.2% (Weekly)" }, { label: "SOPR", value: "1.02 (Minimal profit-taking)" }] },
+      { agentId: "deriv", summary: "OI surged 12% in 4 hours, reaching $38.2B. Funding rate 0.0122% — short squeeze buildup. $103K liquidation cluster at $245M. Options Put/Call ratio 0.42, call-biased.", keyData: [{ label: "OI", value: "$38.2B (+12%)" }, { label: "Funding", value: "0.0122%" }, { label: "Liq. Cluster", value: "$103K ($245M)" }, { label: "P/C Ratio", value: "0.42 (Call bias)" }, { label: "Max Pain", value: "$96K" }] },
+      { agentId: "social", summary: "15+ channels showing extreme greed. X mentions at 4.2K/min. Institutional adoption cycle narrative dominant. Fear & Greed Index 82. Contrarian signal approaching threshold.", keyData: [{ label: "Sentiment", value: "82/100 (Extreme Greed)" }, { label: "Mentions", value: "4.2K/min (+120%)" }, { label: "Narrative", value: "Institutional Adoption" }, { label: "Influencer", value: "85% BULLISH" }] },
     ],
   },
   btc: {
-    conclusion: "BTC 1H 상승 삼각형 형성 중. RSI 45→58 상승세, CVD +$124M 매수 우위, 거래량 24H 평균 1.6배. 볼륨 프로파일 POC $100,200. 지지 $99,180(S1) / $97,500(S2), 저항 $102,350(R1). **$102,350 돌파 시 $108,500 목표.** 거래소 보유량 -3.2%는 매도 압력 완화 시그널.",
+    conclusion: "BTC 1H ascending triangle forming. RSI 45→58 rising, CVD +$124M buy-dominant, volume 1.6x 24H avg. Volume Profile POC $100,200. Support $99,180(S1) / $97,500(S2), resistance $102,350(R1). **$102,350 breakout targets $108,500.** Exchange reserves -3.2% signals sell pressure easing.",
     signal: "LONG",
     confidence: 82,
     agentBreakdowns: [
-      { agentId: "chart", summary: "1H 상승 삼각형. RSI 58 중립상승. CVD +$124M 실질 매수세. ATR 1,420 변동성 보통. 볼린저 밴드 수축 → 돌파 임박 신호.", keyData: [{ label: "패턴", value: "Ascending Triangle" }, { label: "RSI (1H)", value: "58 (중립 상승)" }, { label: "CVD", value: "+$124M" }, { label: "지지 S1", value: "$99,180" }, { label: "지지 S2", value: "$97,500" }, { label: "저항 R1", value: "$102,350" }, { label: "거래량", value: "1.6x 평균" }, { label: "ATR", value: "$1,420" }, { label: "목표가", value: "$108,500" }] },
-      { agentId: "chain", summary: "거래소 보유량 주간 3.2% 감소. 채굴자 유출 낮은 수준 — 캐피출레이션 없음. SOPR 1.02로 수익 실현 미미. LTH 공급 ATH.", keyData: [{ label: "거래소 보유량", value: "-3.2%" }, { label: "채굴자 유출", value: "LOW" }, { label: "LTH", value: "ATH" }, { label: "SOPR", value: "1.02" }] },
+      { agentId: "chart", summary: "1H ascending triangle. RSI 58 neutral-rising. CVD +$124M real buy-side. ATR 1,420 moderate volatility. Bollinger bands contracting → breakout imminent.", keyData: [{ label: "Pattern", value: "Ascending Triangle" }, { label: "RSI (1H)", value: "58 (Neutral Rising)" }, { label: "CVD", value: "+$124M" }, { label: "Support S1", value: "$99,180" }, { label: "Support S2", value: "$97,500" }, { label: "Resistance R1", value: "$102,350" }, { label: "Volume", value: "1.6x Avg" }, { label: "ATR", value: "$1,420" }, { label: "Target", value: "$108,500" }] },
+      { agentId: "chain", summary: "Exchange reserves down 3.2% weekly. Miner outflow at low levels — no capitulation. SOPR 1.02, minimal profit-taking. LTH supply at ATH.", keyData: [{ label: "Exchange Reserves", value: "-3.2%" }, { label: "Miner Outflow", value: "LOW" }, { label: "LTH", value: "ATH" }, { label: "SOPR", value: "1.02" }] },
     ],
   },
   eth: {
-    conclusion: "ETH/BTC 0.032 지지선 테스트. RSI 38 과매도 접근, CVD +$45M 매수 유입. 거래량 평균 1.3배. 비콘체인 40% 급증 + $4,500 콜 $105M 매수. **ETH 독립 상승 구간 진입 가능성 78%.**",
+    conclusion: "ETH/BTC testing 0.032 support. RSI 38 approaching oversold, CVD +$45M buy inflow. Volume 1.3x avg. Beacon chain deposits surged 40% + $4,500 call $105M bought. **ETH independent rally probability 78%.**",
     signal: "LONG",
     confidence: 75,
     agentBreakdowns: [
-      { agentId: "chart", summary: "ETH/BTC 0.032 핵심 지지. RSI 38 과매도 접근. CVD +$45M. 일봉 컵앤핸들 형성. 지지 $3,680(S1), 저항 $4,020(R1).", keyData: [{ label: "ETH/BTC", value: "0.032 지지" }, { label: "RSI (4H)", value: "38 (과매도 접근)" }, { label: "CVD", value: "+$45M" }, { label: "지지 S1", value: "$3,680" }, { label: "저항 R1", value: "$4,020" }, { label: "거래량", value: "1.3x 평균" }, { label: "반등 확률", value: "78%" }] },
-      { agentId: "chain", summary: "스테이킹 예치 24H 40% 급증. 32,000 ETH 비콘체인 유입. Gas 34 Gwei.", keyData: [{ label: "스테이킹", value: "+40%" }, { label: "유입", value: "32,000 ETH" }, { label: "Gas", value: "34 Gwei" }] },
-      { agentId: "deriv", summary: "$105M 규모 $4,500 콜옵션 3월 만기 대량 매수 감지.", keyData: [{ label: "옵션", value: "$105M 콜" }, { label: "행사가", value: "$4,500" }, { label: "P/C 비율", value: "0.38" }] },
+      { agentId: "chart", summary: "ETH/BTC 0.032 key support. RSI 38 approaching oversold. CVD +$45M. Daily cup-and-handle forming. Support $3,680(S1), resistance $4,020(R1).", keyData: [{ label: "ETH/BTC", value: "0.032 Support" }, { label: "RSI (4H)", value: "38 (Near Oversold)" }, { label: "CVD", value: "+$45M" }, { label: "Support S1", value: "$3,680" }, { label: "Resistance R1", value: "$4,020" }, { label: "Volume", value: "1.3x Avg" }, { label: "Bounce Prob.", value: "78%" }] },
+      { agentId: "chain", summary: "Staking deposits surged 40% in 24H. 32,000 ETH entered beacon chain. Gas at 34 Gwei.", keyData: [{ label: "Staking", value: "+40%" }, { label: "Inflow", value: "32,000 ETH" }, { label: "Gas", value: "34 Gwei" }] },
+      { agentId: "deriv", summary: "$105M in $4,500 call options for March expiry detected.", keyData: [{ label: "Options", value: "$105M Call" }, { label: "Strike", value: "$4,500" }, { label: "P/C Ratio", value: "0.38" }] },
     ],
   },
   sol: {
-    conclusion: "SOL 주봉 컵앤핸들 완성. RSI 62 상승 모멘텀, CVD +$67M 강한 매수세. 거래량 2.1배 급증. DeFi TVL +18%, 소셜 언급량 +89%. **$285 측정 목표. $230 지지 유지가 전제.**",
+    conclusion: "SOL weekly cup-and-handle completed. RSI 62 bullish momentum, CVD +$67M strong buy-side. Volume surged 2.1x. DeFi TVL +18%, social mentions +89%. **$285 measured target. $230 support must hold.**",
     signal: "STRONG LONG",
     confidence: 85,
     agentBreakdowns: [
-      { agentId: "chart", summary: "주봉 컵앤핸들 완성. RSI 62 건강한 상승. CVD +$67M 강한 실질 매수. 지지 $230(S1), 저항 $260(R1). 볼린저 상단 확장 중.", keyData: [{ label: "패턴", value: "Cup & Handle" }, { label: "RSI (1D)", value: "62 (상승 모멘텀)" }, { label: "CVD", value: "+$67M" }, { label: "지지 S1", value: "$230" }, { label: "저항 R1", value: "$260" }, { label: "거래량", value: "2.1x 평균" }, { label: "목표가", value: "$285" }] },
-      { agentId: "chain", summary: "SOL DeFi TVL 주간 18% 증가. DEX 거래량 신기록.", keyData: [{ label: "TVL", value: "+18%" }, { label: "DEX", value: "신기록" }, { label: "온체인", value: "ALL GREEN" }] },
-      { agentId: "social", summary: "SOL 극단적 강세 편향. 언급량 24시간 89% 급증.", keyData: [{ label: "언급량", value: "+89%" }, { label: "편향", value: "극단적 강세" }, { label: "트렌드", value: "AI Agent" }] },
+      { agentId: "chart", summary: "Weekly cup-and-handle completed. RSI 62 healthy uptrend. CVD +$67M strong real buying. Support $230(S1), resistance $260(R1). Bollinger upper expanding.", keyData: [{ label: "Pattern", value: "Cup & Handle" }, { label: "RSI (1D)", value: "62 (Bullish Momentum)" }, { label: "CVD", value: "+$67M" }, { label: "Support S1", value: "$230" }, { label: "Resistance R1", value: "$260" }, { label: "Volume", value: "2.1x Avg" }, { label: "Target", value: "$285" }] },
+      { agentId: "chain", summary: "SOL DeFi TVL up 18% weekly. DEX volume at all-time record.", keyData: [{ label: "TVL", value: "+18%" }, { label: "DEX", value: "ATH" }, { label: "On-chain", value: "ALL GREEN" }] },
+      { agentId: "social", summary: "SOL extreme bullish bias. Mention volume surged 89% in 24H.", keyData: [{ label: "Mentions", value: "+89%" }, { label: "Bias", value: "Extreme Bullish" }, { label: "Trend", value: "AI Agent" }] },
     ],
   },
 };
@@ -377,7 +377,7 @@ const Agents = () => {
           setChatMessages((prev) =>
             prev.map((m) => m.id === typingId ? {
               ...m,
-              content: `**${agent.emoji} ${agent.name} 단독 분석:** ${agentBreakdown.summary}`,
+              content: `**${agent.emoji} ${agent.name} Solo Analysis:** ${agentBreakdown.summary}`,
               isTyping: false,
               signal: orchestrated.signal,
               confidence: orchestrated.confidence,
@@ -476,7 +476,7 @@ const Agents = () => {
                           <div className="flex flex-col items-center justify-center h-full text-center py-8 opacity-60">
                             <span className="text-2xl mb-2">⊞</span>
                             <p className="text-xs font-mono text-muted-foreground mb-1">Terminal Ready</p>
-                            <p className="text-[9px] font-mono text-muted-foreground/60">질문을 입력하세요</p>
+                            <p className="text-[9px] font-mono text-muted-foreground/60">Enter a question to start</p>
                           </div>
                         )}
 
@@ -567,27 +567,9 @@ const Agents = () => {
               </div>
             )}
 
-            {/* MARKET TAB */}
+            {/* MARKET TAB — no chart (already in Chat tab) */}
             {mobileTab === "market" && (
               <div className="h-full overflow-y-auto">
-                {/* Chart */}
-                <div className="p-3 border-b border-border">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-mono tracking-wider text-accent">MARKET LIVE</span>
-                    <ExternalLink size={10} className="text-muted-foreground" />
-                  </div>
-                  <div className="border border-border bg-card overflow-hidden">
-                    <div className="flex items-center gap-2 px-2.5 pt-2 pb-1">
-                      <span className="font-bold text-xs text-accent">{selectedTicker?.ticker}</span>
-                      <span className="text-[9px] font-mono text-muted-foreground">{selectedTicker?.name}</span>
-                      <span className={`text-[9px] font-mono font-semibold ml-auto ${selectedTicker.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                        {selectedTicker.change > 0 ? "+" : ""}{selectedTicker.change}%
-                      </span>
-                    </div>
-                    <TradingViewChart symbol={selectedTicker?.ticker || "BTC"} height={180} />
-                  </div>
-                </div>
-
                 {/* Headlines */}
                 <div className="p-3 border-b border-border">
                   <span className="font-mono text-[9px] tracking-wider text-muted-foreground mb-2 block">HEADLINES</span>
@@ -953,7 +935,7 @@ const Agents = () => {
                           <div className="flex flex-col items-center justify-center h-full text-center py-8 opacity-60">
                             <span className="text-2xl mb-2">⊞</span>
                             <p className="text-xs font-mono text-muted-foreground mb-1">StockClaw Terminal Ready</p>
-                            <p className="text-[10px] font-mono text-muted-foreground/60">질문을 입력하면 에이전트들이 분석을 시작합니다</p>
+                            <p className="text-[10px] font-mono text-muted-foreground/60">Enter a query to start agent analysis</p>
                           </div>
                         )}
                         <AnimatePresence>
@@ -1308,7 +1290,7 @@ const Agents = () => {
                   </div>
                 ) : (
                   <div className="text-center py-6">
-                    <p className="text-[10px] font-mono text-muted-foreground mb-2">지갑을 연결하면 스왑할 수 있습니다</p>
+                    <p className="text-[10px] font-mono text-muted-foreground mb-2">Connect your wallet to swap</p>
                     <button onClick={() => setSwapModalOpen(false)} className="text-[9px] font-mono text-accent hover:underline">Connect Wallet →</button>
                   </div>
                 )}

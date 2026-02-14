@@ -76,8 +76,8 @@ const Holdings = () => {
           ) : (
             <div className="border border-border border-dashed p-6 mb-6 flex flex-col items-center justify-center text-center">
               <Wallet size={24} className="text-muted-foreground mb-2" />
-              <p className="text-xs font-mono text-muted-foreground mb-1">지갑이 연결되지 않았습니다</p>
-              <p className="text-[9px] font-mono text-muted-foreground/60">상단의 Connect Wallet 버튼을 눌러 지갑을 연결하세요</p>
+              <p className="text-xs font-mono text-muted-foreground mb-1">Wallet not connected</p>
+              <p className="text-[9px] font-mono text-muted-foreground/60">Press the Connect Wallet button above to connect your wallet</p>
             </div>
           )}
 
