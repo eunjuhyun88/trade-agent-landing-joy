@@ -38,14 +38,14 @@ const AppNav = () => {
             </span>
           </div>
 
-          <div className="hidden md:flex items-center">
+          <div className="flex items-center">
             {tabs.map((tab) => {
               const isActive = location.pathname === tab.path;
               return (
                 <span
                   key={tab.path}
                   onClick={() => navigate(tab.path)}
-                  className={`px-4 py-[13px] text-[9px] font-mono font-medium tracking-[1.5px] uppercase cursor-pointer border-b-2 transition-colors ${
+                  className={`px-3 sm:px-4 py-[13px] text-[9px] font-mono font-medium tracking-[1.5px] uppercase cursor-pointer border-b-2 transition-colors ${
                     isActive ? "text-foreground border-accent" : "text-muted-foreground border-transparent hover:text-foreground"
                   }`}
                 >
