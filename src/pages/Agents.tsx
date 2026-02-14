@@ -945,25 +945,25 @@ const Agents = () => {
                   {/* Terminal */}
                   <ResizablePanel defaultSize={58} minSize={30}>
                     <div className="h-full flex flex-col overflow-hidden">
-                      <div className="px-5 py-2 border-b border-border shrink-0 flex items-center justify-between">
-                        <p className="text-[10px] font-mono text-muted-foreground">StockClaw Terminal — 5 agents online</p>
-                        <div className="flex gap-4 text-[9px] font-mono">
+                      <div className="px-4 py-1.5 border-b border-border shrink-0 flex items-center justify-between">
+                        <p className="text-[9px] font-mono text-muted-foreground whitespace-nowrap">Terminal — 5 agents</p>
+                        <div className="flex gap-3 text-[8px] font-mono shrink-0">
                           {[
-                            { label: "Queries", value: "127" },
-                            { label: "Analyses", value: "34" },
-                            { label: "Alerts", value: "12" },
+                            { label: "Q", value: "127" },
+                            { label: "A", value: "34" },
+                            { label: "⚡", value: "12" },
                           ].map((stat) => (
-                            <span key={stat.label} className="text-muted-foreground">{stat.label} <span className="text-foreground font-semibold">{stat.value}</span></span>
+                            <span key={stat.label} className="text-muted-foreground">{stat.label} <span className="text-foreground font-bold">{stat.value}</span></span>
                           ))}
                         </div>
                       </div>
 
-                      <div className="flex-1 overflow-y-auto px-5 py-2" ref={chatScrollRef}>
+                      <div className="flex-1 overflow-y-auto px-4 py-2" ref={chatScrollRef}>
                         {chatMessages.length === 0 && (
-                          <div className="flex flex-col items-center justify-center h-full text-center py-8 opacity-60">
-                            <span className="text-2xl mb-2">⊞</span>
-                            <p className="text-xs font-mono text-muted-foreground mb-1">StockClaw Terminal Ready</p>
-                            <p className="text-[10px] font-mono text-muted-foreground/60">Enter a query to start agent analysis</p>
+                          <div className="flex flex-col items-center justify-center h-full text-center opacity-50">
+                            <span className="text-xl mb-1">⊞</span>
+                            <p className="text-[10px] font-mono text-muted-foreground mb-0.5">Terminal Ready</p>
+                            <p className="text-[8px] font-mono text-muted-foreground/50">Enter a query to start</p>
                           </div>
                         )}
                         <AnimatePresence>
@@ -1076,60 +1076,60 @@ const Agents = () => {
                   <ResizablePanel defaultSize={42} minSize={20} maxSize={55}>
                     <div className="h-full overflow-y-auto border-l border-border">
                       {/* Headlines */}
-                      <div className="p-3 border-b border-border">
-                        <div className="mb-1.5">
-                          <span className="font-mono text-[9px] tracking-wider text-muted-foreground">HEADLINES</span>
+                      <div className="px-2.5 py-2 border-b border-border">
+                        <div className="mb-1">
+                          <span className="font-mono text-[8px] tracking-wider text-muted-foreground font-semibold">HEADLINES</span>
                         </div>
-                        <div className="space-y-1">
-                          {agents.flatMap((a) => a.headlines.map((h) => ({ ...h, agentEmoji: a.emoji, agentColor: a.color }))).slice(0, 6).map((h, i) => (
-                            <div key={i} className="flex gap-2 group cursor-pointer">
-                              <span className="text-[8px] font-mono text-muted-foreground shrink-0">{h.time}</span>
-                              <p className={`text-[9px] leading-snug group-hover:underline ${h.sentiment === "bull" ? "text-status-active" : (h.sentiment as string) === "bear" ? "text-status-hot" : "text-foreground/70"}`}>{h.text}</p>
+                        <div className="space-y-[3px]">
+                          {agents.flatMap((a) => a.headlines.map((h) => ({ ...h, agentEmoji: a.emoji, agentColor: a.color }))).slice(0, 5).map((h, i) => (
+                            <div key={i} className="flex gap-1.5 group cursor-pointer">
+                              <span className="text-[7px] font-mono text-muted-foreground shrink-0 w-7">{h.time}</span>
+                              <p className={`text-[8px] leading-tight group-hover:underline line-clamp-1 ${h.sentiment === "bull" ? "text-status-active font-medium" : (h.sentiment as string) === "bear" ? "text-status-hot font-medium" : "text-foreground/60"}`}>{h.text}</p>
                             </div>
                           ))}
                         </div>
                       </div>
 
                       {/* Agent Breakdowns */}
-                      <div className="p-3 border-b border-border">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-mono text-[9px] font-semibold tracking-[1px]">AGENT ANALYSIS</span>
-                          <span className="font-mono text-[8px] text-muted-foreground">{selectedAgents.size}/{agents.length} ACTIVE</span>
+                      <div className="px-2.5 py-2 border-b border-border">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-mono text-[8px] font-bold tracking-[1px]">AGENT ANALYSIS</span>
+                          <span className="font-mono text-[7px] text-muted-foreground">{selectedAgents.size}/{agents.length}</span>
                         </div>
                         {agents.map((agent) => {
                           const isSelected = selectedAgents.has(agent.id);
                           const breakdown = activeBreakdowns.find((b) => b.agentId === agent.id);
                           const isExpanded = expandedBreakdown === agent.id;
                           return (
-                            <div key={agent.id} className="border-b border-border last:border-0">
+                            <div key={agent.id} className="border-b border-border/50 last:border-0">
                               <div
-                                className={`flex items-center justify-between py-[6px] cursor-pointer transition-colors ${isSelected ? "bg-accent/10" : "hover:bg-card/50 opacity-50"}`}
+                                className={`flex items-center justify-between py-[4px] cursor-pointer transition-colors ${isSelected ? "" : "opacity-40"}`}
                                 onClick={() => { if (breakdown) setExpandedBreakdown(isExpanded ? null : agent.id); }}
                               >
-                                <div className="flex items-center gap-[7px]">
+                                <div className="flex items-center gap-1.5">
                                   <button
                                     onClick={(e) => { e.stopPropagation(); toggleAgent(agent.id); }}
-                                    className={`w-3 h-3 border flex items-center justify-center text-[7px] transition-colors ${isSelected ? "border-accent bg-accent/20 text-accent" : "border-muted-foreground"}`}
+                                    className={`w-3 h-3 border flex items-center justify-center text-[6px] transition-colors ${isSelected ? "border-accent bg-accent/20 text-accent" : "border-muted-foreground/50"}`}
                                   >
                                     {isSelected && "✓"}
                                   </button>
-                                  <span className="text-[11px]">{agent.emoji}</span>
-                                  <span className={`font-mono text-[9px] font-semibold tracking-[0.5px] ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
-                                    {agent.fullName.toUpperCase()}
+                                  <span className="text-[10px]">{agent.emoji}</span>
+                                  <span className={`font-mono text-[8px] font-semibold ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
+                                    {agent.name}
                                   </span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  {breakdown && <span className="font-mono text-[7px] text-accent px-1 border border-accent/30">DATA</span>}
-                                  <span className={`w-[6px] h-[6px] rounded-full ${agent.status !== "idle" ? "bg-status-active" : "bg-muted-foreground"}`} />
+                                <div className="flex items-center gap-1.5">
+                                  {breakdown && <span className="font-mono text-[6px] text-accent px-1 border border-accent/30">DATA</span>}
+                                  <span className={`w-[5px] h-[5px] rounded-full ${agent.status !== "idle" ? "bg-status-active" : "bg-muted-foreground/40"}`} />
                                 </div>
                               </div>
                               {isExpanded && breakdown && (
-                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="pb-2 px-1 overflow-hidden">
-                                  <p className="text-[10px] leading-relaxed text-foreground/80 mb-2 px-1">{breakdown.summary}</p>
+                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="pb-1.5 overflow-hidden">
+                                  <p className="text-[9px] leading-snug text-foreground/80 mb-1.5">{breakdown.summary}</p>
                                   {breakdown.keyData.map((d, i) => (
-                                    <div key={i} className="flex justify-between py-[2px] text-[9px] px-1">
+                                    <div key={i} className="flex justify-between py-[1px] text-[8px]">
                                       <span className="text-muted-foreground">{d.label}</span>
-                                      <span className="font-mono text-[9px] text-accent">{d.value}</span>
+                                      <span className="font-mono text-accent font-medium">{d.value}</span>
                                     </div>
                                   ))}
                                 </motion.div>
@@ -1140,21 +1140,19 @@ const Agents = () => {
                       </div>
 
                       {/* Unified Intelligence */}
-                      <div className="px-3 py-3 bg-[hsl(45_90%_55%/0.08)] border-t border-[hsl(45_90%_55%/0.2)]">
-                        <div className="font-mono text-[7px] text-muted-foreground tracking-[2px] mb-3">UNIFIED INTELLIGENCE</div>
-                        <div className="flex items-center justify-center mb-3">
-                          <div className="relative w-[120px] h-[60px]">
+                      <div className="px-2.5 py-2 bg-[hsl(45_90%_55%/0.06)] border-t border-[hsl(45_90%_55%/0.15)]">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-mono text-[7px] text-muted-foreground tracking-[2px]">UNIFIED INTELLIGENCE</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-status-active animate-pulse" />
+                            <span className="font-mono text-[8px] font-bold tracking-[1px]">LONG</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="relative w-[80px] h-[40px] shrink-0">
                             <svg viewBox="0 0 120 60" className="w-full h-full overflow-visible">
-                              <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(var(--border))" strokeWidth="6" strokeLinecap="round" />
-                              <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(45 90% 55%)" strokeWidth="6" strokeLinecap="round" strokeDasharray={`${Math.PI * 50 * 0.73} ${Math.PI * 50}`} />
-                              {[0, 25, 50, 75, 100].map((tick) => {
-                                const angle = Math.PI - (tick / 100) * Math.PI;
-                                const x1 = 60 + 42 * Math.cos(angle);
-                                const y1 = 55 - 42 * Math.sin(angle);
-                                const x2 = 60 + 47 * Math.cos(angle);
-                                const y2 = 55 - 47 * Math.sin(angle);
-                                return <line key={tick} x1={x1} y1={y1} x2={x2} y2={y2} stroke="hsl(var(--muted-foreground))" strokeWidth="1" opacity="0.4" />;
-                              })}
+                              <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(var(--border))" strokeWidth="7" strokeLinecap="round" />
+                              <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(45 90% 55%)" strokeWidth="7" strokeLinecap="round" strokeDasharray={`${Math.PI * 50 * 0.73} ${Math.PI * 50}`} />
                               {(() => {
                                 const angle = Math.PI - (73 / 100) * Math.PI;
                                 const nx = 60 + 36 * Math.cos(angle);
@@ -1163,39 +1161,30 @@ const Agents = () => {
                               })()}
                               <circle cx="60" cy="55" r="3" fill="hsl(45 90% 55%)" />
                             </svg>
-                            <div className="absolute bottom-[-2px] left-1/2 -translate-x-1/2 text-center">
-                              <div className="font-mono text-[20px] font-black leading-none">73</div>
+                            <div className="absolute bottom-[-2px] left-1/2 -translate-x-1/2">
+                              <span className="font-mono text-[16px] font-black">73</span>
                             </div>
                           </div>
-                        </div>
-                        <div className="flex items-center justify-center gap-2 mb-3">
-                          <span className="w-2 h-2 rounded-full bg-status-active animate-pulse" />
-                          <span className="font-mono text-[11px] font-bold tracking-[2px]">LONG SIGNAL</span>
-                        </div>
-                        <div className="space-y-[5px]">
-                          {[
-                            { emoji: "📐", name: "CHART", score: 88, color: "268 35% 72%" },
-                            { emoji: "⛓", name: "CHAIN", score: 65, color: "142 70% 45%" },
-                            { emoji: "📡", name: "DERIV", score: 78, color: "0 84% 60%" },
-                            { emoji: "💬", name: "SOCIAL", score: 72, color: "280 60% 65%" },
-                          ].map((a) => (
-                            <div key={a.name} className="flex items-center gap-2">
-                              <span className="text-[9px] w-3">{a.emoji}</span>
-                              <span className="font-mono text-[7px] w-10 text-muted-foreground">{a.name}</span>
-                              <div className="flex-1 h-[4px] bg-border overflow-hidden">
-                                <div className="h-full transition-all" style={{ width: `${a.score}%`, backgroundColor: `hsl(${a.color})` }} />
+                          <div className="flex-1 space-y-[3px]">
+                            {[
+                              { emoji: "📐", name: "CHART", score: 88, color: "268 35% 72%" },
+                              { emoji: "⛓", name: "CHAIN", score: 65, color: "142 70% 45%" },
+                              { emoji: "📡", name: "DERIV", score: 78, color: "0 84% 60%" },
+                              { emoji: "💬", name: "SOCIAL", score: 72, color: "280 60% 65%" },
+                            ].map((a) => (
+                              <div key={a.name} className="flex items-center gap-1">
+                                <span className="font-mono text-[6px] w-7 text-muted-foreground">{a.name}</span>
+                                <div className="flex-1 h-[3px] bg-border overflow-hidden">
+                                  <div className="h-full" style={{ width: `${a.score}%`, backgroundColor: `hsl(${a.color})` }} />
+                                </div>
+                                <span className="font-mono text-[7px] w-4 text-right font-medium">{a.score}</span>
                               </div>
-                              <span className="font-mono text-[8px] w-5 text-right text-foreground/70">{a.score}</span>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                        <div className="flex items-center justify-between mt-3 pt-2 border-t border-[hsl(45_90%_55%/0.15)]">
-                          <div className="text-[7px] font-mono text-muted-foreground">
-                            COMPOSITE <span className="text-foreground font-semibold">73/100</span>
-                          </div>
-                          <div className="text-[7px] font-mono text-muted-foreground">
-                            CONSENSUS <span className="text-status-active font-semibold">BULLISH</span>
-                          </div>
+                        <div className="flex items-center justify-between pt-1.5 border-t border-[hsl(45_90%_55%/0.12)]">
+                          <span className="text-[7px] font-mono text-muted-foreground">COMPOSITE <span className="text-foreground font-bold">73</span></span>
+                          <span className="text-[7px] font-mono text-status-active font-bold">BULLISH</span>
                         </div>
                       </div>
                     </div>
