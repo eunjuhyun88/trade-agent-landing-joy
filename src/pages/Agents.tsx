@@ -188,19 +188,30 @@ const allFeed = agents.flatMap((a) =>
 
 const Agents = () => {
   const navigate = useNavigate();
-  const [orchestrationAgent, setOrchestrationAgent] = useState("chart");
+  const [selectedAgents, setSelectedAgents] = useState<Set<string>>(new Set(agents.map((a) => a.id)));
+  const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
   const [selectedTf, setSelectedTf] = useState("1H");
-  const orchAgent = agents.find((a) => a.id === orchestrationAgent)!;
-  const orchColor = `hsl(${orchAgent.color})`;
   const selectedTicker = sharedWatchlist[0];
+
+  const toggleAgent = (id: string) => {
+    setSelectedAgents((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        if (next.size > 1) next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
 
   return (
     <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
       <AppNav
         activeTab="trade"
-        activeAgent={orchestrationAgent}
+        activeAgent="chart"
         agents={agents}
-        onAgentChange={(id) => setOrchestrationAgent(id)}
+        onAgentChange={(id) => toggleAgent(id)}
       />
 
       {/* Main App */}
@@ -323,27 +334,27 @@ const Agents = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      {/* Orchestration agent selector chips */}
+                      {/* Multi-select agent chips */}
                       <div className="flex items-center gap-[2px]">
                         {agents.map((a) => (
                           <button
                             key={a.id}
-                            onClick={() => setOrchestrationAgent(a.id)}
+                            onClick={() => toggleAgent(a.id)}
                             className={`text-[8px] font-mono px-[6px] py-[2px] transition-colors ${
-                              a.id === orchestrationAgent
+                              selectedAgents.has(a.id)
                                 ? "text-accent-foreground"
-                                : "text-muted-foreground hover:text-foreground"
+                                : "text-muted-foreground/40 hover:text-muted-foreground"
                             }`}
-                            style={a.id === orchestrationAgent ? { backgroundColor: `hsl(${a.color})` } : undefined}
+                            style={selectedAgents.has(a.id) ? { backgroundColor: `hsl(${a.color})` } : undefined}
                             title={a.fullName}
                           >
                             {a.emoji}
                           </button>
                         ))}
                       </div>
-                      <span className="text-[8px] font-mono text-muted-foreground">→ {orchAgent.name}</span>
+                      <span className="text-[8px] font-mono text-muted-foreground">{selectedAgents.size}/{agents.length}</span>
                     </div>
-                    <button className="transition-colors" style={{ color: orchColor }}>
+                    <button className="transition-colors text-accent hover:text-foreground">
                       <Send size={12} />
                     </button>
                   </div>
@@ -427,33 +438,85 @@ const Agents = () => {
               <div className="p-3 border-b border-border">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-mono text-[9px] font-semibold tracking-[1px]">ORCHESTRATION</span>
-                  <span className="font-mono text-[8px] text-muted-foreground">5 PILOTS</span>
+                  <span className="font-mono text-[8px] text-muted-foreground">{selectedAgents.size}/{agents.length} ACTIVE</span>
                 </div>
                 {agents.map((agent) => {
                   const isActive = agent.status !== "idle";
-                  const isOrch = agent.id === orchestrationAgent;
+                  const isSelected = selectedAgents.has(agent.id);
+                  const isExpanded = expandedAgent === agent.id;
                   return (
                     <div key={agent.id} className="border-b border-border last:border-0">
                       <div
                         className={`flex items-center justify-between py-[6px] cursor-pointer transition-colors ${
-                          isOrch ? "bg-accent/10" : "hover:bg-card/50"
+                          isSelected ? "bg-accent/10" : "hover:bg-card/50 opacity-50"
                         }`}
-                        onClick={() => setOrchestrationAgent(agent.id)}
+                        onClick={() => setExpandedAgent(isExpanded ? null : agent.id)}
                       >
                         <div className="flex items-center gap-[7px]">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); toggleAgent(agent.id); }}
+                            className={`w-3 h-3 border flex items-center justify-center text-[7px] transition-colors ${
+                              isSelected ? "border-accent bg-accent/20 text-accent" : "border-muted-foreground"
+                            }`}
+                          >
+                            {isSelected && "✓"}
+                          </button>
                           <span className="text-[11px]">{agent.emoji}</span>
-                          <span className={`font-mono text-[9px] font-semibold tracking-[0.5px] ${isOrch ? "text-foreground" : "text-muted-foreground"}`}>
+                          <span className={`font-mono text-[9px] font-semibold tracking-[0.5px] ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
                             {agent.fullName.toUpperCase()}
                           </span>
-                          {isOrch && (
-                            <span className="text-[7px] font-mono px-1 py-[1px] bg-accent/20 text-accent tracking-wider">ACTIVE</span>
-                          )}
                         </div>
                         <div className="flex items-center gap-2">
                           {agent.score > 0 && <span className="font-mono text-[10px] font-bold">{agent.score}</span>}
                           <span className={`w-[6px] h-[6px] rounded-full ${isActive ? "bg-status-active" : "bg-muted-foreground"}`} />
                         </div>
                       </div>
+                      {isExpanded && agent.clusterDetails.length > 0 && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          className="pb-2 px-1 overflow-hidden"
+                        >
+                          <div className="font-mono text-[7px] text-muted-foreground mb-[3px] tracking-[0.5px]">IDENTIFIED ZONES</div>
+                          {agent.clusterDetails.map((d, i) => (
+                            <div key={i} className="flex justify-between py-[2px] text-[9px]">
+                              <span className="text-muted-foreground">{d.label}</span>
+                              <span className={`font-mono text-[9px] ${
+                                (d as any).color === "hot" ? "text-status-hot" :
+                                (d as any).color === "active" ? "text-status-active" : ""
+                              }`}>{d.value}</span>
+                            </div>
+                          ))}
+                          {agent.clusterMeta.length > 0 && (
+                            <div className="flex gap-[10px] mt-[5px] font-mono text-[8px]">
+                              {agent.clusterMeta.map((m, i) => (
+                                <span key={i}>
+                                  <span className="text-muted-foreground">{m.label}:</span>{" "}
+                                  <span className={m.color === "green" ? "text-status-active" : "text-accent"}>{m.value}</span>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          {agent.id === "deriv" && (
+                            <div className="mt-[5px]">
+                              <div className="font-mono text-[7px] text-muted-foreground mb-[3px] tracking-[0.5px]">LIQUIDATION HEATMAP</div>
+                              <div className="flex gap-[2px]">
+                                <div className="h-2 flex-[3] bg-accent/15" />
+                                <div className="h-2 flex-[1] bg-status-hot/15" />
+                                <div className="h-2 flex-[0.5] bg-status-hot" />
+                              </div>
+                              <div className="font-mono text-[7px] text-muted-foreground mt-[2px]">$152k — HIGH DENSITY</div>
+                            </div>
+                          )}
+                          {agent.id === "chain" && (
+                            <div className="mt-[3px]">
+                              <div className="h-[3px] bg-border overflow-hidden">
+                                <div className="h-full w-[65%] bg-[hsl(45_90%_55%)]" />
+                              </div>
+                            </div>
+                          )}
+                        </motion.div>
+                      )}
                     </div>
                   );
                 })}
