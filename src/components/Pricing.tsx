@@ -1,51 +1,65 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 
+const tiers = [
+  {
+    name: "FREE",
+    price: "0",
+    token: "$SHO",
+    period: "",
+    usd: "",
+    highlight: false,
+    cta: "START FREE",
+    features: [
+      "5 analyses per day",
+      "3 agents: CHART, CHAIN, SOCIAL",
+      "Entry Score (3-agent partial)",
+      "Delayed feed",
+    ],
+  },
+  {
+    name: "PRO MONTHLY",
+    price: "50",
+    token: "$SHO",
+    period: "/mo",
+    usd: "~$19 USD",
+    highlight: false,
+    cta: "UPGRADE TO PRO →",
+    features: [
+      "Unlimited analyses",
+      "All 5 agents",
+      "Full Entry Score (5-agent weighted)",
+      "Real-time feed",
+      "Custom alerts",
+      "Webhook integration",
+      "Agent deep-dive view",
+    ],
+  },
+  {
+    name: "PRO YEARLY",
+    price: "500",
+    token: "$SHO",
+    period: "/yr",
+    usd: "~$190 USD",
+    save: "Save 16%",
+    highlight: true,
+    cta: "GET YEARLY →",
+    features: [
+      "Everything in Pro Monthly",
+      "All 5 agents",
+      "Full Entry Score (5-agent weighted)",
+      "Real-time feed",
+      "Custom alerts",
+      "Webhook integration",
+      "Agent deep-dive view",
+      "Priority support",
+    ],
+  },
+];
+
 const Pricing = () => {
-  const [yearly, setYearly] = useState(false);
-
-  const tiers = [
-    {
-      name: "FREE",
-      price: "0",
-      token: "$SHO",
-      period: "",
-      usd: "",
-      highlight: false,
-      cta: "START FREE",
-      features: [
-        "5 analyses per day",
-        "3 agents: CHART, CHAIN, SOCIAL",
-        "Entry Score (3-agent partial)",
-        "Delayed feed",
-      ],
-    },
-    {
-      name: "PRO",
-      price: yearly ? "500" : "50",
-      token: "$SHO",
-      period: yearly ? "/yr" : "/mo",
-      usd: yearly ? "~$190 USD" : "~$19 USD",
-      save: yearly ? "Save 16%" : "",
-      highlight: true,
-      cta: yearly ? "GET YEARLY →" : "UPGRADE TO PRO →",
-      features: [
-        "Unlimited analyses",
-        "All 5 agents: CHART, CHAIN, SOCIAL, DERIV, ALERT",
-        "Full Entry Score (5-agent weighted)",
-        "Real-time feed",
-        "Custom alerts",
-        "Webhook integration",
-        "Agent deep-dive view",
-        ...(yearly ? ["Priority support"] : []),
-      ],
-    },
-  ];
-
   return (
     <section className="px-6 md:px-12 py-20">
-      {/* Tag */}
       <motion.div
         className="mb-4"
         initial={{ opacity: 0 }}
@@ -56,9 +70,8 @@ const Pricing = () => {
         <span className="text-xs font-mono tracking-wider text-accent">ACCESS_TIERS</span>
       </motion.div>
 
-      {/* Headline */}
       <motion.h2
-        className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tighter mb-8"
+        className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tighter mb-12"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -69,38 +82,8 @@ const Pricing = () => {
         <span className="text-accent">ACCESS LEVEL.</span>
       </motion.h2>
 
-      {/* Toggle */}
-      <motion.div
-        className="flex items-center gap-1 mb-12"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        <button
-          onClick={() => setYearly(false)}
-          className={`text-xs font-mono tracking-wider px-4 py-2 border transition-colors ${
-            !yearly
-              ? "bg-primary text-primary-foreground border-primary"
-              : "border-border text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          MONTHLY
-        </button>
-        <button
-          onClick={() => setYearly(true)}
-          className={`text-xs font-mono tracking-wider px-4 py-2 border transition-colors ${
-            yearly
-              ? "bg-primary text-primary-foreground border-primary"
-              : "border-border text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          YEARLY — SAVE 16%
-        </button>
-      </motion.div>
-
-      {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-border max-w-3xl">
+      {/* Cards — 3 columns */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-border max-w-5xl">
         {tiers.map((tier, i) => (
           <motion.div
             key={tier.name}
@@ -112,7 +95,6 @@ const Pricing = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.1 }}
           >
-            {/* Tier name */}
             <span
               className={`text-xs font-mono tracking-[0.2em] mb-6 ${
                 tier.highlight ? "text-primary-foreground/70" : "text-muted-foreground"
@@ -121,7 +103,6 @@ const Pricing = () => {
               {tier.name}
             </span>
 
-            {/* Price */}
             <div className="mb-1">
               <span className="text-4xl md:text-5xl font-bold tracking-tighter">{tier.price}</span>
               <span
@@ -142,21 +123,20 @@ const Pricing = () => {
                 {tier.usd}
               </span>
             )}
-            {tier.save && (
+            {tier.save ? (
               <span className="text-xs font-mono text-status-active font-bold mb-6">
                 {tier.save}
               </span>
+            ) : (
+              <div className="mb-6" />
             )}
-            {!tier.save && <div className="mb-6" />}
 
-            {/* Divider */}
             <div
               className={`h-[1px] mb-6 ${
                 tier.highlight ? "bg-primary-foreground/20" : "bg-border"
               }`}
             />
 
-            {/* Features */}
             <ul className="space-y-3 flex-1 mb-8">
               {tier.features.map((feature) => (
                 <li key={feature} className="flex items-start gap-2.5">
@@ -177,7 +157,6 @@ const Pricing = () => {
               ))}
             </ul>
 
-            {/* CTA */}
             <button
               className={`w-full py-3 text-xs font-mono tracking-wider transition-colors ${
                 tier.highlight
@@ -191,7 +170,6 @@ const Pricing = () => {
         ))}
       </div>
 
-      {/* Disclaimer */}
       <motion.p
         className="text-xs font-mono text-muted-foreground mt-8 max-w-lg"
         initial={{ opacity: 0 }}

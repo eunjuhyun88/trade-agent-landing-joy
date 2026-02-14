@@ -227,43 +227,43 @@ type OrchestratedResponse = {
 
 const orchestratedResponses: Record<string, OrchestratedResponse> = {
   default: {
-    conclusion: "BTC는 현재 $101,890 저항대를 테스트 중이며, 기술적 패턴(하락 웨지), 온체인 축적 신호(-$492M 유출), 파생상품 숏 스퀴즈 가능성(OI +12%), 소셜 극단적 탐욕 지수를 종합할 때 **단기 상승 돌파 가능성이 높습니다.** 다만 $103K 청산 클러스터 돌파 여부가 핵심 변수입니다.",
+    conclusion: "BTC는 현재 $101,890 저항대를 테스트 중입니다. 4H 하락 웨지 + RSI 32.4 과매도 다이버전스, CVD 양전환(매수 우위), 거래량 프로파일 $99K-$101K 고밀도 구간, 온체인 -$492M 순유출(축적), OI +12% 숏스퀴즈 빌드업, 소셜 극단적 탐욕을 종합할 때 **단기 상승 돌파 가능성이 높습니다.** 핵심 저항 $102,350 돌파 시 $108,500 목표. $103K 청산 클러스터가 핵심 변수.",
     signal: "LONG",
     confidence: 73,
     agentBreakdowns: [
-      { agentId: "chart", summary: "4H 하락 웨지 패턴 형성 중. RSI 다이버전스 + 0.618 피보나치 리트레이스먼트. 돌파 목표가 $108,500.", keyData: [{ label: "패턴", value: "Descending Wedge" }, { label: "RSI", value: "32.4 (과매도)" }, { label: "목표가", value: "$108,500" }] },
-      { agentId: "chain", summary: "콜드 월렛 → 거래소 15,000 BTC 이동 감지. 순 유출 -$492M으로 축적 국면. 장기 보유자 공급량 ATH.", keyData: [{ label: "순유출", value: "-$492M" }, { label: "고래 활동", value: "HIGH" }, { label: "LTH 공급", value: "ATH" }] },
-      { agentId: "deriv", summary: "OI 4시간 내 12% 급증, $38.2B 도달. 펀딩 레이트 0.0122% — 숏 스퀴즈 빌드업. $103K 청산 클러스터 주목.", keyData: [{ label: "OI", value: "$38.2B (+12%)" }, { label: "펀딩", value: "0.0122%" }, { label: "청산 클러스터", value: "$103K" }] },
-      { agentId: "social", summary: "15+ 채널 극단적 탐욕. X 언급량 4.2K/min. 기관 채택 사이클 내러티브 지배적. 역발상 신호 임계치 접근.", keyData: [{ label: "감성", value: "EXTREME GREED" }, { label: "언급량", value: "4.2K/min" }, { label: "내러티브", value: "기관 채택" }] },
+      { agentId: "chart", summary: "4H 하락 웨지 패턴. RSI 32.4 과매도 다이버전스 + MACD 불리시 크로스. 0.618 피보나치에서 반등 시도. CVD 양전환으로 실질 매수세 유입 확인. 볼륨 프로파일 POC $100,200.", keyData: [{ label: "패턴", value: "Descending Wedge" }, { label: "RSI (4H)", value: "32.4 과매도" }, { label: "CVD", value: "+$82M (양전환)" }, { label: "지지", value: "$99,180 (S1)" }, { label: "저항", value: "$102,350 (R1)" }, { label: "거래량", value: "1.8x 평균 대비" }, { label: "볼린저", value: "하단 터치 후 수축" }, { label: "목표가", value: "$108,500" }] },
+      { agentId: "chain", summary: "콜드 월렛 → 거래소 15,000 BTC 이동 감지. 순 유출 -$492M으로 축적 국면. 장기 보유자 공급량 ATH. 거래소 보유량 3.2% 감소 — 매도 압력 완화.", keyData: [{ label: "순유출", value: "-$492M" }, { label: "고래 활동", value: "HIGH (3건/$1B+)" }, { label: "LTH 공급", value: "ATH" }, { label: "거래소 보유량", value: "-3.2% (주간)" }, { label: "SOPR", value: "1.02 (수익 실현 미미)" }] },
+      { agentId: "deriv", summary: "OI 4시간 내 12% 급증, $38.2B 도달. 펀딩 레이트 0.0122% — 숏 스퀴즈 빌드업. $103K 청산 클러스터 $245M 규모. 옵션 Put/Call 비율 0.42로 콜 편향.", keyData: [{ label: "OI", value: "$38.2B (+12%)" }, { label: "펀딩", value: "0.0122%" }, { label: "청산 클러스터", value: "$103K ($245M)" }, { label: "P/C 비율", value: "0.42 (콜 편향)" }, { label: "최대 고통 가격", value: "$96K" }] },
+      { agentId: "social", summary: "15+ 채널 극단적 탐욕. X 언급량 4.2K/min. 기관 채택 사이클 내러티브 지배적. Fear & Greed Index 82. 역발상 신호 임계치 접근.", keyData: [{ label: "감성 지수", value: "82/100 (극단적 탐욕)" }, { label: "언급량", value: "4.2K/min (+120%)" }, { label: "내러티브", value: "기관 채택" }, { label: "인플루언서", value: "85% BULLISH" }] },
     ],
   },
   btc: {
-    conclusion: "BTC 1H 상승 삼각형 + 주간 채굴자 유출 감소 + OI 급증을 종합하면, **$102,350 돌파 시 $108,500까지 상승 여력이 있습니다.** 거래소 보유량 3.2% 감소는 매도 압력 완화를 시사합니다.",
+    conclusion: "BTC 1H 상승 삼각형 형성 중. RSI 45→58 상승세, CVD +$124M 매수 우위, 거래량 24H 평균 1.6배. 볼륨 프로파일 POC $100,200. 지지 $99,180(S1) / $97,500(S2), 저항 $102,350(R1). **$102,350 돌파 시 $108,500 목표.** 거래소 보유량 -3.2%는 매도 압력 완화 시그널.",
     signal: "LONG",
     confidence: 82,
     agentBreakdowns: [
-      { agentId: "chart", summary: "1H 상승 삼각형 형성. 핵심 저항 $102,350, 피보나치 익스텐션 목표 $108,500. 볼륨 프로파일 고활성 구간 $99K-$101K.", keyData: [{ label: "패턴", value: "Ascending Triangle" }, { label: "저항", value: "$102,350" }, { label: "목표가", value: "$108,500" }] },
-      { agentId: "chain", summary: "거래소 보유량 주간 3.2% 감소. 채굴자 유출 낮은 수준 — 캐피출레이션 없음. LTH 공급 ATH.", keyData: [{ label: "거래소 보유량", value: "-3.2%" }, { label: "채굴자 유출", value: "LOW" }, { label: "LTH", value: "ATH" }] },
+      { agentId: "chart", summary: "1H 상승 삼각형. RSI 58 중립상승. CVD +$124M 실질 매수세. ATR 1,420 변동성 보통. 볼린저 밴드 수축 → 돌파 임박 신호.", keyData: [{ label: "패턴", value: "Ascending Triangle" }, { label: "RSI (1H)", value: "58 (중립 상승)" }, { label: "CVD", value: "+$124M" }, { label: "지지 S1", value: "$99,180" }, { label: "지지 S2", value: "$97,500" }, { label: "저항 R1", value: "$102,350" }, { label: "거래량", value: "1.6x 평균" }, { label: "ATR", value: "$1,420" }, { label: "목표가", value: "$108,500" }] },
+      { agentId: "chain", summary: "거래소 보유량 주간 3.2% 감소. 채굴자 유출 낮은 수준 — 캐피출레이션 없음. SOPR 1.02로 수익 실현 미미. LTH 공급 ATH.", keyData: [{ label: "거래소 보유량", value: "-3.2%" }, { label: "채굴자 유출", value: "LOW" }, { label: "LTH", value: "ATH" }, { label: "SOPR", value: "1.02" }] },
     ],
   },
   eth: {
-    conclusion: "ETH/BTC 0.032 지지선 테스트 + 비콘체인 40% 급증 + 옵션 시장 $4,500 콜 매수를 종합하면, **ETH 독립 상승 구간 진입 가능성이 높습니다.** 역사적 반등 확률 78%.",
+    conclusion: "ETH/BTC 0.032 지지선 테스트. RSI 38 과매도 접근, CVD +$45M 매수 유입. 거래량 평균 1.3배. 비콘체인 40% 급증 + $4,500 콜 $105M 매수. **ETH 독립 상승 구간 진입 가능성 78%.**",
     signal: "LONG",
     confidence: 75,
     agentBreakdowns: [
-      { agentId: "chart", summary: "ETH/BTC 비율 0.032 핵심 지지 테스트. 역사적 반등 확률 78%. 일봉 컵앤핸들 형성 중.", keyData: [{ label: "ETH/BTC", value: "0.032 지지" }, { label: "반등 확률", value: "78%" }, { label: "패턴", value: "Cup & Handle" }] },
-      { agentId: "chain", summary: "스테이킹 예치 24H 40% 급증. 32,000 ETH 비콘체인 유입. Gas 34 Gwei — 건강한 네트워크.", keyData: [{ label: "스테이킹", value: "+40%" }, { label: "유입", value: "32,000 ETH" }, { label: "Gas", value: "34 Gwei" }] },
-      { agentId: "deriv", summary: "$105M 규모 $4,500 콜옵션 3월 만기 대량 매수 감지. 이례적 활동.", keyData: [{ label: "옵션", value: "$105M 콜" }, { label: "행사가", value: "$4,500" }, { label: "만기", value: "3월" }] },
+      { agentId: "chart", summary: "ETH/BTC 0.032 핵심 지지. RSI 38 과매도 접근. CVD +$45M. 일봉 컵앤핸들 형성. 지지 $3,680(S1), 저항 $4,020(R1).", keyData: [{ label: "ETH/BTC", value: "0.032 지지" }, { label: "RSI (4H)", value: "38 (과매도 접근)" }, { label: "CVD", value: "+$45M" }, { label: "지지 S1", value: "$3,680" }, { label: "저항 R1", value: "$4,020" }, { label: "거래량", value: "1.3x 평균" }, { label: "반등 확률", value: "78%" }] },
+      { agentId: "chain", summary: "스테이킹 예치 24H 40% 급증. 32,000 ETH 비콘체인 유입. Gas 34 Gwei.", keyData: [{ label: "스테이킹", value: "+40%" }, { label: "유입", value: "32,000 ETH" }, { label: "Gas", value: "34 Gwei" }] },
+      { agentId: "deriv", summary: "$105M 규모 $4,500 콜옵션 3월 만기 대량 매수 감지.", keyData: [{ label: "옵션", value: "$105M 콜" }, { label: "행사가", value: "$4,500" }, { label: "P/C 비율", value: "0.38" }] },
     ],
   },
   sol: {
-    conclusion: "SOL 주봉 컵앤핸들 완성 + DeFi TVL 18% 성장 + 소셜 언급량 89% 급증을 종합하면, **$285 측정 목표까지 상승 모멘텀이 강합니다.** $230 지지 유지가 전제 조건.",
+    conclusion: "SOL 주봉 컵앤핸들 완성. RSI 62 상승 모멘텀, CVD +$67M 강한 매수세. 거래량 2.1배 급증. DeFi TVL +18%, 소셜 언급량 +89%. **$285 측정 목표. $230 지지 유지가 전제.**",
     signal: "STRONG LONG",
     confidence: 85,
     agentBreakdowns: [
-      { agentId: "chart", summary: "주봉 컵앤핸들 완성. 측정 이동 목표 $285. $230 지지에서 강한 볼륨 확인.", keyData: [{ label: "패턴", value: "Cup & Handle" }, { label: "목표가", value: "$285" }, { label: "지지", value: "$230" }] },
-      { agentId: "chain", summary: "SOL DeFi TVL 주간 18% 증가. DEX 거래량 신기록. 온체인 활동 지표 올 그린.", keyData: [{ label: "TVL", value: "+18%" }, { label: "DEX", value: "신기록" }, { label: "온체인", value: "ALL GREEN" }] },
-      { agentId: "social", summary: "SOL 극단적 강세 편향. 언급량 24시간 89% 급증. AI 에이전트 테마 토큰 열풍.", keyData: [{ label: "언급량", value: "+89%" }, { label: "편향", value: "극단적 강세" }, { label: "트렌드", value: "AI Agent" }] },
+      { agentId: "chart", summary: "주봉 컵앤핸들 완성. RSI 62 건강한 상승. CVD +$67M 강한 실질 매수. 지지 $230(S1), 저항 $260(R1). 볼린저 상단 확장 중.", keyData: [{ label: "패턴", value: "Cup & Handle" }, { label: "RSI (1D)", value: "62 (상승 모멘텀)" }, { label: "CVD", value: "+$67M" }, { label: "지지 S1", value: "$230" }, { label: "저항 R1", value: "$260" }, { label: "거래량", value: "2.1x 평균" }, { label: "목표가", value: "$285" }] },
+      { agentId: "chain", summary: "SOL DeFi TVL 주간 18% 증가. DEX 거래량 신기록.", keyData: [{ label: "TVL", value: "+18%" }, { label: "DEX", value: "신기록" }, { label: "온체인", value: "ALL GREEN" }] },
+      { agentId: "social", summary: "SOL 극단적 강세 편향. 언급량 24시간 89% 급증.", keyData: [{ label: "언급량", value: "+89%" }, { label: "편향", value: "극단적 강세" }, { label: "트렌드", value: "AI Agent" }] },
     ],
   },
 };
