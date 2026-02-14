@@ -9,7 +9,7 @@ const Footer = () => {
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
+      <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 mb-8">
         <div>
           <span className="text-2xl font-bold tracking-tight">CLAWHOO.</span>
           <div className="flex items-center gap-6 mt-4 text-xs font-mono tracking-wider text-muted-foreground">
@@ -31,6 +31,13 @@ const Footer = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Disclaimer */}
+      <div className="border-t border-border pt-6">
+        <p className="text-[10px] font-mono text-muted-foreground/70 leading-relaxed max-w-xl">
+          This is not financial advice. Entry Score measures condition favorability, not price direction. Trade at your own risk.
+        </p>
       </div>
     </motion.footer>
   );
