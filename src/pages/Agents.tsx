@@ -202,18 +202,31 @@ const Agents = () => {
       {/* Main App */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="flex-1">
-          {/* LEFT: Watchlist + Intel Feed */}
-          <ResizablePanel defaultSize={22} minSize={15} maxSize={35}>
+          {/* LEFT: Watchlist */}
+          <ResizablePanel defaultSize={18} minSize={12} maxSize={28}>
             <div className="h-full flex flex-col overflow-hidden">
               <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
-                <span className="text-[9px] font-mono font-semibold tracking-[1px] text-status-active">MY PORTFOLIO</span>
-                <div className="flex gap-2 text-[9px] text-muted-foreground">
-                  <span className="cursor-pointer hover:text-foreground">+ Add</span>
-                  <span className="cursor-pointer hover:text-foreground">✏ Edit</span>
+                <span className="text-[9px] font-mono font-semibold tracking-[1px] text-status-active">MY WATCHLIST</span>
+                <Settings size={12} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
+              </div>
+
+              <div className="shrink-0 px-2 py-1.5 border-b border-border">
+                <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-1">
+                  <Search size={10} className="text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className="bg-transparent text-[10px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50"
+                  />
                 </div>
               </div>
 
-              <div className="shrink-0 max-h-[40%] overflow-y-auto">
+              <div className="shrink-0 px-3 py-1 border-b border-border flex items-center justify-between">
+                <span className="text-[9px] font-mono text-muted-foreground tracking-wider">Default Watchlist</span>
+                <ChevronDown size={9} className="text-muted-foreground" />
+              </div>
+
+              <div className="flex-1 overflow-y-auto">
                 {sharedWatchlist.map((item) => (
                   <div
                     key={item.ticker}
@@ -228,104 +241,19 @@ const Agents = () => {
                       <span className="text-[8px] text-muted-foreground">{item.name}</span>
                     </div>
                     <div className="text-right">
-                      <div className="font-mono text-[10px] text-foreground/70">{item.price}</div>
-                      <div className={`font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                      <div className={`font-mono text-[10px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
                         {item.change > 0 ? "+" : ""}{item.change.toFixed(1)}%
                       </div>
                     </div>
                   </div>
                 ))}
-                <div className="px-3 py-[6px] font-mono text-[9px] text-accent cursor-pointer border-b border-border">+ Add Ticker</div>
               </div>
 
-              {/* Intel Feed */}
-              <div className="flex-1 flex flex-col overflow-hidden border-t border-border">
-                <div className="px-3 py-2 border-b border-border flex items-center justify-between shrink-0 bg-background">
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={selectedId}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="font-mono text-[9px] font-semibold tracking-[1px] text-[hsl(45_90%_55%)]"
-                    >
-                      {selectedTicker?.ticker} INTEL
-                    </motion.span>
-                  </AnimatePresence>
-                  <div className="flex">
-                    {["FEED", "NEWS", "MARKET"].map((mode, i) => (
-                      <span
-                        key={mode}
-                        className={`font-mono text-[8px] px-2 py-[2px] cursor-pointer border-b ${
-                          i === 0 ? "text-[hsl(45_90%_55%)] border-[hsl(45_90%_55%)]" : "text-muted-foreground border-transparent"
-                        }`}
-                      >
-                        {mode}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex-1 overflow-y-auto">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={selectedId}
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -6 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {selected.feed.map((entry, i) => (
-                        <div key={`${selectedId}-${i}`} className="px-3 py-2.5 border-b border-border">
-                          <div className="font-mono text-[8px] text-muted-foreground mb-[3px]">
-                            {entry.date ? `${entry.date} — ` : ""}{entry.time}
-                          </div>
-                          <p className="text-[11px] text-foreground/70 leading-[1.55]">{entry.content}</p>
-                        </div>
-                      ))}
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-
-                {/* Market Headlines */}
-                <div className="shrink-0 max-h-[30%] overflow-y-auto border-t border-border">
-                  <div className="font-mono text-[8px] font-semibold tracking-[1px] text-status-active px-3 py-2 border-b border-border sticky top-0 bg-background">
-                    MARKET LIVE
-                  </div>
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={selectedId}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.15 }}
-                    >
-                      {selected.headlines.map((h, i) => (
-                        <div key={i} className="px-3 py-[6px] border-b border-border">
-                          <div className="font-mono text-[8px] text-muted-foreground">{h.time}</div>
-                          <div className={`text-[10px] leading-[1.35] mt-[2px] ${
-                            h.sentiment === "bull" ? "text-status-active" : (h.sentiment as string) === "bear" ? "text-status-hot" : "text-foreground/70"
-                          }`}>
-                            {h.text}
-                          </div>
-                        </div>
-                      ))}
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              </div>
-
-              {/* Chat Input */}
-              <div className="shrink-0 px-3 py-[7px] border-t border-border bg-card flex items-center gap-[6px]">
-                <span className="text-accent text-[11px]">&gt;</span>
-                <input
-                  type="text"
-                  placeholder="Ask your agent anything..."
-                  className="flex-1 bg-transparent border-none text-[10px] text-foreground outline-none placeholder:text-muted-foreground"
-                />
-                <span className="font-mono text-[8px] text-muted-foreground whitespace-nowrap">/Deep Research ▾</span>
-                <div className="w-[22px] h-[22px] bg-accent flex items-center justify-center cursor-pointer text-accent-foreground shrink-0">
-                  <Send size={10} />
-                </div>
+              <div className="border-t border-border p-1.5 shrink-0">
+                <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
+                  <Plus size={9} />
+                  <span>Add Ticker</span>
+                </button>
               </div>
             </div>
           </ResizablePanel>
