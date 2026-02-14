@@ -7,6 +7,15 @@ import {
 } from "lucide-react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 
+const sharedWatchlist = [
+  { ticker: "BTC", name: "Bitcoin", price: "101,890", change: 2.41 },
+  { ticker: "ETH", name: "Ethereum", price: "3,842", change: -1.32 },
+  { ticker: "SOL", name: "Solana", price: "248.50", change: 5.67 },
+  { ticker: "AVAX", name: "Avalanche", price: "42.18", change: -0.89 },
+  { ticker: "DOGE", name: "Dogecoin", price: "0.182", change: 3.12 },
+  { ticker: "XRP", name: "Ripple", price: "2.41", change: 1.05 },
+];
+
 const agents = [
   {
     id: "chart",
@@ -25,14 +34,6 @@ const agents = [
       { label: "STATE", value: "SCANNING" },
     ],
     recentSignal: "BTC descending wedge breakout target $108,500. RSI divergence at 0.618 fib.",
-    watchlist: [
-      { ticker: "BTC", name: "Bitcoin", change: 2.41 },
-      { ticker: "ETH", name: "Ethereum", change: -1.32 },
-      { ticker: "SOL", name: "Solana", change: 5.67 },
-      { ticker: "AVAX", name: "Avalanche", change: -0.89 },
-      { ticker: "DOGE", name: "Dogecoin", change: 3.12 },
-      { ticker: "XRP", name: "Ripple", change: 1.05 },
-    ],
     feed: [
       { time: "09:30 EST", date: "Friday, February 14, 2026", content: "BTC is forming a descending wedge pattern on the 4H chart with a potential breakout target of $108,500. RSI divergence detected at the 0.618 Fibonacci retracement level." },
       { time: "08:15 EST", content: "ETH/BTC ratio testing critical support at 0.032. Historical data suggests a bounce from this level with 78% probability." },
@@ -68,14 +69,6 @@ const agents = [
       { label: "STATE", value: "TRACKING" },
     ],
     recentSignal: "15,000 BTC ($1.53B) moved from cold storage to Coinbase Prime.",
-    watchlist: [
-      { ticker: "WHALE_01", name: "Unknown Wallet", change: 12.4 },
-      { ticker: "WHALE_02", name: "Jump Trading", change: -5.2 },
-      { ticker: "WHALE_03", name: "Wintermute", change: 3.8 },
-      { ticker: "DEX_VOL", name: "DEX Volume 24h", change: 15.3 },
-      { ticker: "GAS_AVG", name: "Avg Gas (Gwei)", change: -2.1 },
-      { ticker: "TVL_ETH", name: "ETH TVL", change: 1.7 },
-    ],
     feed: [
       { time: "10:00 UTC", date: "Friday, February 14, 2026", content: "Massive whale movement detected: 15,000 BTC ($1.53B) transferred from cold storage to Coinbase Prime." },
       { time: "08:30 UTC", content: "Ethereum staking deposits surged 40% in the last 24 hours, with 32,000 ETH entering the beacon chain." },
@@ -109,14 +102,6 @@ const agents = [
       { label: "STATE", value: "CRITICAL" },
     ],
     recentSignal: "BTC OI surged 12% in 4H. Funding at 0.0122% — liquidation risk elevated.",
-    watchlist: [
-      { ticker: "BTC-PERP", name: "BTC Perpetual", change: 2.1 },
-      { ticker: "ETH-PERP", name: "ETH Perpetual", change: -1.5 },
-      { ticker: "BTC-0328", name: "BTC Mar Futures", change: 2.3 },
-      { ticker: "BTC-OI", name: "BTC Open Interest", change: 12.0 },
-      { ticker: "FUND_RATE", name: "Funding Rate", change: 0.01 },
-      { ticker: "LIQ_24H", name: "Liquidations 24h", change: -15.2 },
-    ],
     feed: [
       { time: "11:00 EST", date: "Friday, February 14, 2026", content: "BTC open interest surged 12% in the last 4 hours, reaching $38.2B across major exchanges. Funding rates turning positive at 0.0122%." },
       { time: "09:45 EST", content: "ETH options market showing unusual activity: $105M in call options purchased at $4,500 strike for March expiry." },
@@ -150,14 +135,6 @@ const agents = [
       { label: "STATE", value: "AGGREGATING" },
     ],
     recentSignal: "SOL mentions up 89% in 24h. Extreme bullish bias — contrarian signal watch.",
-    watchlist: [
-      { ticker: "#BTC", name: "Bitcoin mentions", change: 45.2 },
-      { ticker: "#ETH", name: "Ethereum mentions", change: 12.8 },
-      { ticker: "#SOL", name: "Solana mentions", change: 89.3 },
-      { ticker: "CT_VOL", name: "Crypto Twitter Vol", change: 34.1 },
-      { ticker: "REDDIT", name: "Reddit Activity", change: 18.7 },
-      { ticker: "DISCORD", name: "Discord Signals", change: -5.4 },
-    ],
     feed: [
       { time: "12:00 EST", date: "Friday, February 14, 2026", content: "Sentiment analysis across 15+ channels shows extreme bullish bias for SOL, with mention volume up 89% in 24 hours." },
       { time: "10:30 EST", content: "New memecoin trend detected on Telegram: 'AI Agent' themed tokens gaining traction with combined volume exceeding $50M." },
@@ -191,14 +168,6 @@ const agents = [
       { label: "STATE", value: "STANDBY" },
     ],
     recentSignal: "BTC > $100K trigger fired. All 3 confirmations met. 12 webhooks notified.",
-    watchlist: [
-      { ticker: "TRG_001", name: "BTC > $105K", change: 0 },
-      { ticker: "TRG_002", name: "ETH < $3,200", change: 0 },
-      { ticker: "TRG_003", name: "SOL RSI > 70", change: 0 },
-      { ticker: "TRG_004", name: "BTC Vol Spike", change: 0 },
-      { ticker: "TRG_005", name: "Whale Alert > $10M", change: 0 },
-      { ticker: "TRG_006", name: "Funding > 0.02%", change: 0 },
-    ],
     feed: [
       { time: "13:00 EST", date: "Friday, February 14, 2026", content: "TRIGGER FIRED: BTC crossed $100,000 resistance level. All 3 confirmation criteria met. Webhook notification sent to 12 connected endpoints." },
       { time: "11:15 EST", content: "TRIGGER ARMED: ETH funding rate approaching 0.02% threshold on Binance. Currently at 0.0187%." },
@@ -247,233 +216,236 @@ const Agents = () => {
       </nav>
 
       {/* Main Layout */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={selectedId}
-          className="flex-1 flex flex-col overflow-hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
-        >
-          {/* Detail Header */}
-          <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0">
-            <div className="flex items-center gap-3">
-              <span style={{ color: agentColor }}>{selected.icon}</span>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-base tracking-tight">{selected.name}</span>
-                  <span className="text-[10px] font-mono text-muted-foreground">/ {selected.category}</span>
-                </div>
-                <p className="text-[10px] text-muted-foreground">{selected.description}</p>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Detail Header */}
+        <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0">
+          <div className="flex items-center gap-3">
+            <span style={{ color: agentColor }}>{selected.icon}</span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-base tracking-tight">{selected.name}</span>
+                <span className="text-[10px] font-mono text-muted-foreground">/ {selected.category}</span>
               </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => navigate(`/agent/${selectedId}`)}
-                className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors"
-              >
-                FULL VIEW <ExternalLink size={10} />
-              </button>
-              <button className="bg-primary text-primary-foreground px-3 py-1 text-[10px] font-mono tracking-wider hover:opacity-90 transition-opacity">
-                INITIALIZE
-              </button>
+              <p className="text-[10px] text-muted-foreground">{selected.description}</p>
             </div>
           </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(`/agent/${selectedId}`)}
+              className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors"
+            >
+              FULL VIEW <ExternalLink size={10} />
+            </button>
+            <button className="bg-primary text-primary-foreground px-3 py-1 text-[10px] font-mono tracking-wider hover:opacity-90 transition-opacity">
+              INITIALIZE
+            </button>
+          </div>
+        </div>
 
-          {/* Resizable: Watchlist | Feed | Market */}
-          <ResizablePanelGroup direction="horizontal" className="flex-1">
-            {/* Watchlist */}
-            <ResizablePanel defaultSize={22} minSize={15} maxSize={35}>
-              <div className="h-full flex flex-col overflow-hidden border-r border-border">
-                <div className="p-3 border-b border-border">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-mono tracking-wider" style={{ color: agentColor }}>WATCHLIST</span>
-                    <Settings size={12} className="text-muted-foreground" />
+        {/* Resizable: Watchlist | Feed | Market */}
+        <ResizablePanelGroup direction="horizontal" className="flex-1">
+          {/* Watchlist (shared, stable) */}
+          <ResizablePanel defaultSize={22} minSize={15} maxSize={35}>
+            <div className="h-full flex flex-col overflow-hidden border-r border-border">
+              <div className="p-3 border-b border-border">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-mono tracking-wider text-muted-foreground">WATCHLIST</span>
+                  <Settings size={12} className="text-muted-foreground" />
+                </div>
+                <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-1">
+                  <Search size={10} className="text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className="bg-transparent text-[10px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50"
+                  />
+                </div>
+              </div>
+              <div className="flex-1 overflow-y-auto p-1.5">
+                {sharedWatchlist.map((item) => (
+                  <div
+                    key={item.ticker}
+                    className="flex items-center justify-between px-2 py-1.5 hover:bg-secondary cursor-pointer transition-colors"
+                  >
+                    <div className="min-w-0 flex-1 mr-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[11px] font-bold block truncate">{item.ticker}</span>
+                        <span className="text-[9px] text-muted-foreground truncate">{item.name}</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-foreground/70">${item.price}</span>
+                    </div>
+                    <span className={`text-[10px] font-mono shrink-0 ${item.change > 0 ? "text-status-active" : item.change < 0 ? "text-status-hot" : "text-muted-foreground"}`}>
+                      {item.change > 0 ? "+" : ""}{item.change.toFixed(1)}%
+                    </span>
                   </div>
-                  <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-1">
-                    <Search size={10} className="text-muted-foreground" />
+                ))}
+              </div>
+              <div className="border-t border-border p-1.5">
+                <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
+                  <Plus size={9} />
+                  <span>Add Ticker</span>
+                </button>
+              </div>
+            </div>
+          </ResizablePanel>
+
+          <ResizableHandle withHandle />
+
+          {/* Feed with Agent Tabs on top */}
+          <ResizablePanel defaultSize={48} minSize={30}>
+            <div className="h-full flex flex-col overflow-hidden">
+              {/* Agent Icon Tabs */}
+              <div className="flex items-center border-b border-border shrink-0">
+                {agents.map((agent) => {
+                  const isActive = agent.id === selectedId;
+                  const color = `hsl(${agent.color})`;
+                  return (
+                    <button
+                      key={agent.id}
+                      onClick={() => setSelectedId(agent.id)}
+                      className={`flex-1 flex items-center justify-center py-2.5 transition-colors relative ${
+                        isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground/70"
+                      }`}
+                      title={agent.fullName}
+                    >
+                      <span style={isActive ? { color } : undefined}>{agent.icon}</span>
+                      {isActive && (
+                        <motion.div
+                          className="absolute bottom-0 left-0 right-0 h-[2px]"
+                          style={{ backgroundColor: color }}
+                          layoutId="agentTabIndicator"
+                          transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                        />
+                      )}
+                      {agent.status === "hot" && (
+                        <span className="absolute top-1 right-1/4 w-1.5 h-1.5 rounded-full bg-status-hot" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Feed Content - only this animates */}
+              <div className="flex-1 overflow-y-auto px-5 py-4">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedId}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {selected.feed.map((entry, i) => (
+                      <div key={`${selectedId}-${i}`}>
+                        {entry.date && (
+                          <div className="mb-2 mt-4 first:mt-0">
+                            <span className="font-mono text-[10px] tracking-wide text-foreground/70">{entry.date}</span>
+                          </div>
+                        )}
+                        <div className="mb-4 pb-4 border-b border-border/50 last:border-0">
+                          <span className="text-[9px] font-mono text-muted-foreground">{entry.time}</span>
+                          <p className="mt-1.5 text-xs leading-relaxed text-foreground/90">{entry.content}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Chat Input */}
+              <div className="border-t border-border p-3">
+                <div className="border border-border bg-card px-3 py-2">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-muted-foreground/50 font-mono text-xs">&gt;</span>
                     <input
                       type="text"
-                      placeholder="Search..."
-                      className="bg-transparent text-[10px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50"
+                      placeholder="Ask your agent anything..."
+                      className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
                     />
                   </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <button className="text-[9px] font-mono text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
+                        /Deep Research <ChevronDown size={8} />
+                      </button>
+                    </div>
+                    <button className="text-muted-foreground hover:text-foreground transition-colors" style={{ color: agentColor }}>
+                      <Send size={12} />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex-1 overflow-y-auto p-1.5">
-                  {selected.watchlist.map((item, i) => (
-                    <motion.div
-                      key={item.ticker}
-                      className="flex items-center justify-between px-2 py-1.5 hover:bg-secondary cursor-pointer transition-colors"
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.02 }}
-                    >
-                      <div className="min-w-0 flex-1 mr-2">
-                        <span className="text-[11px] font-bold block truncate" style={{ color: agentColor }}>{item.ticker}</span>
-                        <p className="text-[9px] text-muted-foreground truncate">{item.name}</p>
-                      </div>
-                      <span className={`text-[10px] font-mono shrink-0 ${item.change > 0 ? "text-status-active" : item.change < 0 ? "text-status-hot" : "text-muted-foreground"}`}>
-                        {item.change > 0 ? "+" : ""}{item.change.toFixed(1)}%
+              </div>
+            </div>
+          </ResizablePanel>
+
+          <ResizableHandle withHandle />
+
+          {/* Market Data & Headlines */}
+          <ResizablePanel defaultSize={30} minSize={18} maxSize={40}>
+            <div className="h-full flex flex-col overflow-hidden border-l border-border">
+              <div className="p-3 border-b border-border">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-mono tracking-wider" style={{ color: agentColor }}>MARKET LIVE</span>
+                  <ExternalLink size={10} className="text-muted-foreground" />
+                </div>
+                <div className="border border-border bg-card p-2.5">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="font-bold text-xs">{sharedWatchlist[0]?.ticker}</span>
+                    <span className="text-[9px] font-mono text-muted-foreground truncate">{sharedWatchlist[0]?.name}</span>
+                  </div>
+                  <div className="flex gap-2 text-[9px] font-mono text-muted-foreground mb-2 flex-wrap">
+                    {selected.marketStats.map((stat) => (
+                      <span key={stat.label} className="whitespace-nowrap">
+                        <span>{stat.label}</span>{" "}
+                        <span className="text-foreground">{stat.value}</span>
                       </span>
-                    </motion.div>
-                  ))}
-                </div>
-                <div className="border-t border-border p-1.5">
-                  <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
-                    <Plus size={9} />
-                    <span>Add Ticker</span>
-                  </button>
+                    ))}
+                  </div>
+                  <svg viewBox="0 0 300 80" className="w-full h-14">
+                    <defs>
+                      <linearGradient id={`grad-${selectedId}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={agentColor} stopOpacity="0.3" />
+                        <stop offset="100%" stopColor={agentColor} stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <motion.path
+                      d="M0,55 L40,50 L80,60 L120,45 L160,35 L200,38 L240,25 L280,28 L300,20"
+                      fill="none"
+                      stroke={agentColor}
+                      strokeWidth="1.5"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 1.5, delay: 0.2 }}
+                    />
+                    <motion.path
+                      d="M0,55 L40,50 L80,60 L120,45 L160,35 L200,38 L240,25 L280,28 L300,20 L300,80 L0,80 Z"
+                      fill={`url(#grad-${selectedId})`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.8, delay: 1 }}
+                    />
+                  </svg>
                 </div>
               </div>
-            </ResizablePanel>
 
-            <ResizableHandle withHandle />
-
-            {/* Feed with Agent Tabs on top */}
-            <ResizablePanel defaultSize={48} minSize={30}>
-              <div className="h-full flex flex-col overflow-hidden">
-                {/* Agent Icon Tabs */}
-                <div className="flex items-center border-b border-border shrink-0">
-                  {agents.map((agent) => {
-                    const isActive = agent.id === selectedId;
-                    const color = `hsl(${agent.color})`;
-                    return (
-                      <button
-                        key={agent.id}
-                        onClick={() => setSelectedId(agent.id)}
-                        className={`flex-1 flex items-center justify-center py-2.5 transition-colors relative ${
-                          isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground/70"
-                        }`}
-                        title={agent.fullName}
-                      >
-                        <span style={isActive ? { color } : undefined}>{agent.icon}</span>
-                        {isActive && (
-                          <motion.div
-                            className="absolute bottom-0 left-0 right-0 h-[2px]"
-                            style={{ backgroundColor: color }}
-                            layoutId="agentTabIndicator"
-                            transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                          />
-                        )}
-                        {agent.status === "hot" && (
-                          <span className="absolute top-1 right-1/4 w-1.5 h-1.5 rounded-full bg-status-hot" />
-                        )}
-                      </button>
-                    );
-                  })}
+              {/* Headlines - animate on switch */}
+              <div className="flex-1 overflow-y-auto p-3">
+                <div className="mb-2">
+                  <span className="font-mono text-[9px] tracking-wider text-muted-foreground">HEADLINES</span>
                 </div>
-
-                {/* Feed Content */}
-                <div className="flex-1 overflow-y-auto px-5 py-4">
-                  {selected.feed.map((entry, i) => (
-                    <motion.div
-                      key={`${selectedId}-${i}`}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.06 }}
-                    >
-                      {entry.date && (
-                        <div className="mb-2 mt-4 first:mt-0">
-                          <span className="font-mono text-[10px] tracking-wide text-foreground/70">{entry.date}</span>
-                        </div>
-                      )}
-                      <div className="mb-4 pb-4 border-b border-border/50 last:border-0">
-                        <span className="text-[9px] font-mono text-muted-foreground">{entry.time}</span>
-                        <p className="mt-1.5 text-xs leading-relaxed text-foreground/90">{entry.content}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Chat Input */}
-                <div className="border-t border-border p-3">
-                  <div className="border border-border bg-card px-3 py-2">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className="text-muted-foreground/50 font-mono text-xs">&gt;</span>
-                      <input
-                        type="text"
-                        placeholder="Ask your agent anything..."
-                        className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <button className="text-[9px] font-mono text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
-                          /Deep Research <ChevronDown size={8} />
-                        </button>
-                      </div>
-                      <button className="text-muted-foreground hover:text-foreground transition-colors" style={{ color: agentColor }}>
-                        <Send size={12} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ResizablePanel>
-
-            <ResizableHandle withHandle />
-
-            {/* Market Data & Headlines */}
-            <ResizablePanel defaultSize={30} minSize={18} maxSize={40}>
-              <div className="h-full flex flex-col overflow-hidden border-l border-border">
-                <div className="p-3 border-b border-border">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-mono tracking-wider" style={{ color: agentColor }}>MARKET LIVE</span>
-                    <ExternalLink size={10} className="text-muted-foreground" />
-                  </div>
-                  <div className="border border-border bg-card p-2.5">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className="font-bold text-xs">{selected.watchlist[0]?.ticker}</span>
-                      <span className="text-[9px] font-mono text-muted-foreground truncate">{selected.watchlist[0]?.name}</span>
-                    </div>
-                    <div className="flex gap-2 text-[9px] font-mono text-muted-foreground mb-2 flex-wrap">
-                      {selected.marketStats.map((stat) => (
-                        <span key={stat.label} className="whitespace-nowrap">
-                          <span>{stat.label}</span>{" "}
-                          <span className="text-foreground">{stat.value}</span>
-                        </span>
-                      ))}
-                    </div>
-                    <svg viewBox="0 0 300 80" className="w-full h-14">
-                      <defs>
-                        <linearGradient id={`grad-${selectedId}`} x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor={agentColor} stopOpacity="0.3" />
-                          <stop offset="100%" stopColor={agentColor} stopOpacity="0" />
-                        </linearGradient>
-                      </defs>
-                      <motion.path
-                        d="M0,55 L40,50 L80,60 L120,45 L160,35 L200,38 L240,25 L280,28 L300,20"
-                        fill="none"
-                        stroke={agentColor}
-                        strokeWidth="1.5"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 1.5, delay: 0.2 }}
-                      />
-                      <motion.path
-                        d="M0,55 L40,50 L80,60 L120,45 L160,35 L200,38 L240,25 L280,28 L300,20 L300,80 L0,80 Z"
-                        fill={`url(#grad-${selectedId})`}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.8, delay: 1 }}
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-3">
-                  <div className="mb-2">
-                    <span className="font-mono text-[9px] tracking-wider text-muted-foreground">HEADLINES</span>
-                  </div>
-                  <div className="space-y-2">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedId}
+                    className="space-y-2"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
                     {selected.headlines.map((headline, i) => (
-                      <motion.div
+                      <div
                         key={`${selectedId}-h-${i}`}
                         className="flex gap-2 group cursor-pointer py-0.5"
-                        initial={{ opacity: 0, x: 8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 + i * 0.05 }}
                       >
                         <span className="text-[9px] font-mono text-muted-foreground shrink-0 mt-0.5">{headline.time}</span>
                         <p className={`text-[10px] leading-relaxed group-hover:underline ${
@@ -485,15 +457,15 @@ const Agents = () => {
                         }`}>
                           {headline.text}
                         </p>
-                      </motion.div>
+                      </div>
                     ))}
-                  </div>
-                </div>
+                  </motion.div>
+                </AnimatePresence>
               </div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        </motion.div>
-      </AnimatePresence>
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
     </div>
   );
 };
