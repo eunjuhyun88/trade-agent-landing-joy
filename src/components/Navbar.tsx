@@ -9,13 +9,14 @@ const Navbar = () => {
           <span className="text-xl font-bold tracking-tight cursor-pointer" onClick={() => navigate("/")}>CLAWHOO.</span>
           <div className="hidden md:flex items-center gap-1 text-sm font-mono tracking-wide">
             <span onClick={() => navigate("/agents")} className="border-r border-border pr-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">TERMINAL</span>
-            <span className="px-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">DOCS_V2</span>
+            <span className="px-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">AGENTS</span>
+            <span className="px-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">DOCS</span>
           </div>
         </div>
         <div className="flex items-center gap-6">
-          <div className="hidden sm:flex flex-col items-end text-xs font-mono">
-            <span className="text-muted-foreground">LATENCY_MS</span>
-            <span className="text-foreground">1.2043</span>
+          <div className="hidden sm:flex items-center gap-2 text-xs font-mono">
+            <span className="text-muted-foreground">LATENCY_MS:</span>
+            <span className="text-foreground">1.2ms</span>
           </div>
           <button
             onClick={() => navigate("/agents")}

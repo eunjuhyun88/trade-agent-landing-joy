@@ -5,7 +5,7 @@ const agents = [
   {
     id: "AGT_01",
     name: "CHART",
-    description: "Geometric pattern recognition and liquidity void detection.",
+    description: "Geometric pattern recognition + liquidity void detection across multiple timeframes.",
     status: "active" as const,
     stats: [
       { label: "FIB_LEVEL", value: "0.618" },
@@ -16,7 +16,7 @@ const agents = [
   {
     id: "AGT_02",
     name: "CHAIN",
-    description: "On-chain flow monitoring and whale wallet heatmaps.",
+    description: "On-chain flow monitoring + whale wallet heatmaps.",
     status: "active" as const,
     stats: [
       { label: "MEMPOOL", value: "ACTIVE" },
@@ -27,7 +27,7 @@ const agents = [
   {
     id: "AGT_03",
     name: "DERIV",
-    description: "Open interest spikes and funding rate arbitrage signals.",
+    description: "Open interest spikes + funding rate arbitrage.",
     status: "hot" as const,
     stats: [
       { label: "OI_CHANGE", value: "+12%" },
@@ -39,7 +39,7 @@ const agents = [
   {
     id: "AGT_04",
     name: "SOCIAL",
-    description: "NLP-driven sentiment analysis across 15+ social channels.",
+    description: "NLP-driven sentiment analysis across 15+ channels.",
     status: "active" as const,
     stats: [
       { label: "SENTIMENT", value: "BULL" },
@@ -50,10 +50,10 @@ const agents = [
   {
     id: "AGT_05",
     name: "ALERT",
-    description: "Custom deterministic triggers and push notifications.",
+    description: "Custom deterministic triggers + push notifications.",
     status: "idle" as const,
     stats: [
-      { label: "TRIGGERS", value: "42 ACTIVE" },
+      { label: "TRIGGERS", value: "42" },
       { label: "WEBHOOK", value: "STABLE" },
       { label: "STATE", value: "STANDBY" },
     ],
