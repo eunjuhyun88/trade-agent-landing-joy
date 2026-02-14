@@ -241,15 +241,37 @@ const AgentDetail = () => {
 
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
+        {/* Left Icon Bar - integrated into flow */}
+        <div className="w-12 border-r border-border bg-background flex flex-col items-center py-4 gap-3 shrink-0">
+          {Object.entries(categoryIcons).map(([key, icon]) => (
+            <button
+              key={key}
+              onClick={() => navigate(`/agent/${key}`)}
+              title={key.toUpperCase()}
+              className={`p-2 rounded-sm transition-all duration-200 ${
+                key === agentId
+                  ? "text-foreground bg-secondary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+              }`}
+            >
+              {icon}
+            </button>
+          ))}
+          <div className="flex-1" />
+          <button
+            onClick={() => navigate("/agents")}
+            title="All Agents"
+            className="p-2 text-muted-foreground hover:text-foreground transition-colors text-[10px] font-mono"
+          >
+            ALL
+          </button>
+        </div>
+
+        {/* Resizable Panels */}
         <ResizablePanelGroup direction="horizontal" className="flex-1">
           {/* Left Sidebar - Watchlist */}
           <ResizablePanel defaultSize={22} minSize={15} maxSize={35}>
-            <motion.aside
-              className="h-full flex flex-col overflow-hidden"
-              initial={{ x: -40, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.4 }}
-            >
+            <div className="h-full flex flex-col overflow-hidden border-r border-border">
               <div className="p-4 border-b border-border">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-mono tracking-wider" style={{ color: agentColor }}>
@@ -265,118 +287,113 @@ const AgentDetail = () => {
                     <input
                       type="text"
                       placeholder="Search..."
-                      className="bg-transparent text-xs font-mono outline-none flex-1 placeholder:text-muted-foreground/50"
+                      className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50"
                     />
                   </div>
-                  <button className="border border-border p-1.5 text-muted-foreground hover:text-foreground transition-colors">
+                  <button className="border border-border p-1.5 text-muted-foreground hover:text-foreground transition-colors shrink-0">
                     <Plus size={14} />
                   </button>
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto">
-                <div className="p-3">
-                  <div className="flex items-center justify-between mb-2 px-1">
+              <div className="flex-1 overflow-y-auto scrollbar-thin">
+                <div className="p-2">
+                  <div className="flex items-center justify-between mb-2 px-2">
                     <span className="text-[10px] font-mono text-muted-foreground tracking-wider">Default Watchlist</span>
-                    <ChevronDown size={12} className="text-muted-foreground" />
+                    <ChevronDown size={10} className="text-muted-foreground" />
                   </div>
                   {agent.watchlist.map((item, i) => (
                     <motion.div
                       key={item.ticker}
-                      className="flex items-center justify-between px-3 py-2.5 hover:bg-secondary cursor-pointer transition-colors group"
-                      initial={{ opacity: 0, x: -20 }}
+                      className="flex items-center justify-between px-2 py-2 hover:bg-secondary cursor-pointer transition-colors rounded-sm"
+                      initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.05 }}
+                      transition={{ delay: i * 0.03 }}
                     >
-                      <div>
-                        <span className="text-sm font-bold" style={{ color: agentColor }}>{item.ticker}</span>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">{item.name}</p>
+                      <div className="min-w-0 flex-1 mr-2">
+                        <span className="text-xs font-bold block truncate" style={{ color: agentColor }}>{item.ticker}</span>
+                        <p className="text-[10px] text-muted-foreground truncate">{item.name}</p>
                       </div>
-                      <span className={`text-xs font-mono ${item.change > 0 ? "text-status-active" : item.change < 0 ? "text-status-hot" : "text-muted-foreground"}`}>
-                        {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
+                      <span className={`text-[11px] font-mono shrink-0 ${item.change > 0 ? "text-status-active" : item.change < 0 ? "text-status-hot" : "text-muted-foreground"}`}>
+                        {item.change > 0 ? "+" : ""}{item.change.toFixed(1)}%
                       </span>
                     </motion.div>
                   ))}
                 </div>
               </div>
 
-              <div className="border-t border-border p-3">
-                <button className="flex items-center gap-2 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-3 py-2">
-                  <Plus size={12} />
+              <div className="border-t border-border p-2">
+                <button className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1.5">
+                  <Plus size={10} />
                   <span>Add Ticker</span>
                 </button>
               </div>
-            </motion.aside>
+            </div>
           </ResizablePanel>
 
           <ResizableHandle withHandle />
 
           {/* Center - Analysis Feed */}
           <ResizablePanel defaultSize={48} minSize={30}>
-            <motion.div
-              className="h-full flex flex-col overflow-hidden"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-            >
-              <div className="flex-1 overflow-y-auto px-8 py-6">
+            <div className="h-full flex flex-col overflow-hidden">
+              <div className="flex-1 overflow-y-auto px-6 py-5">
                 {agent.feed.map((entry, i) => (
-                  <div key={i}>
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.08 }}
+                  >
                     {entry.date && (
-                      <div className="mb-4 mt-6 first:mt-0">
-                        <span className="font-mono text-sm tracking-wide text-foreground">{entry.date}</span>
+                      <div className="mb-3 mt-5 first:mt-0">
+                        <span className="font-mono text-xs tracking-wide text-foreground/70">{entry.date}</span>
                       </div>
                     )}
-                    <div className="mb-6">
-                      <span className="text-xs font-mono text-muted-foreground">{entry.time}</span>
+                    <div className="mb-5 pb-5 border-b border-border/50 last:border-0">
+                      <span className="text-[10px] font-mono text-muted-foreground">{entry.time}</span>
                       <p className="mt-2 text-sm leading-relaxed text-foreground/90">{entry.content}</p>
-                      <button className="text-xs font-mono text-muted-foreground hover:text-foreground mt-2 transition-colors">
+                      <button className="text-[10px] font-mono text-muted-foreground hover:text-foreground mt-2 transition-colors">
                         ..More
                       </button>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
 
               {/* Chat Input */}
-              <div className="border-t border-border p-4">
+              <div className="border-t border-border p-3">
                 <div className="border border-border bg-card px-4 py-3">
-                  <div className="flex items-center gap-2 mb-3">
+                  <div className="flex items-center gap-2 mb-2">
                     <span className="text-muted-foreground/50 font-mono text-sm">&gt;</span>
                     <input
                       type="text"
                       placeholder="Ask your agent anything..."
-                      className="bg-transparent text-sm font-mono outline-none flex-1 placeholder:text-muted-foreground/40"
+                      className="bg-transparent text-sm font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <button className="text-xs font-mono text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
+                      <button className="text-[10px] font-mono text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
                         /Deep Research <ChevronDown size={10} />
                       </button>
-                      <button className="text-xs font-mono text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
+                      <button className="text-[10px] font-mono text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
                         All Sources <ChevronDown size={10} />
                       </button>
                     </div>
                     <button className="text-muted-foreground hover:text-foreground transition-colors" style={{ color: agentColor }}>
-                      <Send size={16} />
+                      <Send size={14} />
                     </button>
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </ResizablePanel>
 
           <ResizableHandle withHandle />
 
           {/* Right Sidebar - Market Data & Headlines */}
-          <ResizablePanel defaultSize={30} minSize={20} maxSize={40}>
-            <motion.aside
-              className="h-full flex flex-col overflow-hidden"
-              initial={{ x: 40, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-            >
+          <ResizablePanel defaultSize={30} minSize={18} maxSize={40}>
+            <div className="h-full flex flex-col overflow-hidden border-l border-border">
               {/* Market Stats */}
               <div className="p-4 border-b border-border">
                 <div className="flex items-center justify-between mb-3">
@@ -384,23 +401,21 @@ const AgentDetail = () => {
                   <ExternalLink size={12} className="text-muted-foreground" />
                 </div>
 
-                {/* Mini Chart Placeholder */}
-                <div className="border border-border bg-card p-3 mb-3">
+                <div className="border border-border bg-card p-3">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="font-bold text-sm">{agent.watchlist[0]?.ticker}</span>
-                    <span className="text-[10px] font-mono text-muted-foreground">{agent.watchlist[0]?.name}</span>
+                    <span className="text-[10px] font-mono text-muted-foreground truncate">{agent.watchlist[0]?.name}</span>
                   </div>
-                  <div className="flex gap-3 text-[10px] font-mono text-muted-foreground mb-3 flex-wrap">
+                  <div className="flex gap-2 text-[10px] font-mono text-muted-foreground mb-3 flex-wrap">
                     {agent.marketStats.map((stat) => (
-                      <span key={stat.label}>
+                      <span key={stat.label} className="whitespace-nowrap">
                         <span className="text-muted-foreground">{stat.label}</span>{" "}
                         <span className="text-foreground">{stat.value}</span>
                       </span>
                     ))}
                   </div>
 
-                  {/* SVG Mini Chart */}
-                  <svg viewBox="0 0 300 100" className="w-full h-24">
+                  <svg viewBox="0 0 300 100" className="w-full h-20">
                     <defs>
                       <linearGradient id={`grad-${agentId}`} x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor={agentColor} stopOpacity="0.3" />
@@ -430,24 +445,24 @@ const AgentDetail = () => {
               {/* Headlines */}
               <div className="flex-1 overflow-y-auto p-4">
                 <div className="mb-3">
-                  <span className="font-mono text-xs tracking-wide text-foreground">Friday, February 14, 2026</span>
+                  <span className="font-mono text-[10px] tracking-wider text-muted-foreground">HEADLINES</span>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   {agent.headlines.map((headline, i) => (
                     <motion.div
                       key={i}
-                      className="flex gap-3 group cursor-pointer"
-                      initial={{ opacity: 0, x: 20 }}
+                      className="flex gap-2 group cursor-pointer py-1"
+                      initial={{ opacity: 0, x: 10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + i * 0.1 }}
+                      transition={{ delay: 0.3 + i * 0.06 }}
                     >
                       <span className="text-[10px] font-mono text-muted-foreground shrink-0 mt-0.5">{headline.time}</span>
-                      <p className={`text-xs leading-relaxed group-hover:underline ${
+                      <p className={`text-[11px] leading-relaxed group-hover:underline ${
                         headline.sentiment === "bull"
                           ? "text-status-active"
                           : headline.sentiment === "bear"
                             ? "text-status-hot"
-                            : "text-foreground/80"
+                            : "text-foreground/70"
                       }`}>
                         {headline.text}
                       </p>
@@ -455,34 +470,10 @@ const AgentDetail = () => {
                   ))}
                 </div>
               </div>
-            </motion.aside>
+            </div>
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
-
-      {/* Left Icon Bar (like reference) */}
-      <div className="fixed left-0 top-[53px] bottom-0 w-12 border-r border-border bg-background flex flex-col items-center py-4 gap-4 z-10">
-        {Object.entries(categoryIcons).map(([key, icon]) => (
-          <button
-            key={key}
-            onClick={() => navigate(`/agent/${key}`)}
-            className={`p-2 transition-colors ${
-              key === agentId
-                ? "text-foreground bg-secondary"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {icon}
-          </button>
-        ))}
-      </div>
-
-      {/* Offset left sidebar for icon bar */}
-      <style>{`
-        .flex.flex-1.overflow-hidden > aside:first-child {
-          margin-left: 48px;
-        }
-      `}</style>
     </div>
   );
 };
