@@ -1,15 +1,23 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
       <div className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-8">
           <span className="text-xl font-bold tracking-tight cursor-pointer" onClick={() => navigate("/")}>CLAWHOO.</span>
           <div className="hidden md:flex items-center gap-1 text-sm font-mono tracking-wide">
-            <span onClick={() => navigate("/agents")} className="border-r border-border pr-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">TERMINAL</span>
-            <span className="px-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">AGENTS</span>
+            <span 
+              onClick={() => navigate("/agents")} 
+              className={`border-r border-border pr-4 cursor-pointer transition-colors ${
+                location.pathname === "/agents" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              TERMINAL
+            </span>
             <span className="px-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">DOCS</span>
           </div>
         </div>
