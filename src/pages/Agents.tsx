@@ -368,7 +368,7 @@ const Agents = () => {
 
   return (
     <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
-      <AppNav activeTab="trade" />
+      <AppNav />
 
       {/* Main App */}
       <div className="flex-1 flex flex-col overflow-hidden">

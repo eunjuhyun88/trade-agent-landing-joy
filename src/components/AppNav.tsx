@@ -1,11 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Search, ArrowLeft } from "lucide-react";
 
-interface AppNavProps {
-  activeTab?: "trade" | "advisory" | "holdings";
-}
-
-const AppNav = ({ activeTab = "trade" }: AppNavProps) => {
+const AppNav = () => {
   const navigate = useNavigate();
 
   return (
@@ -23,29 +19,13 @@ const AppNav = ({ activeTab = "trade" }: AppNavProps) => {
           </span>
         </div>
 
-        {/* Page Tabs */}
         <div className="hidden md:flex items-center">
-          {(["Trade", "Advisory", "Holdings"] as const).map((tab) => {
-            const key = tab.toLowerCase() as "trade" | "advisory" | "holdings";
-            const isActive = key === activeTab;
-            return (
-              <span
-                key={tab}
-                onClick={() => {
-                  if (key === "trade") navigate("/agents");
-                }}
-                className={`px-4 py-[13px] text-[9px] font-mono font-medium tracking-[1.5px] uppercase cursor-pointer border-b-2 transition-colors ${
-                  isActive
-                    ? "text-foreground border-accent"
-                    : "text-muted-foreground border-transparent hover:text-foreground/70"
-                }`}
-              >
-                {tab}
-              </span>
-            );
-          })}
+          <span
+            className="px-4 py-[13px] text-[9px] font-mono font-medium tracking-[1.5px] uppercase cursor-pointer border-b-2 text-foreground border-accent"
+          >
+            Terminal
+          </span>
         </div>
-
       </div>
 
       <div className="flex items-center gap-3">
