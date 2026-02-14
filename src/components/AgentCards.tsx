@@ -14,11 +14,13 @@ const agents = [
     chartData: "0,60 30,55 60,40 90,45 120,30 150,35 180,20 210,25 240,15 270,30 300,20",
     analyzes: [
       "Pattern detection (Wedge, Triangle, H&S)",
-      "Support/Resistance, Order Blocks, FVG",
+      "Support/Resistance levels (S1, S2, R1, R2)",
       "RSI, MACD, Bollinger Bands, ATR",
+      "CVD (Cumulative Volume Delta)",
+      "Volume Profile (POC, VAH, VAL)",
       "Multi-timeframe (1H / 4H / 1D)"
     ],
-    sampleOutput: { SIGNAL: "LONG", CONFIDENCE: "88.2", ZONE: "RANGE_LOW - Support (94.2%)" },
+    sampleOutput: { SIGNAL: "LONG", CONFIDENCE: "88.2", RSI: "32.4", CVD: "+$82M", ZONE: "S1 $99,180" },
     stats: [
       { label: "FIB_LEVEL", value: "0.618" },
       { label: "VOL_PROFILE", value: "HIGH" },
