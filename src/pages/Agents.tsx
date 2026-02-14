@@ -789,18 +789,75 @@ const Agents = () => {
                 })}
               </div>
 
-              {/* Unified Intelligence */}
-              <div className="px-3 py-2 bg-[hsl(45_90%_55%/0.15)]">
-                <div className="font-mono text-[7px] text-muted-foreground tracking-[1px] mb-[2px]">UNIFIED INTELLIGENCE</div>
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-lg font-bold">LONG SIGNAL</span>
-                  <div className="text-right">
-                    <div className="font-mono text-[22px] font-bold">73</div>
-                    <div className="font-mono text-[7px] text-muted-foreground">SCORE</div>
+              {/* Unified Intelligence — Enhanced */}
+              <div className="px-3 py-3 bg-[hsl(45_90%_55%/0.08)] border-t border-[hsl(45_90%_55%/0.2)]">
+                <div className="font-mono text-[7px] text-muted-foreground tracking-[2px] mb-3">UNIFIED INTELLIGENCE</div>
+                
+                {/* Gauge */}
+                <div className="flex items-center justify-center mb-3">
+                  <div className="relative w-[120px] h-[60px]">
+                    <svg viewBox="0 0 120 60" className="w-full h-full overflow-visible">
+                      {/* Background arc */}
+                      <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(var(--border))" strokeWidth="6" strokeLinecap="round" />
+                      {/* Score arc — 73% of semicircle */}
+                      <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(45 90% 55%)" strokeWidth="6" strokeLinecap="round" strokeDasharray={`${Math.PI * 50 * 0.73} ${Math.PI * 50}`} />
+                      {/* Tick marks */}
+                      {[0, 25, 50, 75, 100].map((tick) => {
+                        const angle = Math.PI - (tick / 100) * Math.PI;
+                        const x1 = 60 + 42 * Math.cos(angle);
+                        const y1 = 55 - 42 * Math.sin(angle);
+                        const x2 = 60 + 47 * Math.cos(angle);
+                        const y2 = 55 - 47 * Math.sin(angle);
+                        return <line key={tick} x1={x1} y1={y1} x2={x2} y2={y2} stroke="hsl(var(--muted-foreground))" strokeWidth="1" opacity="0.4" />;
+                      })}
+                      {/* Needle */}
+                      {(() => {
+                        const angle = Math.PI - (73 / 100) * Math.PI;
+                        const nx = 60 + 36 * Math.cos(angle);
+                        const ny = 55 - 36 * Math.sin(angle);
+                        return <line x1="60" y1="55" x2={nx} y2={ny} stroke="hsl(45 90% 55%)" strokeWidth="2" strokeLinecap="round" />;
+                      })()}
+                      <circle cx="60" cy="55" r="3" fill="hsl(45 90% 55%)" />
+                    </svg>
+                    <div className="absolute bottom-[-2px] left-1/2 -translate-x-1/2 text-center">
+                      <div className="font-mono text-[20px] font-black leading-none">73</div>
+                    </div>
                   </div>
                 </div>
-                <div className="h-1 bg-border overflow-hidden mt-[5px]">
-                  <div className="h-full w-[73%] bg-[hsl(45_90%_55%)]" />
+
+                {/* Signal label */}
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <span className="w-2 h-2 rounded-full bg-status-active animate-pulse" />
+                  <span className="font-mono text-[11px] font-bold tracking-[2px]">LONG SIGNAL</span>
+                </div>
+
+                {/* Agent confidence bars */}
+                <div className="space-y-[5px]">
+                  {[
+                    { emoji: "📐", name: "CHART", score: 88, color: "268 35% 72%" },
+                    { emoji: "⛓", name: "CHAIN", score: 65, color: "142 70% 45%" },
+                    { emoji: "📡", name: "DERIV", score: 78, color: "0 84% 60%" },
+                    { emoji: "💬", name: "SOCIAL", score: 72, color: "280 60% 65%" },
+                  ].map((a) => (
+                    <div key={a.name} className="flex items-center gap-2">
+                      <span className="text-[9px] w-3">{a.emoji}</span>
+                      <span className="font-mono text-[7px] w-10 text-muted-foreground">{a.name}</span>
+                      <div className="flex-1 h-[4px] bg-border overflow-hidden">
+                        <div className="h-full transition-all" style={{ width: `${a.score}%`, backgroundColor: `hsl(${a.color})` }} />
+                      </div>
+                      <span className="font-mono text-[8px] w-5 text-right text-foreground/70">{a.score}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Bottom bar */}
+                <div className="flex items-center justify-between mt-3 pt-2 border-t border-[hsl(45_90%_55%/0.15)]">
+                  <div className="text-[7px] font-mono text-muted-foreground">
+                    COMPOSITE <span className="text-foreground font-semibold">73/100</span>
+                  </div>
+                  <div className="text-[7px] font-mono text-muted-foreground">
+                    CONSENSUS <span className="text-status-active font-semibold">BULLISH</span>
+                  </div>
                 </div>
               </div>
 
