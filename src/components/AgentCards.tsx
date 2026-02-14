@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const agents = [
   {
@@ -59,7 +60,16 @@ const agents = [
   },
 ];
 
+const agentRoutes: Record<string, string> = {
+  AGT_01: "chart",
+  AGT_02: "chain",
+  AGT_03: "deriv",
+  AGT_04: "social",
+  AGT_05: "alert",
+};
+
 const AgentCards = () => {
+  const navigate = useNavigate();
   return (
     <section className="px-6 md:px-12 py-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-0 border border-border">
@@ -76,6 +86,8 @@ const AgentCards = () => {
             viewport={{ once: true, margin: "-30px" }}
             transition={{ duration: 0.4, delay: i * 0.1 }}
             whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            onClick={() => navigate(`/agent/${agentRoutes[agent.id]}`)}
+            style={{ cursor: "pointer" }}
           >
             <div>
               <div className="flex items-center justify-between mb-6">
