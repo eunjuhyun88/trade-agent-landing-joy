@@ -1009,18 +1009,15 @@ const Agents = () => {
 
                       {/* Prompt */}
                       <div className="px-4 py-2 border-t border-border shrink-0">
-                        <div className="flex flex-wrap gap-1.5 mb-1.5 items-center">
-                          <span className="text-[8px] font-mono text-muted-foreground">Searching from :</span>
-                          {dataSources.map((source) => (
-                            <button key={source} onClick={() => toggleSource(source)} className={`text-[8px] font-mono px-2 py-[2px] border transition-colors ${selectedSources.has(source) ? "border-accent/40 bg-accent/10 text-foreground" : "border-border text-muted-foreground/50 hover:text-muted-foreground"}`}>
-                              {selectedSources.has(source) && <span className="mr-0.5">✓</span>}{source}
-                            </button>
-                          ))}
-                        </div>
                         <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
                           <div className="flex items-center gap-2 border border-border bg-card px-3 py-2">
                             <span className="text-accent font-mono text-sm">&gt;</span>
-                            <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder="Ask your agents — try 'Analyze BTC' or 'What's happening" className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40" />
+                            <div className="flex items-center gap-1 shrink-0 border-r border-border/50 pr-2 mr-1">
+                              <LineChart size={10} className="text-accent" />
+                              <span className="text-[8px] font-mono text-accent font-semibold">{selectedTicker?.ticker} 4H</span>
+                            </div>
+                            <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder="Ask your agents..." className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40" />
+                            <button type="submit" className="transition-colors text-accent hover:text-foreground"><Send size={12} /></button>
                           </div>
                           <div className="flex items-center gap-1 mt-1 px-1">
                             <div className="flex gap-[2px]">
@@ -1031,9 +1028,14 @@ const Agents = () => {
                               ))}
                             </div>
                             <span className="text-[8px] font-mono text-muted-foreground">{selectedAgents.size}/{agents.length}</span>
+                            <div className="w-px h-3 bg-border mx-1" />
+                            {dataSources.map((source) => (
+                              <button key={source} type="button" onClick={() => toggleSource(source)} className={`text-[7px] font-mono px-1.5 py-[1px] transition-colors ${selectedSources.has(source) ? "text-accent" : "text-muted-foreground/30 hover:text-muted-foreground/50"}`}>
+                                {selectedSources.has(source) && "✓"}{source}
+                              </button>
+                            ))}
                             <div className="flex-1" />
                             <span className="text-[7px] font-mono text-muted-foreground">/? for help</span>
-                            <button type="submit" className="transition-colors text-accent hover:text-foreground"><Send size={12} /></button>
                           </div>
                         </form>
                       </div>
