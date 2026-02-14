@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -182,7 +182,7 @@ const agents = [
 
 const timeframes = ["1M", "5M", "15M", "1H", "4H"];
 
-const alertEvents = [
+const initialAlertEvents = [
   { id: "e1", exchange: "Binance", type: "liquidation", side: "BUY", pair: "BTCUSDT", amount: "0.542", price: "101,890.30", time: "오후 8:32", mine: true },
   { id: "e2", exchange: "Binance", type: "liquidation", side: "SELL", pair: "ETHUSDT", amount: "25.000", price: "3,842.55", time: "오후 8:32", mine: false },
   { id: "e3", exchange: "Binance", type: "liquidation", side: "BUY", pair: "SOLUSDT", amount: "1,200", price: "248.50", time: "오후 8:31", mine: true },
@@ -191,9 +191,23 @@ const alertEvents = [
   { id: "e6", exchange: "Bybit", type: "liquidation", side: "BUY", pair: "ETHUSDT", amount: "8.500", price: "3,841.20", time: "오후 8:30", mine: false },
   { id: "e7", exchange: "Binance", type: "whale", side: "BUY", pair: "BTCUSDT", amount: "15.000", price: "101,900.00", time: "오후 8:29", mine: true },
   { id: "e8", exchange: "Binance", type: "liquidation", side: "SELL", pair: "XRPUSDT", amount: "45,000", price: "2.4100", time: "오후 8:29", mine: false },
-  { id: "e9", exchange: "OKX", type: "liquidation", side: "BUY", pair: "SOLUSDT", amount: "340", price: "248.30", time: "오후 8:28", mine: true },
-  { id: "e10", exchange: "Binance", type: "whale", side: "SELL", pair: "ETHUSDT", amount: "500.000", price: "3,840.00", time: "오후 8:28", mine: false },
 ];
+
+const randomPairs = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "DOGEUSDT", "XRPUSDT", "AVAXUSDT", "BNBUSDT"];
+const randomExchanges = ["Binance", "OKX", "Bybit", "Bitget"];
+const randomTypes = ["liquidation", "liquidation", "liquidation", "whale"];
+
+const generateRandomAlert = (id: number) => {
+  const pair = randomPairs[Math.floor(Math.random() * randomPairs.length)];
+  const side = Math.random() > 0.4 ? "BUY" : "SELL";
+  const exchange = randomExchanges[Math.floor(Math.random() * randomExchanges.length)];
+  const type = randomTypes[Math.floor(Math.random() * randomTypes.length)];
+  const amount = (Math.random() * 100).toFixed(3);
+  const price = (Math.random() * 100000 + 1000).toFixed(2);
+  const now = new Date();
+  const time = `오후 ${now.getHours() > 12 ? now.getHours() - 12 : now.getHours()}:${now.getMinutes().toString().padStart(2, "0")}`;
+  return { id: `live-${id}`, exchange, type, side, pair, amount, price, time, mine: Math.random() > 0.5 };
+};
 
 const allFeed = agents.flatMap((a) =>
   a.feed.map((f) => ({ ...f, agentName: a.name, agentEmoji: a.emoji, agentColor: a.color }))
@@ -205,8 +219,20 @@ const Agents = () => {
   const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
   const [selectedTf, setSelectedTf] = useState("1H");
   const [alertFilter, setAlertFilter] = useState<"all" | "mine">("all");
+  const [liveAlerts, setLiveAlerts] = useState(initialAlertEvents);
+  const alertCounter = useRef(0);
+  const alertScrollRef = useRef<HTMLDivElement>(null);
   const selectedTicker = sharedWatchlist[0];
-  const filteredAlerts = alertFilter === "mine" ? alertEvents.filter((a) => a.mine) : alertEvents;
+  const filteredAlerts = alertFilter === "mine" ? liveAlerts.filter((a) => a.mine) : liveAlerts;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      alertCounter.current += 1;
+      const newAlert = generateRandomAlert(alertCounter.current);
+      setLiveAlerts((prev) => [newAlert, ...prev].slice(0, 50));
+    }, 2000 + Math.random() * 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const toggleAgent = (id: string) => {
     setSelectedAgents((prev) => {
@@ -301,24 +327,35 @@ const Agents = () => {
                     ))}
                   </div>
                 </div>
-                <div className="flex-1 overflow-y-auto">
-                  {filteredAlerts.map((alert) => (
-                    <div key={alert.id} className="px-3 py-[6px] border-b border-border/50 hover:bg-card/50 cursor-pointer transition-colors">
-                      <div className="flex items-center gap-1.5 mb-[2px]">
-                        <span className="text-[9px] font-mono text-accent">{alert.exchange}</span>
-                        <span className="text-[7px] font-mono text-muted-foreground uppercase">{alert.type}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className={`w-2 h-2 rounded-full ${alert.side === "BUY" ? "bg-status-active" : "bg-status-hot"}`} />
-                        <span className="font-mono text-[10px] text-foreground/90">
-                          {alert.pair} {alert.side} {alert.amount} @ {alert.price}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-end mt-[2px]">
-                        <span className="text-[7px] font-mono text-muted-foreground">{alert.time}</span>
-                      </div>
-                    </div>
-                  ))}
+                <div className="flex-1 overflow-y-auto" ref={alertScrollRef}>
+                  <AnimatePresence initial={false}>
+                    {filteredAlerts.map((alert) => (
+                      <motion.div
+                        key={alert.id}
+                        initial={{ opacity: 0, height: 0, x: -20 }}
+                        animate={{ opacity: 1, height: "auto", x: 0 }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-3 py-[6px] border-b border-border/50 hover:bg-card/50 cursor-pointer transition-colors">
+                          <div className="flex items-center gap-1.5 mb-[2px]">
+                            <span className="text-[9px] font-mono text-accent">{alert.exchange}</span>
+                            <span className="text-[7px] font-mono text-muted-foreground uppercase">{alert.type}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className={`w-2 h-2 rounded-full ${alert.side === "BUY" ? "bg-status-active" : "bg-status-hot"}`} />
+                            <span className="font-mono text-[10px] text-foreground/90">
+                              {alert.pair} {alert.side} {alert.amount} @ {alert.price}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-end mt-[2px]">
+                            <span className="text-[7px] font-mono text-muted-foreground">{alert.time}</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
                 <div className="border-t border-border p-1.5 shrink-0">
                   <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
