@@ -29,6 +29,9 @@ type WalletContextType = {
   addTrade: (trade: TradeRecord) => void;
   subscription: SubscriptionPlan;
   subscribe: (plan: SubscriptionPlan) => void;
+  chatCount: number;
+  maxFreeChats: number;
+  incrementChat: () => boolean;
 };
 
 const WalletContext = createContext<WalletContextType | null>(null);
@@ -44,6 +47,8 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [address, setAddress] = useState("");
   const [trades, setTrades] = useState<TradeRecord[]>([]);
   const [subscription, setSubscription] = useState<SubscriptionPlan>(null);
+  const [chatCount, setChatCount] = useState(0);
+  const maxFreeChats = 5;
 
   const connect = (walletId: string) => {
     setConnected(walletId);
@@ -63,10 +68,17 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     setSubscription(plan);
   }, []);
 
+  const incrementChat = useCallback(() => {
+    if (subscription && subscription !== "FREE") return true;
+    if (chatCount >= maxFreeChats) return false;
+    setChatCount((prev) => prev + 1);
+    return true;
+  }, [subscription, chatCount, maxFreeChats]);
+
   const connectedWallet = wallets.find((w) => w.id === connected);
 
   return (
-    <WalletContext.Provider value={{ connected, address, wallets, connectedWallet, connect, disconnect, trades, addTrade, subscription, subscribe }}>
+    <WalletContext.Provider value={{ connected, address, wallets, connectedWallet, connect, disconnect, trades, addTrade, subscription, subscribe, chatCount, maxFreeChats, incrementChat }}>
       {children}
     </WalletContext.Provider>
   );
