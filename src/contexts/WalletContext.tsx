@@ -1,9 +1,20 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useCallback } from "react";
 
 const wallets = [
   { id: "metamask", name: "MetaMask", icon: "🦊", color: "45 90% 55%" },
   { id: "base", name: "Base Wallet", icon: "🔵", color: "220 80% 55%" },
 ];
+
+export type TradeRecord = {
+  type: "BUY" | "SELL" | "SWAP";
+  asset: string;
+  amount: string;
+  price: string;
+  time: string;
+  status: string;
+  toAsset?: string;
+  toAmount?: string;
+};
 
 type WalletContextType = {
   connected: string | null;
@@ -12,6 +23,8 @@ type WalletContextType = {
   connectedWallet: typeof wallets[0] | undefined;
   connect: (walletId: string) => void;
   disconnect: () => void;
+  trades: TradeRecord[];
+  addTrade: (trade: TradeRecord) => void;
 };
 
 const WalletContext = createContext<WalletContextType | null>(null);
@@ -25,6 +38,7 @@ export const useWallet = () => {
 export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [connected, setConnected] = useState<string | null>(null);
   const [address, setAddress] = useState("");
+  const [trades, setTrades] = useState<TradeRecord[]>([]);
 
   const connect = (walletId: string) => {
     setConnected(walletId);
@@ -36,10 +50,14 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     setAddress("");
   };
 
+  const addTrade = useCallback((trade: TradeRecord) => {
+    setTrades((prev) => [trade, ...prev]);
+  }, []);
+
   const connectedWallet = wallets.find((w) => w.id === connected);
 
   return (
-    <WalletContext.Provider value={{ connected, address, wallets, connectedWallet, connect, disconnect }}>
+    <WalletContext.Provider value={{ connected, address, wallets, connectedWallet, connect, disconnect, trades, addTrade }}>
       {children}
     </WalletContext.Provider>
   );

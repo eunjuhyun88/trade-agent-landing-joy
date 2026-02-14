@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown, Plus, Wallet, Copy, ExternalLink } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowDownUp, Plus, Wallet, Copy, ExternalLink } from "lucide-react";
 import AppNav from "@/components/AppNav";
-import { useWallet } from "@/contexts/WalletContext";
+import { useWallet, TradeRecord } from "@/contexts/WalletContext";
 
 const mockPortfolio = [
   { asset: "BTC", name: "Bitcoin", amount: "0.2451", value: "$24,973.29", price: "$101,890", change: 2.41, pnl: "+$1,842.30", pnlPct: "+7.95%", allocation: 48 },
@@ -22,7 +22,8 @@ const mockActivity = [
 
 const Holdings = () => {
   const [tab, setTab] = useState<"portfolio" | "activity">("portfolio");
-  const { connected, address, connectedWallet } = useWallet();
+  const { connected, address, connectedWallet, trades } = useWallet();
+  const allActivity = [...trades, ...mockActivity];
   const totalValue = "$51,598.28";
   const totalPnl = "+$3,753.08";
   const totalPnlPct = "+7.84%";
@@ -195,7 +196,7 @@ const Holdings = () => {
                 <span className="w-20 text-right">Time</span>
                 <span className="w-16 text-right">Status</span>
               </div>
-              {mockActivity.map((item, i) => (
+              {allActivity.map((item, i) => (
                 <motion.div
                   key={i}
                   className="flex items-center px-4 py-3 border-b border-border/50 last:border-0 hover:bg-card/50 transition-colors"
@@ -204,8 +205,8 @@ const Holdings = () => {
                   transition={{ delay: i * 0.05 }}
                 >
                   <span className="w-16">
-                    <span className={`text-[9px] font-mono font-bold flex items-center gap-1 ${item.type === "BUY" ? "text-status-active" : "text-status-hot"}`}>
-                      {item.type === "BUY" ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                    <span className={`text-[9px] font-mono font-bold flex items-center gap-1 ${item.type === "BUY" ? "text-status-active" : item.type === "SELL" ? "text-status-hot" : "text-accent"}`}>
+                      {item.type === "BUY" ? <TrendingUp size={10} /> : item.type === "SELL" ? <TrendingDown size={10} /> : <ArrowDownUp size={10} />}
                       {item.type}
                     </span>
                   </span>

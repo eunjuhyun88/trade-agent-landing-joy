@@ -10,6 +10,7 @@ import AppNav from "@/components/AppNav";
 import TradingViewChart from "@/components/TradingViewChart";
 import TickerBar from "@/components/TickerBar";
 import { useWallet } from "@/contexts/WalletContext";
+import { useToast } from "@/hooks/use-toast";
 
 const sharedWatchlist = [
   { ticker: "BTC", name: "Bitcoin", price: "101,890", change: 2.41 },
@@ -271,7 +272,8 @@ const orchestratedResponses: Record<string, OrchestratedResponse> = {
 
 const Agents = () => {
   const navigate = useNavigate();
-  const { connected } = useWallet();
+  const { connected, addTrade } = useWallet();
+  const { toast } = useToast();
   const [selectedAgents, setSelectedAgents] = useState<Set<string>>(new Set(agents.map((a) => a.id)));
   const [swapFrom, setSwapFrom] = useState("ETH");
   const [swapTo, setSwapTo] = useState("BTC");
@@ -892,7 +894,25 @@ const Agents = () => {
                     )}
 
                     <button
-                      onClick={() => setSwapModalOpen(false)}
+                      onClick={() => {
+                        const toAmount = swapAmount ? (parseFloat(swapAmount) * (swapFrom === "ETH" && swapTo === "BTC" ? 0.0377 : swapFrom === "USDT" && swapTo === "BTC" ? 0.0000098 : swapFrom === "USDT" && swapTo === "ETH" ? 0.00026 : swapFrom === "USDT" && swapTo === "SOL" ? 0.00402 : 1.2)).toFixed(6) : "0";
+                        addTrade({
+                          type: "SWAP",
+                          asset: swapFrom,
+                          amount: swapAmount || "0",
+                          price: `→ ${toAmount} ${swapTo}`,
+                          toAsset: swapTo,
+                          toAmount,
+                          time: "Just now",
+                          status: "filled",
+                        });
+                        toast({
+                          title: "✅ Swap Executed",
+                          description: `${swapAmount || "0"} ${swapFrom} → ${toAmount} ${swapTo}`,
+                        });
+                        setSwapModalOpen(false);
+                        setSwapAmount("");
+                      }}
                       className="w-full py-2.5 bg-[hsl(45_90%_55%/0.15)] border border-[hsl(45_90%_55%)] text-[hsl(45_90%_55%)] font-mono text-[10px] font-semibold tracking-[2px] uppercase cursor-pointer hover:bg-[hsl(45_90%_55%/0.25)] transition-colors"
                     >
                       EXECUTE SWAP
