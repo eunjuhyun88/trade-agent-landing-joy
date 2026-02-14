@@ -1,9 +1,11 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
   BarChart3, Link2, TrendingUp, MessageSquare, Clock,
-  ArrowLeft, ExternalLink,
+  ArrowLeft, ExternalLink, Search, Send, ChevronDown, Settings, Plus,
 } from "lucide-react";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 
 const agents = [
   {
@@ -13,7 +15,7 @@ const agents = [
     fullName: "Chart Analysis Agent",
     category: "Technical Analysis",
     color: "268 35% 72%",
-    icon: <BarChart3 size={18} />,
+    icon: <BarChart3 size={16} />,
     status: "active" as const,
     description: "Geometric pattern recognition and liquidity void detection across multiple timeframes.",
     stats: [
@@ -23,6 +25,31 @@ const agents = [
       { label: "STATE", value: "SCANNING" },
     ],
     recentSignal: "BTC descending wedge breakout target $108,500. RSI divergence at 0.618 fib.",
+    watchlist: [
+      { ticker: "BTC", name: "Bitcoin", change: 2.41 },
+      { ticker: "ETH", name: "Ethereum", change: -1.32 },
+      { ticker: "SOL", name: "Solana", change: 5.67 },
+      { ticker: "AVAX", name: "Avalanche", change: -0.89 },
+      { ticker: "DOGE", name: "Dogecoin", change: 3.12 },
+      { ticker: "XRP", name: "Ripple", change: 1.05 },
+    ],
+    feed: [
+      { time: "09:30 EST", date: "Friday, February 14, 2026", content: "BTC is forming a descending wedge pattern on the 4H chart with a potential breakout target of $108,500. RSI divergence detected at the 0.618 Fibonacci retracement level." },
+      { time: "08:15 EST", content: "ETH/BTC ratio testing critical support at 0.032. Historical data suggests a bounce from this level with 78% probability." },
+      { time: "16:00 EST", date: "Thursday, February 13, 2026", content: "SOL completed a cup-and-handle formation on the weekly chart. Measured move target sits at $285." },
+    ],
+    headlines: [
+      { time: "06:47", text: "BTC breaks $100K as institutional inflows hit record $2.1B weekly", sentiment: "bull" as const },
+      { time: "06:18", text: "ETH gas fees spike 300% amid NFT mint frenzy", sentiment: "neutral" as const },
+      { time: "02:31", text: "Fibonacci confluence zone holds: SOL bounces from $198 support", sentiment: "bull" as const },
+      { time: "23:46", text: "Market-wide liquidation cascade wipes $500M in overleveraged longs", sentiment: "bear" as const },
+    ],
+    marketStats: [
+      { label: "O", value: "98,420" },
+      { label: "H", value: "102,350" },
+      { label: "L", value: "97,180" },
+      { label: "C", value: "101,890" },
+    ],
   },
   {
     id: "chain",
@@ -31,7 +58,7 @@ const agents = [
     fullName: "On-Chain Analysis Agent",
     category: "Blockchain Intelligence",
     color: "142 70% 45%",
-    icon: <Link2 size={18} />,
+    icon: <Link2 size={16} />,
     status: "active" as const,
     description: "On-chain flow monitoring, whale wallet heatmaps, and smart money tracking.",
     stats: [
@@ -41,6 +68,29 @@ const agents = [
       { label: "STATE", value: "TRACKING" },
     ],
     recentSignal: "15,000 BTC ($1.53B) moved from cold storage to Coinbase Prime.",
+    watchlist: [
+      { ticker: "WHALE_01", name: "Unknown Wallet", change: 12.4 },
+      { ticker: "WHALE_02", name: "Jump Trading", change: -5.2 },
+      { ticker: "WHALE_03", name: "Wintermute", change: 3.8 },
+      { ticker: "DEX_VOL", name: "DEX Volume 24h", change: 15.3 },
+      { ticker: "GAS_AVG", name: "Avg Gas (Gwei)", change: -2.1 },
+      { ticker: "TVL_ETH", name: "ETH TVL", change: 1.7 },
+    ],
+    feed: [
+      { time: "10:00 UTC", date: "Friday, February 14, 2026", content: "Massive whale movement detected: 15,000 BTC ($1.53B) transferred from cold storage to Coinbase Prime." },
+      { time: "08:30 UTC", content: "Ethereum staking deposits surged 40% in the last 24 hours, with 32,000 ETH entering the beacon chain." },
+    ],
+    headlines: [
+      { time: "07:12", text: "Whale alert: 50,000 ETH moved to unknown wallet from exchange", sentiment: "bull" as const },
+      { time: "05:45", text: "DeFi TVL reaches new ATH of $320B across all chains", sentiment: "bull" as const },
+      { time: "03:20", text: "Mempool congestion spikes as NFT collection drops", sentiment: "neutral" as const },
+    ],
+    marketStats: [
+      { label: "NET_FLOW", value: "+492M" },
+      { label: "MEMPOOL", value: "ACTIVE" },
+      { label: "GAS", value: "34 Gwei" },
+      { label: "VALIDATORS", value: "982K" },
+    ],
   },
   {
     id: "deriv",
@@ -49,7 +99,7 @@ const agents = [
     fullName: "Derivatives Agent",
     category: "Futures & Options",
     color: "0 84% 60%",
-    icon: <TrendingUp size={18} />,
+    icon: <TrendingUp size={16} />,
     status: "hot" as const,
     description: "Open interest spikes, funding rate arbitrage, and liquidation cascade detection.",
     stats: [
@@ -59,6 +109,29 @@ const agents = [
       { label: "STATE", value: "CRITICAL" },
     ],
     recentSignal: "BTC OI surged 12% in 4H. Funding at 0.0122% — liquidation risk elevated.",
+    watchlist: [
+      { ticker: "BTC-PERP", name: "BTC Perpetual", change: 2.1 },
+      { ticker: "ETH-PERP", name: "ETH Perpetual", change: -1.5 },
+      { ticker: "BTC-0328", name: "BTC Mar Futures", change: 2.3 },
+      { ticker: "BTC-OI", name: "BTC Open Interest", change: 12.0 },
+      { ticker: "FUND_RATE", name: "Funding Rate", change: 0.01 },
+      { ticker: "LIQ_24H", name: "Liquidations 24h", change: -15.2 },
+    ],
+    feed: [
+      { time: "11:00 EST", date: "Friday, February 14, 2026", content: "BTC open interest surged 12% in the last 4 hours, reaching $38.2B across major exchanges. Funding rates turning positive at 0.0122%." },
+      { time: "09:45 EST", content: "ETH options market showing unusual activity: $105M in call options purchased at $4,500 strike for March expiry." },
+    ],
+    headlines: [
+      { time: "08:30", text: "BTC futures premium hits 15% annualized, highest since bull run peak", sentiment: "bull" as const },
+      { time: "07:00", text: "Record $2.1B in options expiring Friday, max pain at $96K", sentiment: "neutral" as const },
+      { time: "04:15", text: "Funding rates spike to 0.03% on Binance, overheated longs", sentiment: "bear" as const },
+    ],
+    marketStats: [
+      { label: "OI", value: "$38.2B" },
+      { label: "FUNDING", value: "0.0122%" },
+      { label: "LIQ_24H", value: "$245M" },
+      { label: "BASIS", value: "0.45%" },
+    ],
   },
   {
     id: "social",
@@ -67,7 +140,7 @@ const agents = [
     fullName: "Social Sentiment Agent",
     category: "NLP Analysis",
     color: "280 60% 65%",
-    icon: <MessageSquare size={18} />,
+    icon: <MessageSquare size={16} />,
     status: "active" as const,
     description: "NLP-driven sentiment analysis across 15+ social channels in real-time.",
     stats: [
@@ -77,6 +150,29 @@ const agents = [
       { label: "STATE", value: "AGGREGATING" },
     ],
     recentSignal: "SOL mentions up 89% in 24h. Extreme bullish bias — contrarian signal watch.",
+    watchlist: [
+      { ticker: "#BTC", name: "Bitcoin mentions", change: 45.2 },
+      { ticker: "#ETH", name: "Ethereum mentions", change: 12.8 },
+      { ticker: "#SOL", name: "Solana mentions", change: 89.3 },
+      { ticker: "CT_VOL", name: "Crypto Twitter Vol", change: 34.1 },
+      { ticker: "REDDIT", name: "Reddit Activity", change: 18.7 },
+      { ticker: "DISCORD", name: "Discord Signals", change: -5.4 },
+    ],
+    feed: [
+      { time: "12:00 EST", date: "Friday, February 14, 2026", content: "Sentiment analysis across 15+ channels shows extreme bullish bias for SOL, with mention volume up 89% in 24 hours." },
+      { time: "10:30 EST", content: "New memecoin trend detected on Telegram: 'AI Agent' themed tokens gaining traction with combined volume exceeding $50M." },
+    ],
+    headlines: [
+      { time: "09:00", text: "Elon Musk tweets about DOGE, social volume spikes 500%", sentiment: "bull" as const },
+      { time: "07:30", text: "Vitalik posts ETH roadmap update, community sentiment surges", sentiment: "bull" as const },
+      { time: "05:00", text: "FUD spreading about major exchange hack rumor (unverified)", sentiment: "bear" as const },
+    ],
+    marketStats: [
+      { label: "SENTIMENT", value: "87/100" },
+      { label: "MENTIONS", value: "4.2K/min" },
+      { label: "MOOD", value: "EXTREME GREED" },
+      { label: "INFLUENCER", value: "BULLISH" },
+    ],
   },
   {
     id: "alert",
@@ -85,7 +181,7 @@ const agents = [
     fullName: "Alert System Agent",
     category: "Trigger Engine",
     color: "45 90% 55%",
-    icon: <Clock size={18} />,
+    icon: <Clock size={16} />,
     status: "idle" as const,
     description: "Custom deterministic triggers, push notifications, and webhook integrations.",
     stats: [
@@ -95,162 +191,348 @@ const agents = [
       { label: "STATE", value: "STANDBY" },
     ],
     recentSignal: "BTC > $100K trigger fired. All 3 confirmations met. 12 webhooks notified.",
+    watchlist: [
+      { ticker: "TRG_001", name: "BTC > $105K", change: 0 },
+      { ticker: "TRG_002", name: "ETH < $3,200", change: 0 },
+      { ticker: "TRG_003", name: "SOL RSI > 70", change: 0 },
+      { ticker: "TRG_004", name: "BTC Vol Spike", change: 0 },
+      { ticker: "TRG_005", name: "Whale Alert > $10M", change: 0 },
+      { ticker: "TRG_006", name: "Funding > 0.02%", change: 0 },
+    ],
+    feed: [
+      { time: "13:00 EST", date: "Friday, February 14, 2026", content: "TRIGGER FIRED: BTC crossed $100,000 resistance level. All 3 confirmation criteria met. Webhook notification sent to 12 connected endpoints." },
+      { time: "11:15 EST", content: "TRIGGER ARMED: ETH funding rate approaching 0.02% threshold on Binance. Currently at 0.0187%." },
+    ],
+    headlines: [
+      { time: "13:00", text: "FIRED: BTC > $100K trigger activated across 12 webhooks", sentiment: "bull" as const },
+      { time: "11:15", text: "ARMED: ETH funding rate nearing critical threshold", sentiment: "neutral" as const },
+      { time: "08:00", text: "STANDBY: 42 triggers active, system nominal", sentiment: "neutral" as const },
+    ],
+    marketStats: [
+      { label: "ACTIVE", value: "42" },
+      { label: "FIRED_24H", value: "3" },
+      { label: "UPTIME", value: "99.97%" },
+      { label: "LATENCY", value: "230ms" },
+    ],
   },
 ];
 
 const Agents = () => {
   const navigate = useNavigate();
+  const [selectedId, setSelectedId] = useState("chart");
+  const selected = agents.find((a) => a.id === selectedId)!;
+  const agentColor = `hsl(${selected.color})`;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
       {/* Top Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-6">
-            <button
-              onClick={() => navigate("/")}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft size={18} />
-            </button>
-            <span className="text-xl font-bold tracking-tight">CLAWHOO.</span>
-            <div className="h-4 w-px bg-border" />
-            <span className="text-xs font-mono tracking-wider text-muted-foreground">
-              AGENT_OVERVIEW / ALL_SYSTEMS
-            </span>
+      <nav className="border-b border-border bg-background/95 backdrop-blur-sm flex items-center justify-between px-4 py-3 shrink-0">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate("/")} className="text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft size={18} />
+          </button>
+          <span className="text-lg font-bold tracking-tight">CLAWHOO.</span>
+          <div className="h-4 w-px bg-border" />
+          <span className="text-xs font-mono tracking-wider text-muted-foreground">
+            AGENT_OVERVIEW / ALL_SYSTEMS
+          </span>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-status-active animate-pulse-dot" />
+            <span className="text-xs font-mono text-muted-foreground">4 ACTIVE</span>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-status-active animate-pulse-dot" />
-              <span className="text-xs font-mono text-muted-foreground">4 ACTIVE</span>
-            </div>
-            <span className="text-xs font-mono text-muted-foreground">1 STANDBY</span>
-          </div>
+          <span className="text-xs font-mono text-muted-foreground">1 STANDBY</span>
         </div>
       </nav>
 
-      <main className="pt-20 px-6 md:px-12 pb-12">
-        {/* Header */}
-        <motion.div
-          className="mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">AGENT SYSTEMS</h1>
-          <p className="text-sm text-muted-foreground font-mono">
-            Real-time monitoring dashboard — 5 autonomous analysis agents
-          </p>
-        </motion.div>
+      {/* Main Split Layout */}
+      <ResizablePanelGroup direction="horizontal" className="flex-1">
+        {/* Left: Agent List */}
+        <ResizablePanel defaultSize={24} minSize={18} maxSize={35}>
+          <div className="h-full flex flex-col overflow-hidden border-r border-border">
+            <div className="p-4 border-b border-border">
+              <h2 className="text-sm font-bold tracking-tight mb-1">AGENT SYSTEMS</h2>
+              <p className="text-[10px] font-mono text-muted-foreground">5 autonomous agents</p>
+            </div>
 
-        {/* Agent Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-0 border border-border">
-          {agents.map((agent, i) => {
-            const agentColor = `hsl(${agent.color})`;
-            return (
-              <motion.div
-                key={agent.id}
-                className="border border-border bg-card hover:bg-secondary transition-colors cursor-pointer group"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-                onClick={() => navigate(`/agent/${agent.id}`)}
-              >
-                {/* Card Header */}
-                <div className="flex items-center justify-between p-5 border-b border-border">
-                  <div className="flex items-center gap-3">
-                    <span style={{ color: agentColor }}>{agent.icon}</span>
-                    <div>
+            <div className="flex-1 overflow-y-auto">
+              {agents.map((agent, i) => {
+                const isSelected = agent.id === selectedId;
+                const color = `hsl(${agent.color})`;
+                return (
+                  <motion.div
+                    key={agent.id}
+                    className={`border-b border-border px-4 py-3 cursor-pointer transition-colors ${
+                      isSelected ? "bg-secondary" : "hover:bg-secondary/50"
+                    }`}
+                    onClick={() => setSelectedId(agent.id)}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-lg tracking-tight">{agent.name}</span>
-                        <span className="text-[10px] font-mono text-muted-foreground">{agent.code}</span>
+                        <span style={{ color }}>{agent.icon}</span>
+                        <span className="font-bold text-sm tracking-tight">{agent.name}</span>
+                        <span className="text-[9px] font-mono text-muted-foreground">{agent.code}</span>
                       </div>
-                      <span className="text-[10px] font-mono text-muted-foreground tracking-wider">
-                        {agent.category}
-                      </span>
+                      {agent.status === "hot" ? (
+                        <span className="bg-status-hot text-primary-foreground text-[9px] font-mono px-1.5 py-0.5 tracking-wider">HOT</span>
+                      ) : agent.status === "active" ? (
+                        <span className="w-2 h-2 rounded-full bg-status-active animate-pulse-dot" />
+                      ) : (
+                        <span className="text-[9px] font-mono text-muted-foreground">IDLE</span>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground leading-relaxed line-clamp-1">{agent.description}</p>
+                    <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-0.5">
+                      {agent.stats.slice(0, 2).map((stat) => (
+                        <div key={stat.label} className="flex justify-between text-[9px] font-mono text-muted-foreground">
+                          <span>{stat.label}:</span>
+                          <span className="text-foreground">{stat.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                    {isSelected && (
+                      <motion.div
+                        className="mt-2 pt-2 border-t border-border/50"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                      >
+                        <span className="text-[9px] font-mono text-muted-foreground block mb-1">LATEST_SIGNAL</span>
+                        <p className="text-[10px] text-foreground/80 leading-relaxed line-clamp-2">{agent.recentSignal}</p>
+                      </motion.div>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </ResizablePanel>
+
+        <ResizableHandle withHandle />
+
+        {/* Right: Detail Area with nested resizable panels */}
+        <ResizablePanel defaultSize={76} minSize={50}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedId}
+              className="h-full flex flex-col overflow-hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              {/* Detail Header */}
+              <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0">
+                <div className="flex items-center gap-3">
+                  <span style={{ color: agentColor }}>{selected.icon}</span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-base tracking-tight">{selected.name}</span>
+                      <span className="text-[10px] font-mono text-muted-foreground">/ {selected.category}</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">{selected.description}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => navigate(`/agent/${selectedId}`)}
+                    className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    FULL VIEW <ExternalLink size={10} />
+                  </button>
+                  <button className="bg-primary text-primary-foreground px-3 py-1 text-[10px] font-mono tracking-wider hover:opacity-90 transition-opacity">
+                    INITIALIZE
+                  </button>
+                </div>
+              </div>
+
+              {/* Nested Resizable: Watchlist | Feed | Market */}
+              <ResizablePanelGroup direction="horizontal" className="flex-1">
+                {/* Watchlist */}
+                <ResizablePanel defaultSize={22} minSize={15} maxSize={35}>
+                  <div className="h-full flex flex-col overflow-hidden border-r border-border">
+                    <div className="p-3 border-b border-border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] font-mono tracking-wider" style={{ color: agentColor }}>WATCHLIST</span>
+                        <Settings size={12} className="text-muted-foreground" />
+                      </div>
+                      <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-1">
+                        <Search size={10} className="text-muted-foreground" />
+                        <input
+                          type="text"
+                          placeholder="Search..."
+                          className="bg-transparent text-[10px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-1.5">
+                      {selected.watchlist.map((item, i) => (
+                        <motion.div
+                          key={item.ticker}
+                          className="flex items-center justify-between px-2 py-1.5 hover:bg-secondary cursor-pointer transition-colors"
+                          initial={{ opacity: 0, x: -8 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.02 }}
+                        >
+                          <div className="min-w-0 flex-1 mr-2">
+                            <span className="text-[11px] font-bold block truncate" style={{ color: agentColor }}>{item.ticker}</span>
+                            <p className="text-[9px] text-muted-foreground truncate">{item.name}</p>
+                          </div>
+                          <span className={`text-[10px] font-mono shrink-0 ${item.change > 0 ? "text-status-active" : item.change < 0 ? "text-status-hot" : "text-muted-foreground"}`}>
+                            {item.change > 0 ? "+" : ""}{item.change.toFixed(1)}%
+                          </span>
+                        </motion.div>
+                      ))}
+                    </div>
+                    <div className="border-t border-border p-1.5">
+                      <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
+                        <Plus size={9} />
+                        <span>Add Ticker</span>
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {agent.status === "hot" ? (
-                      <span className="bg-status-hot text-primary-foreground text-[10px] font-mono px-2 py-0.5 tracking-wider">
-                        HOT
-                      </span>
-                    ) : agent.status === "active" ? (
-                      <span className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-status-active animate-pulse-dot" />
-                        <span className="text-[10px] font-mono text-muted-foreground">ACTIVE</span>
-                      </span>
-                    ) : (
-                      <span className="text-[10px] font-mono text-muted-foreground">IDLE</span>
-                    )}
-                    <ExternalLink
-                      size={12}
-                      className="text-muted-foreground/0 group-hover:text-muted-foreground transition-colors ml-2"
-                    />
-                  </div>
-                </div>
+                </ResizablePanel>
 
-                {/* Description */}
-                <div className="px-5 pt-4 pb-3">
-                  <p className="text-xs text-muted-foreground leading-relaxed">{agent.description}</p>
-                </div>
+                <ResizableHandle withHandle />
 
-                {/* Stats Grid */}
-                <div className="px-5 pb-4">
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
-                    {agent.stats.map((stat) => (
-                      <div
-                        key={stat.label}
-                        className="flex justify-between text-[10px] font-mono tracking-wider text-muted-foreground"
-                      >
-                        <span>{stat.label}:</span>
-                        <span
-                          className="text-foreground"
-                          style={
-                            stat.label === "STATE"
-                              ? { color: agentColor }
-                              : undefined
-                          }
+                {/* Feed */}
+                <ResizablePanel defaultSize={48} minSize={30}>
+                  <div className="h-full flex flex-col overflow-hidden">
+                    <div className="flex-1 overflow-y-auto px-5 py-4">
+                      {selected.feed.map((entry, i) => (
+                        <motion.div
+                          key={`${selectedId}-${i}`}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.06 }}
                         >
-                          {stat.value}
-                        </span>
+                          {entry.date && (
+                            <div className="mb-2 mt-4 first:mt-0">
+                              <span className="font-mono text-[10px] tracking-wide text-foreground/70">{entry.date}</span>
+                            </div>
+                          )}
+                          <div className="mb-4 pb-4 border-b border-border/50 last:border-0">
+                            <span className="text-[9px] font-mono text-muted-foreground">{entry.time}</span>
+                            <p className="mt-1.5 text-xs leading-relaxed text-foreground/90">{entry.content}</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                    {/* Chat Input */}
+                    <div className="border-t border-border p-3">
+                      <div className="border border-border bg-card px-3 py-2">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="text-muted-foreground/50 font-mono text-xs">&gt;</span>
+                          <input
+                            type="text"
+                            placeholder="Ask your agent anything..."
+                            className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <button className="text-[9px] font-mono text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
+                              /Deep Research <ChevronDown size={8} />
+                            </button>
+                          </div>
+                          <button className="text-muted-foreground hover:text-foreground transition-colors" style={{ color: agentColor }}>
+                            <Send size={12} />
+                          </button>
+                        </div>
                       </div>
-                    ))}
+                    </div>
                   </div>
-                </div>
+                </ResizablePanel>
 
-                {/* Recent Signal */}
-                <div className="px-5 pb-5 pt-2 border-t border-border">
-                  <span className="text-[10px] font-mono tracking-wider text-muted-foreground block mb-1.5">
-                    LATEST_SIGNAL
-                  </span>
-                  <p className="text-xs text-foreground/80 leading-relaxed line-clamp-2">
-                    {agent.recentSignal}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
+                <ResizableHandle withHandle />
 
-          {/* Empty cell for grid alignment on 3-col */}
-          <motion.div
-            className="border border-border bg-card/50 hidden xl:flex items-center justify-center min-h-[280px]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            <div className="text-center">
-              <span className="text-[10px] font-mono text-muted-foreground/50 tracking-wider block mb-2">
-                SLOT_AVAILABLE
-              </span>
-              <span className="text-muted-foreground/30 text-3xl">+</span>
-              <span className="text-[10px] font-mono text-muted-foreground/40 tracking-wider block mt-2">
-                DEPLOY NEW AGENT
-              </span>
-            </div>
-          </motion.div>
-        </div>
-      </main>
+                {/* Market Data & Headlines */}
+                <ResizablePanel defaultSize={30} minSize={18} maxSize={40}>
+                  <div className="h-full flex flex-col overflow-hidden border-l border-border">
+                    {/* Market Stats */}
+                    <div className="p-3 border-b border-border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] font-mono tracking-wider" style={{ color: agentColor }}>MARKET LIVE</span>
+                        <ExternalLink size={10} className="text-muted-foreground" />
+                      </div>
+                      <div className="border border-border bg-card p-2.5">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="font-bold text-xs">{selected.watchlist[0]?.ticker}</span>
+                          <span className="text-[9px] font-mono text-muted-foreground truncate">{selected.watchlist[0]?.name}</span>
+                        </div>
+                        <div className="flex gap-2 text-[9px] font-mono text-muted-foreground mb-2 flex-wrap">
+                          {selected.marketStats.map((stat) => (
+                            <span key={stat.label} className="whitespace-nowrap">
+                              <span>{stat.label}</span>{" "}
+                              <span className="text-foreground">{stat.value}</span>
+                            </span>
+                          ))}
+                        </div>
+                        <svg viewBox="0 0 300 80" className="w-full h-14">
+                          <defs>
+                            <linearGradient id={`grad-${selectedId}`} x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor={agentColor} stopOpacity="0.3" />
+                              <stop offset="100%" stopColor={agentColor} stopOpacity="0" />
+                            </linearGradient>
+                          </defs>
+                          <motion.path
+                            d="M0,55 L40,50 L80,60 L120,45 L160,35 L200,38 L240,25 L280,28 L300,20"
+                            fill="none"
+                            stroke={agentColor}
+                            strokeWidth="1.5"
+                            initial={{ pathLength: 0 }}
+                            animate={{ pathLength: 1 }}
+                            transition={{ duration: 1.5, delay: 0.2 }}
+                          />
+                          <motion.path
+                            d="M0,55 L40,50 L80,60 L120,45 L160,35 L200,38 L240,25 L280,28 L300,20 L300,80 L0,80 Z"
+                            fill={`url(#grad-${selectedId})`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.8, delay: 1 }}
+                          />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Headlines */}
+                    <div className="flex-1 overflow-y-auto p-3">
+                      <div className="mb-2">
+                        <span className="font-mono text-[9px] tracking-wider text-muted-foreground">HEADLINES</span>
+                      </div>
+                      <div className="space-y-2">
+                        {selected.headlines.map((headline, i) => (
+                          <motion.div
+                            key={`${selectedId}-h-${i}`}
+                            className="flex gap-2 group cursor-pointer py-0.5"
+                            initial={{ opacity: 0, x: 8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 + i * 0.05 }}
+                          >
+                            <span className="text-[9px] font-mono text-muted-foreground shrink-0 mt-0.5">{headline.time}</span>
+                            <p className={`text-[10px] leading-relaxed group-hover:underline ${
+                              headline.sentiment === "bull"
+                                ? "text-status-active"
+                                : headline.sentiment === "bear"
+                                  ? "text-status-hot"
+                                  : "text-foreground/70"
+                            }`}>
+                              {headline.text}
+                            </p>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </motion.div>
+          </AnimatePresence>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 };
