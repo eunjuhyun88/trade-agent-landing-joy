@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 const AppNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { connected, address, wallets, connectedWallet, connect, disconnect } = useWallet();
+  const { connected, address, wallets, connectedWallet, connect, disconnect, subscription } = useWallet();
   const { toast } = useToast();
   const [walletOpen, setWalletOpen] = useState(false);
 
@@ -59,6 +59,12 @@ const AppNav = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          {subscription && subscription !== "FREE" && (
+            <div className="hidden sm:flex font-mono text-[9px] font-bold bg-status-active/15 border border-status-active text-status-active px-2 py-[3px] items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-status-active" />
+              {subscription === "PRO YEARLY" ? "PRO YR" : "PRO"} ACTIVE
+            </div>
+          )}
           <div className="font-mono text-[10px] font-bold bg-[hsl(45_90%_55%/0.15)] border border-[hsl(45_90%_55%)] text-[hsl(45_90%_55%)] px-2 py-[3px]">
             ENTRY SCORE 73
           </div>

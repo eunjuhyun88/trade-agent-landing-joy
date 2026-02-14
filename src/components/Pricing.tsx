@@ -64,7 +64,7 @@ const tiers = [
 const Pricing = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { connected, address, connectedWallet, wallets, connect } = useWallet();
+  const { connected, address, connectedWallet, wallets, connect, subscription, subscribe } = useWallet();
   const [paymentModal, setPaymentModal] = useState<typeof tiers[0] | null>(null);
   const [walletSelectOpen, setWalletSelectOpen] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -72,6 +72,11 @@ const Pricing = () => {
   const handleCta = (tier: typeof tiers[0]) => {
     if (tier.name === "FREE") {
       navigate("/agents");
+      return;
+    }
+    // Already subscribed to this plan
+    if (subscription === tier.name) {
+      toast({ title: "✅ Already Active", description: `You already have an active ${tier.name} subscription.` });
       return;
     }
     if (!connected) {
@@ -93,6 +98,7 @@ const Pricing = () => {
     setProcessing(true);
     setTimeout(() => {
       setProcessing(false);
+      subscribe(paymentModal.name as any);
       setPaymentModal(null);
       toast({
         title: "✅ Subscription Activated",
@@ -137,9 +143,16 @@ const Pricing = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.1 }}
           >
-            <span className={`text-xs font-mono tracking-[0.2em] mb-6 ${tier.highlight ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-              {tier.name}
-            </span>
+            <div className="flex items-center gap-2 mb-6">
+              <span className={`text-xs font-mono tracking-[0.2em] ${tier.highlight ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                {tier.name}
+              </span>
+              {subscription === tier.name && (
+                <span className="text-[7px] font-mono font-bold px-1.5 py-[2px] bg-status-active/20 text-status-active border border-status-active/30 tracking-[1px]">
+                  ACTIVE
+                </span>
+              )}
+            </div>
             <div className="mb-1">
               <span className="text-4xl md:text-5xl font-bold tracking-tighter">{tier.price}</span>
               <span className={`text-sm font-mono ml-1 ${tier.highlight ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
@@ -170,12 +183,21 @@ const Pricing = () => {
             <button
               onClick={() => handleCta(tier)}
               className={`w-full py-3 text-xs font-mono tracking-wider transition-colors ${
-                tier.highlight
-                  ? "bg-accent text-accent-foreground hover:opacity-90"
-                  : "border border-foreground hover:bg-secondary"
+                subscription === tier.name
+                  ? "bg-status-active/15 border border-status-active text-status-active cursor-default"
+                  : tier.highlight
+                    ? "bg-accent text-accent-foreground hover:opacity-90"
+                    : "border border-foreground hover:bg-secondary"
               }`}
             >
-              {tier.name === "FREE" ? tier.cta : connected ? `PAY ${tier.price} $SHO` : `CONNECT & PAY ${tier.price} $SHO`}
+              {subscription === tier.name
+                ? "✓ ACTIVE"
+                : tier.name === "FREE"
+                  ? tier.cta
+                  : connected
+                    ? `PAY ${tier.price} $SHO`
+                    : `CONNECT & PAY ${tier.price} $SHO`
+              }
             </button>
           </motion.div>
         ))}

@@ -16,6 +16,8 @@ export type TradeRecord = {
   toAmount?: string;
 };
 
+export type SubscriptionPlan = "FREE" | "PRO MONTHLY" | "PRO YEARLY" | null;
+
 type WalletContextType = {
   connected: string | null;
   address: string;
@@ -25,6 +27,8 @@ type WalletContextType = {
   disconnect: () => void;
   trades: TradeRecord[];
   addTrade: (trade: TradeRecord) => void;
+  subscription: SubscriptionPlan;
+  subscribe: (plan: SubscriptionPlan) => void;
 };
 
 const WalletContext = createContext<WalletContextType | null>(null);
@@ -39,6 +43,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [connected, setConnected] = useState<string | null>(null);
   const [address, setAddress] = useState("");
   const [trades, setTrades] = useState<TradeRecord[]>([]);
+  const [subscription, setSubscription] = useState<SubscriptionPlan>(null);
 
   const connect = (walletId: string) => {
     setConnected(walletId);
@@ -54,10 +59,14 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     setTrades((prev) => [trade, ...prev]);
   }, []);
 
+  const subscribe = useCallback((plan: SubscriptionPlan) => {
+    setSubscription(plan);
+  }, []);
+
   const connectedWallet = wallets.find((w) => w.id === connected);
 
   return (
-    <WalletContext.Provider value={{ connected, address, wallets, connectedWallet, connect, disconnect, trades, addTrade }}>
+    <WalletContext.Provider value={{ connected, address, wallets, connectedWallet, connect, disconnect, trades, addTrade, subscription, subscribe }}>
       {children}
     </WalletContext.Provider>
   );
