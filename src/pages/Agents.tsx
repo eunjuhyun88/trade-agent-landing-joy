@@ -287,6 +287,9 @@ const Agents = () => {
   const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
   const [alertFilter, setAlertFilter] = useState<"all" | "mine">("all");
   const [watchlistCollapsed, setWatchlistCollapsed] = useState(false);
+  const [selectedTickerIndex, setSelectedTickerIndex] = useState(0);
+  const timeframes = ["1H", "4H", "1D", "1W"] as const;
+  const [selectedTimeframe, setSelectedTimeframe] = useState<string>("4H");
   const dataSources = ["On-Chain", "Derivatives", "Social", "Technical", "News", "Private Data"];
   const [selectedSources, setSelectedSources] = useState<Set<string>>(new Set(["On-Chain", "Derivatives", "Social", "Technical"]));
 
@@ -302,7 +305,7 @@ const Agents = () => {
   const [liveAlerts, setLiveAlerts] = useState(initialAlertEvents);
   const alertCounter = useRef(0);
   const alertScrollRef = useRef<HTMLDivElement>(null);
-  const selectedTicker = sharedWatchlist[0];
+  const selectedTicker = sharedWatchlist[selectedTickerIndex];
   const filteredAlerts = alertFilter === "mine" ? liveAlerts.filter((a) => a.mine) : liveAlerts;
 
   // Chat state — now with orchestrated responses
@@ -803,8 +806,8 @@ const Agents = () => {
                   <div className="px-3 py-[3px] border-b border-border bg-card/50">
                     <span className="text-[7px] font-mono font-semibold text-muted-foreground tracking-wider">CRYPTO</span>
                   </div>
-                  {sharedWatchlist.map((item) => (
-                    <div key={item.ticker} className={`flex items-center px-3 py-[5px] cursor-pointer transition-colors border-b border-border/30 ${item.ticker === selectedTicker?.ticker ? "bg-accent/10" : "hover:bg-card/50"}`}>
+                  {sharedWatchlist.map((item, idx) => (
+                    <div key={item.ticker} onClick={() => setSelectedTickerIndex(idx)} className={`flex items-center px-3 py-[5px] cursor-pointer transition-colors border-b border-border/30 ${idx === selectedTickerIndex ? "bg-accent/10" : "hover:bg-card/50"}`}>
                       <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
                       <span className={`w-14 text-right font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
                         {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
@@ -893,7 +896,7 @@ const Agents = () => {
               <ResizablePanel defaultSize={45} minSize={20} maxSize={70}>
                 <div className="h-full flex flex-col overflow-hidden border-b border-border">
                   <div className="px-3 pt-2 pb-1 flex items-center justify-between shrink-0">
-                    <div className="flex items-center gap-2">
+                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-mono tracking-wider text-accent">MARKET LIVE</span>
                       <span className="font-bold text-xs text-accent ml-2">{selectedTicker?.ticker}</span>
                       <span className="text-[9px] font-mono text-muted-foreground">{selectedTicker?.name}</span>
@@ -901,7 +904,14 @@ const Agents = () => {
                         {selectedTicker.change > 0 ? "+" : ""}{selectedTicker.change}%
                       </span>
                     </div>
-                    <ExternalLink size={10} className="text-muted-foreground" />
+                    <div className="flex items-center gap-1">
+                      {timeframes.map((tf) => (
+                        <button key={tf} onClick={() => setSelectedTimeframe(tf)} className={`font-mono text-[8px] px-1.5 py-[2px] transition-colors ${selectedTimeframe === tf ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                          {tf}
+                        </button>
+                      ))}
+                      <ExternalLink size={10} className="text-muted-foreground ml-1" />
+                    </div>
                   </div>
                   <div className="flex-1 min-h-0">
                     <TradingViewChart symbol={selectedTicker?.ticker || "BTC"} fillHeight />
@@ -1014,7 +1024,7 @@ const Agents = () => {
                             <span className="text-accent font-mono text-sm">&gt;</span>
                             <div className="flex items-center gap-1 shrink-0 border-r border-border/50 pr-2 mr-1">
                               <LineChart size={10} className="text-accent" />
-                              <span className="text-[8px] font-mono text-accent font-semibold">{selectedTicker?.ticker} 4H</span>
+                              <span className="text-[8px] font-mono text-accent font-semibold">{selectedTicker?.ticker} {selectedTimeframe}</span>
                             </div>
                             <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder="Ask your agents..." className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40" />
                             <button type="submit" className="transition-colors text-accent hover:text-foreground"><Send size={12} /></button>
