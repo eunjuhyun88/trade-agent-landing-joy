@@ -685,16 +685,16 @@ const Agents = () => {
                 </div>
               </div>
 
-              {/* Headlines */}
-              <div className="p-3 border-b border-border">
-                <div className="mb-2">
+              {/* Headlines — scrollable, compact */}
+              <div className="p-3 border-b border-border shrink-0 max-h-[120px] overflow-y-auto">
+                <div className="mb-1.5">
                   <span className="font-mono text-[9px] tracking-wider text-muted-foreground">HEADLINES</span>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {agents.flatMap((a) => a.headlines.map((h) => ({ ...h, agentEmoji: a.emoji, agentColor: a.color }))).slice(0, 6).map((h, i) => (
-                    <div key={i} className="flex gap-2 group cursor-pointer py-0.5">
-                      <span className="text-[9px] font-mono text-muted-foreground shrink-0 mt-0.5">{h.time}</span>
-                      <p className={`text-[10px] leading-relaxed group-hover:underline ${h.sentiment === "bull" ? "text-status-active" : (h.sentiment as string) === "bear" ? "text-status-hot" : "text-foreground/70"}`}>{h.text}</p>
+                    <div key={i} className="flex gap-2 group cursor-pointer">
+                      <span className="text-[8px] font-mono text-muted-foreground shrink-0">{h.time}</span>
+                      <p className={`text-[9px] leading-snug group-hover:underline ${h.sentiment === "bull" ? "text-status-active" : (h.sentiment as string) === "bear" ? "text-status-hot" : "text-foreground/70"}`}>{h.text}</p>
                     </div>
                   ))}
                 </div>
