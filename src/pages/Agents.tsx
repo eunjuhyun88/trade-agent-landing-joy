@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
   BarChart3, Link2, TrendingUp, MessageSquare, Clock, Bell,
-  ExternalLink, Search, Send, Settings, Plus, ChevronDown, ArrowDownUp,
+  ExternalLink, Search, Send, Settings, Plus, ChevronDown, ArrowDownUp, X,
 } from "lucide-react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import AppNav from "@/components/AppNav";
@@ -276,6 +276,8 @@ const Agents = () => {
   const [swapFrom, setSwapFrom] = useState("ETH");
   const [swapTo, setSwapTo] = useState("BTC");
   const [swapAmount, setSwapAmount] = useState("");
+  const [swapModalOpen, setSwapModalOpen] = useState(false);
+  const [swapSignal, setSwapSignal] = useState<{ asset: string; direction: string } | null>(null);
   const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
   const [alertFilter, setAlertFilter] = useState<"all" | "mine">("all");
   const dataSources = ["On-Chain", "Derivatives", "Social", "Technical", "News", "Private Data"];
@@ -613,6 +615,28 @@ const Agents = () => {
                                   <div className="flex-1 h-1 bg-border overflow-hidden">
                                     <motion.div className="h-full bg-[hsl(45_90%_55%)]" initial={{ width: 0 }} animate={{ width: `${msg.confidence}%` }} transition={{ duration: 0.8, delay: 0.3 }} />
                                   </div>
+                                  <button
+                                    onClick={() => {
+                                      const asset = msg.content.match(/BTC|ETH|SOL/)?.[0] || "BTC";
+                                      setSwapSignal({ asset, direction: msg.signal || "LONG" });
+                                      if (msg.signal?.includes("LONG")) {
+                                        setSwapFrom("USDT");
+                                        setSwapTo(asset);
+                                      } else {
+                                        setSwapFrom(asset);
+                                        setSwapTo("USDT");
+                                      }
+                                      setSwapAmount("");
+                                      setSwapModalOpen(true);
+                                    }}
+                                    className={`font-mono text-[9px] font-bold px-3 py-1.5 border transition-colors ${
+                                      msg.signal?.includes("LONG")
+                                        ? "border-status-active text-status-active bg-status-active/10 hover:bg-status-active/20"
+                                        : "border-status-hot text-status-hot bg-status-hot/10 hover:bg-status-hot/20"
+                                    }`}
+                                  >
+                                    {msg.signal?.includes("LONG") ? "▲ BUY" : "▼ SELL"}
+                                  </button>
                                 </motion.div>
                               )}
                             </>
@@ -778,93 +802,114 @@ const Agents = () => {
                 </div>
               </div>
 
-              {/* Quick Swap */}
-              <div className="px-3 py-2 bg-card border-t border-border">
-                <div className="flex items-center gap-[5px] mb-2">
-                  <ArrowDownUp size={12} className="text-accent" />
-                  <span className="font-mono text-[8px] font-semibold tracking-[1px]">QUICK SWAP</span>
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+
+      {/* Swap Modal */}
+      <AnimatePresence>
+        {swapModalOpen && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSwapModalOpen(false)}
+          >
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+            <motion.div
+              className="relative w-full max-w-sm border border-border bg-card shadow-2xl"
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <ArrowDownUp size={14} className="text-accent" />
+                    <span className="font-mono text-[10px] font-bold tracking-[1px]">QUICK SWAP</span>
+                  </div>
+                  {swapSignal && (
+                    <span className={`font-mono text-[9px] font-bold px-2 py-[2px] border ${
+                      swapSignal.direction.includes("LONG")
+                        ? "border-status-active text-status-active bg-status-active/10"
+                        : "border-status-hot text-status-hot bg-status-hot/10"
+                    }`}>
+                      {swapSignal.direction} {swapSignal.asset}
+                    </span>
+                  )}
+                  <button onClick={() => setSwapModalOpen(false)} className="text-muted-foreground hover:text-foreground">
+                    <X size={14} />
+                  </button>
                 </div>
 
                 {connected ? (
                   <div className="space-y-2">
-                    <div className="border border-border p-2">
+                    <div className="border border-border p-3">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-[7px] font-mono text-muted-foreground">FROM</span>
-                        <span className="text-[7px] font-mono text-muted-foreground">Balance: {swapFrom === "ETH" ? "2.4521" : "0.2451"}</span>
+                        <span className="text-[8px] font-mono text-muted-foreground">FROM</span>
+                        <span className="text-[8px] font-mono text-muted-foreground">Balance: {swapFrom === "ETH" ? "2.4521" : swapFrom === "USDT" ? "9,424.18" : "0.2451"}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <select
-                          value={swapFrom}
-                          onChange={(e) => setSwapFrom(e.target.value)}
-                          className="bg-secondary border border-border text-[10px] font-mono font-bold px-2 py-1 outline-none text-foreground"
-                        >
+                        <select value={swapFrom} onChange={(e) => setSwapFrom(e.target.value)} className="bg-secondary border border-border text-[10px] font-mono font-bold px-2 py-1 outline-none text-foreground">
                           <option value="ETH">ETH</option>
                           <option value="BTC">BTC</option>
                           <option value="SOL">SOL</option>
                           <option value="USDT">USDT</option>
                         </select>
-                        <input
-                          type="text"
-                          value={swapAmount}
-                          onChange={(e) => setSwapAmount(e.target.value)}
-                          placeholder="0.00"
-                          className="flex-1 text-right bg-transparent text-sm font-mono outline-none placeholder:text-muted-foreground/30"
-                        />
+                        <input type="text" value={swapAmount} onChange={(e) => setSwapAmount(e.target.value)} placeholder="0.00" className="flex-1 text-right bg-transparent text-sm font-mono outline-none placeholder:text-muted-foreground/30" />
                       </div>
                     </div>
 
                     <div className="flex justify-center">
-                      <button
-                        onClick={() => { const tmp = swapFrom; setSwapFrom(swapTo); setSwapTo(tmp); }}
-                        className="w-6 h-6 border border-border bg-secondary flex items-center justify-center hover:border-accent/50 transition-colors"
-                      >
-                        <ArrowDownUp size={10} className="text-muted-foreground" />
+                      <button onClick={() => { const tmp = swapFrom; setSwapFrom(swapTo); setSwapTo(tmp); }} className="w-7 h-7 border border-border bg-secondary flex items-center justify-center hover:border-accent/50 transition-colors">
+                        <ArrowDownUp size={11} className="text-muted-foreground" />
                       </button>
                     </div>
 
-                    <div className="border border-border p-2">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[7px] font-mono text-muted-foreground">TO</span>
-                      </div>
+                    <div className="border border-border p-3">
+                      <span className="text-[8px] font-mono text-muted-foreground mb-1 block">TO</span>
                       <div className="flex items-center gap-2">
-                        <select
-                          value={swapTo}
-                          onChange={(e) => setSwapTo(e.target.value)}
-                          className="bg-secondary border border-border text-[10px] font-mono font-bold px-2 py-1 outline-none text-foreground"
-                        >
+                        <select value={swapTo} onChange={(e) => setSwapTo(e.target.value)} className="bg-secondary border border-border text-[10px] font-mono font-bold px-2 py-1 outline-none text-foreground">
                           <option value="BTC">BTC</option>
                           <option value="ETH">ETH</option>
                           <option value="SOL">SOL</option>
                           <option value="USDT">USDT</option>
                         </select>
                         <span className="flex-1 text-right text-sm font-mono text-muted-foreground">
-                          {swapAmount ? (parseFloat(swapAmount) * (swapFrom === "ETH" && swapTo === "BTC" ? 0.0377 : 1.2)).toFixed(6) : "0.00"}
+                          {swapAmount ? (parseFloat(swapAmount) * (swapFrom === "ETH" && swapTo === "BTC" ? 0.0377 : swapFrom === "USDT" && swapTo === "BTC" ? 0.0000098 : swapFrom === "USDT" && swapTo === "ETH" ? 0.00026 : swapFrom === "USDT" && swapTo === "SOL" ? 0.00402 : 1.2)).toFixed(6) : "0.00"}
                         </span>
                       </div>
                     </div>
 
                     {swapAmount && (
                       <div className="text-[8px] font-mono text-muted-foreground flex justify-between px-1">
-                        <span>Rate: 1 {swapFrom} ≈ {swapFrom === "ETH" && swapTo === "BTC" ? "0.0377" : "1.20"} {swapTo}</span>
+                        <span>Rate: 1 {swapFrom} ≈ {swapFrom === "USDT" && swapTo === "BTC" ? "0.0000098" : swapFrom === "USDT" && swapTo === "ETH" ? "0.00026" : swapFrom === "ETH" && swapTo === "BTC" ? "0.0377" : "1.20"} {swapTo}</span>
                         <span>Gas: ~$2.40</span>
                       </div>
                     )}
 
-                    <button className="w-full py-[7px] bg-[hsl(45_90%_55%/0.15)] border border-[hsl(45_90%_55%)] text-[hsl(45_90%_55%)] font-mono text-[9px] font-semibold tracking-[2px] uppercase cursor-pointer hover:bg-[hsl(45_90%_55%/0.25)] transition-colors">
-                      SWAP
+                    <button
+                      onClick={() => setSwapModalOpen(false)}
+                      className="w-full py-2.5 bg-[hsl(45_90%_55%/0.15)] border border-[hsl(45_90%_55%)] text-[hsl(45_90%_55%)] font-mono text-[10px] font-semibold tracking-[2px] uppercase cursor-pointer hover:bg-[hsl(45_90%_55%/0.25)] transition-colors"
+                    >
+                      EXECUTE SWAP
                     </button>
                   </div>
                 ) : (
-                  <div className="text-center py-3">
-                    <p className="text-[9px] font-mono text-muted-foreground mb-1">지갑을 연결하면 스왑할 수 있습니다</p>
-                    <p className="text-[8px] font-mono text-muted-foreground/50">Connect Wallet →</p>
+                  <div className="text-center py-6">
+                    <p className="text-[10px] font-mono text-muted-foreground mb-2">지갑을 연결하면 스왑할 수 있습니다</p>
+                    <button onClick={() => setSwapModalOpen(false)} className="text-[9px] font-mono text-accent hover:underline">Connect Wallet →</button>
                   </div>
                 )}
               </div>
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
 
       {/* Status Ticker Bar */}
       <div className="shrink-0 border-t border-border">
