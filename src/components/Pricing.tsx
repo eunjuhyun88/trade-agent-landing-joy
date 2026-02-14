@@ -83,11 +83,11 @@ const Pricing = () => {
       </motion.h2>
 
       {/* Cards — 3 columns */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-border max-w-5xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 border border-border max-w-5xl">
         {tiers.map((tier, i) => (
           <motion.div
             key={tier.name}
-            className={`p-8 flex flex-col border border-border ${
+            className={`p-6 sm:p-8 flex flex-col border border-border ${
               tier.highlight ? "bg-primary text-primary-foreground" : "bg-card"
             }`}
             initial={{ opacity: 0, y: 30 }}

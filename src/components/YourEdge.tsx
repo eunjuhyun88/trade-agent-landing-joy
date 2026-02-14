@@ -25,31 +25,29 @@ const comparisons = [
 
 const YourEdge = () => {
   return (
-    <section className="px-6 md:px-12 py-20">
+    <section className="px-4 sm:px-6 md:px-12 py-16 sm:py-20">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-4">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-4">
           YOUR <span className="text-accent">EDGE.</span>
         </h2>
-        <p className="text-sm text-muted-foreground mb-10">
+        <p className="text-sm text-muted-foreground mb-8 sm:mb-10">
           What used to take 6 tabs and 2 hours now takes 5 minutes.
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-border">
-        {/* Header */}
+      {/* Mobile: stacked cards, Desktop: grid table */}
+      <div className="hidden sm:grid grid-cols-2 gap-0 border border-border">
         <div className="border-b border-border px-5 py-3 bg-card">
           <span className="text-xs font-mono tracking-wider text-muted-foreground">BEFORE</span>
         </div>
         <div className="border-b border-border px-5 py-3 bg-card">
           <span className="text-xs font-mono tracking-wider text-accent">AFTER</span>
         </div>
-
-        {/* Rows */}
         {comparisons.map((row, i) => (
           <motion.div
             key={i}
@@ -65,6 +63,23 @@ const YourEdge = () => {
             <div className="border-b border-border px-5 py-4 text-sm font-semibold text-foreground">
               {row.after}
             </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Mobile stacked */}
+      <div className="sm:hidden space-y-3">
+        {comparisons.map((row, i) => (
+          <motion.div
+            key={i}
+            className="border border-border p-4"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.08 }}
+          >
+            <p className="text-xs text-muted-foreground mb-2 line-through">{row.before}</p>
+            <p className="text-sm font-semibold text-accent">{row.after}</p>
           </motion.div>
         ))}
       </div>

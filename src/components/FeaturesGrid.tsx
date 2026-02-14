@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const FeaturesGrid = () => {
   return (
-    <section className="px-6 md:px-12 py-16">
+    <section className="px-4 sm:px-6 md:px-12 py-12 sm:py-16">
       {/* Section tag */}
       <motion.div
         className="mb-4"
@@ -16,7 +16,7 @@ const FeaturesGrid = () => {
 
       {/* Headline */}
       <motion.h2
-        className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tighter mb-6"
+        className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tighter mb-6"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
