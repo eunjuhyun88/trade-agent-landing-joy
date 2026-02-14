@@ -8,6 +8,7 @@ import {
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import AppNav from "@/components/AppNav";
 import TradingViewChart from "@/components/TradingViewChart";
+import TickerBar from "@/components/TickerBar";
 
 const sharedWatchlist = [
   { ticker: "BTC", name: "Bitcoin", price: "101,890", change: 2.41 },
@@ -794,16 +795,17 @@ const Agents = () => {
         </ResizablePanelGroup>
       </div>
 
-      {/* Status Bar */}
-      <div className="flex items-center justify-between px-3 h-[22px] bg-background border-t border-border font-mono text-[7px] text-muted-foreground tracking-[0.5px] shrink-0">
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-[3px]"><span className="w-1 h-1 rounded-full bg-status-active" /> CONNECTED</span>
-          <span className="flex items-center gap-[3px]"><span className="w-1 h-1 rounded-full bg-accent" /> 5 AGENTS</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span>LATENCY: 12ms</span>
-          <span>UPTIME: 99.98%</span>
-          <span>v2.4.1</span>
+      {/* Status Ticker Bar */}
+      <div className="shrink-0 border-t border-border">
+        <div className="bg-background text-muted-foreground py-0 overflow-hidden h-[22px] flex items-center">
+          <div className="animate-ticker whitespace-nowrap flex">
+            <span className="text-[8px] font-mono tracking-[1px] px-4">
+              <span className="text-status-active">●</span> CONNECTED | 5 AGENTS | GAS: 14 GWEI | SOL_PRICE: $142.22 | BTC_DOMINANCE: 52.4% | TRADING_VOLUME_24H: $4.2B | LIQUIDATIONS_1H: $1.2M | SYSTEM_STABILITY: 99.98% | BLOCK_HEIGHT: 1982/... | LATENCY: 12ms | UPTIME: 99.98% | v2.4.1
+            </span>
+            <span className="text-[8px] font-mono tracking-[1px] px-4">
+              <span className="text-status-active">●</span> CONNECTED | 5 AGENTS | GAS: 14 GWEI | SOL_PRICE: $142.22 | BTC_DOMINANCE: 52.4% | TRADING_VOLUME_24H: $4.2B | LIQUIDATIONS_1H: $1.2M | SYSTEM_STABILITY: 99.98% | BLOCK_HEIGHT: 1982/... | LATENCY: 12ms | UPTIME: 99.98% | v2.4.1
+            </span>
+          </div>
         </div>
       </div>
     </div>
