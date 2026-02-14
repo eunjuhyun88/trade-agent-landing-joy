@@ -2,11 +2,17 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { toast } = useToast();
+
+  const handleDocs = () => {
+    toast({ title: "📄 Documentation", description: "Docs page coming soon. Stay tuned!" });
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
@@ -22,7 +28,7 @@ const Navbar = () => {
             >
               TERMINAL
             </span>
-            <span className="px-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">DOCS</span>
+            <span onClick={handleDocs} className="px-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">DOCS</span>
           </div>
         </div>
         <div className="flex items-center gap-3 sm:gap-6">
@@ -57,7 +63,10 @@ const Navbar = () => {
             >
               TERMINAL
             </button>
-            <button className="block w-full text-left text-sm font-mono tracking-wider py-2 text-muted-foreground hover:text-foreground">
+            <button
+              onClick={() => { handleDocs(); setMenuOpen(false); }}
+              className="block w-full text-left text-sm font-mono tracking-wider py-2 text-muted-foreground hover:text-foreground"
+            >
               DOCS
             </button>
             <button

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, ArrowDownUp, Plus, Wallet, Copy, ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import AppNav from "@/components/AppNav";
 import { useWallet, TradeRecord } from "@/contexts/WalletContext";
+import { useToast } from "@/hooks/use-toast";
 
 const mockPortfolio = [
   { asset: "BTC", name: "Bitcoin", amount: "0.2451", value: "$24,973.29", price: "$101,890", change: 2.41, pnl: "+$1,842.30", pnlPct: "+7.95%", allocation: 48 },
@@ -23,10 +25,31 @@ const mockActivity = [
 const Holdings = () => {
   const [tab, setTab] = useState<"portfolio" | "activity">("portfolio");
   const { connected, address, connectedWallet, trades } = useWallet();
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const allActivity = [...trades, ...mockActivity];
   const totalValue = "$51,598.28";
   const totalPnl = "+$3,753.08";
   const totalPnlPct = "+7.84%";
+
+  const handleCopyAddress = () => {
+    navigator.clipboard.writeText(address || "");
+    toast({ title: "📋 Copied", description: "Wallet address copied to clipboard." });
+  };
+
+  const handleExternalLink = () => {
+    toast({ title: "🔗 Explorer", description: "Opening block explorer..." });
+    // In a real app: window.open(`https://etherscan.io/address/${address}`, "_blank");
+  };
+
+  const handleAddPosition = () => {
+    toast({ title: "➕ Add Position", description: "Manual position tracking coming soon!" });
+  };
+
+  const handleRowClick = (asset: string) => {
+    navigate("/agents");
+    toast({ title: `📊 ${asset}`, description: `Navigating to terminal for ${asset} analysis.` });
+  };
 
   return (
     <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
@@ -52,8 +75,8 @@ const Holdings = () => {
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
                       <p className="text-[10px] font-mono text-muted-foreground">{address}</p>
-                      <Copy size={9} className="text-muted-foreground hover:text-foreground cursor-pointer" />
-                      <ExternalLink size={9} className="text-muted-foreground hover:text-foreground cursor-pointer" />
+                      <Copy size={9} className="text-muted-foreground hover:text-foreground cursor-pointer" onClick={handleCopyAddress} />
+                      <ExternalLink size={9} className="text-muted-foreground hover:text-foreground cursor-pointer" onClick={handleExternalLink} />
                     </div>
                   </div>
                 </div>
@@ -159,6 +182,7 @@ const Holdings = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
+                  onClick={() => handleRowClick(item.asset)}
                 >
                   <div className="w-24">
                     <span className="text-xs font-mono font-bold text-accent">{item.asset}</span>
@@ -177,7 +201,7 @@ const Holdings = () => {
               ))}
 
               <div className="px-4 py-2 border-t border-border">
-                <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors">
+                <button onClick={handleAddPosition} className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors">
                   <Plus size={9} />
                   <span>Add Position</span>
                 </button>

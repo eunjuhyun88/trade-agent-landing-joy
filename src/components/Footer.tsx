@@ -1,6 +1,13 @@
 import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 const Footer = () => {
+  const { toast } = useToast();
+
+  const handleSocial = (platform: string) => {
+    toast({ title: `🔗 ${platform}`, description: `${platform} link coming soon!` });
+  };
+
   return (
     <motion.footer
       className="px-4 sm:px-6 md:px-12 py-8 sm:py-12 border-t border-border"
@@ -13,9 +20,9 @@ const Footer = () => {
         <div>
           <span className="text-xl sm:text-2xl font-bold tracking-tight">STOCKCLAW.</span>
           <div className="flex items-center gap-4 sm:gap-6 mt-4 text-xs font-mono tracking-wider text-muted-foreground">
-            <span className="hover:text-foreground cursor-pointer transition-colors">TWITTER / X</span>
-            <span className="hover:text-foreground cursor-pointer transition-colors">DISCORD</span>
-            <span className="hover:text-foreground cursor-pointer transition-colors">DOCS</span>
+            <span onClick={() => handleSocial("Twitter / X")} className="hover:text-foreground cursor-pointer transition-colors">TWITTER / X</span>
+            <span onClick={() => handleSocial("Discord")} className="hover:text-foreground cursor-pointer transition-colors">DISCORD</span>
+            <span onClick={() => handleSocial("Docs")} className="hover:text-foreground cursor-pointer transition-colors">DOCS</span>
           </div>
         </div>
         <div className="flex flex-col items-start md:items-end gap-2">

@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   BarChart3, Link2, MessageSquare, TrendingUp,
@@ -7,6 +8,7 @@ import {
 } from "lucide-react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import AppNav from "@/components/AppNav";
+import { useToast } from "@/hooks/use-toast";
 
 const agentList = [
   { id: "chart", code: "AGT_01" },
@@ -186,7 +188,11 @@ const categoryIcons: Record<string, React.ReactNode> = {
 const AgentDetail = () => {
   const { agentId } = useParams<{ agentId: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const agent = agentData[agentId || "chart"];
+  const [chatInput, setChatInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [expandedFeed, setExpandedFeed] = useState<number | null>(null);
 
   if (!agent) {
     return (
@@ -197,6 +203,39 @@ const AgentDetail = () => {
   }
 
   const agentColor = `hsl(${agent.color})`;
+
+  const filteredWatchlist = searchQuery
+    ? agent.watchlist.filter(
+        (w) =>
+          w.ticker.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          w.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : agent.watchlist;
+
+  const handleSendChat = () => {
+    if (!chatInput.trim()) return;
+    toast({
+      title: `${agent.name} Agent`,
+      description: `Processing: "${chatInput.trim()}" — Agent response coming soon.`,
+    });
+    setChatInput("");
+  };
+
+  const handleAddTicker = () => {
+    toast({ title: "➕ Add Ticker", description: "Custom ticker tracking coming soon!" });
+  };
+
+  const handleSettings = () => {
+    toast({ title: "⚙️ Settings", description: "Watchlist settings coming soon!" });
+  };
+
+  const handleDeepResearch = () => {
+    toast({ title: "🔍 Deep Research", description: "Deep research mode coming soon!" });
+  };
+
+  const handleHeadlineClick = (text: string) => {
+    toast({ title: "📰 Headline", description: text });
+  };
 
   return (
     <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
@@ -238,13 +277,15 @@ const AgentDetail = () => {
                 <span className="text-[10px] font-mono tracking-wider" style={{ color: agentColor }}>
                   MY WATCHLIST
                 </span>
-                <Settings size={12} className="text-muted-foreground" />
+                <Settings size={12} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" onClick={handleSettings} />
               </div>
               <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-1">
                 <Search size={10} className="text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="bg-transparent text-[10px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50"
                 />
               </div>
@@ -255,13 +296,14 @@ const AgentDetail = () => {
                 <span className="text-[9px] font-mono text-muted-foreground tracking-wider">Default Watchlist</span>
                 <ChevronDown size={9} className="text-muted-foreground" />
               </div>
-              {agent.watchlist.map((item, i) => (
+              {filteredWatchlist.map((item, i) => (
                 <motion.div
                   key={item.ticker}
                   className="flex items-center justify-between px-2 py-1.5 hover:bg-secondary cursor-pointer transition-colors"
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.03 }}
+                  onClick={() => toast({ title: `📊 ${item.ticker}`, description: `Viewing ${item.name} data...` })}
                 >
                   <div className="min-w-0 flex-1 mr-2">
                     <span className="text-[11px] font-bold block truncate" style={{ color: agentColor }}>{item.ticker}</span>
@@ -272,10 +314,13 @@ const AgentDetail = () => {
                   </span>
                 </motion.div>
               ))}
+              {filteredWatchlist.length === 0 && (
+                <p className="text-[9px] font-mono text-muted-foreground/50 text-center py-4">No results found</p>
+              )}
             </div>
 
             <div className="border-t border-border p-1.5">
-              <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
+              <button onClick={handleAddTicker} className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
                 <Plus size={9} />
                 <span>Add Ticker</span>
               </button>
@@ -303,9 +348,12 @@ const AgentDetail = () => {
                   )}
                   <div className="mb-4 pb-4 border-b border-border/50 last:border-0">
                     <span className="text-[9px] font-mono text-muted-foreground">{entry.time}</span>
-                    <p className="mt-1.5 text-xs leading-relaxed text-foreground/90">{entry.content}</p>
-                    <button className="text-[9px] font-mono text-muted-foreground hover:text-foreground mt-1.5 transition-colors">
-                      ..More
+                    <p className={`mt-1.5 text-xs leading-relaxed text-foreground/90 ${expandedFeed === i ? "" : "line-clamp-3"}`}>{entry.content}</p>
+                    <button
+                      onClick={() => setExpandedFeed(expandedFeed === i ? null : i)}
+                      className="text-[9px] font-mono text-muted-foreground hover:text-foreground mt-1.5 transition-colors"
+                    >
+                      {expandedFeed === i ? "..Less" : "..More"}
                     </button>
                   </div>
                 </motion.div>
@@ -314,26 +362,28 @@ const AgentDetail = () => {
 
             {/* Chat Input */}
             <div className="border-t border-border p-3">
-              <div className="border border-border bg-card px-3 py-2">
+              <form onSubmit={(e) => { e.preventDefault(); handleSendChat(); }} className="border border-border bg-card px-3 py-2">
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className="text-muted-foreground/50 font-mono text-xs">&gt;</span>
                   <input
                     type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
                     placeholder="Ask your agent anything..."
                     className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
                   />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <button className="text-[9px] font-mono text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
+                    <button type="button" onClick={handleDeepResearch} className="text-[9px] font-mono text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
                       /Deep Research <ChevronDown size={8} />
                     </button>
                   </div>
-                  <button className="text-muted-foreground hover:text-foreground transition-colors" style={{ color: agentColor }}>
+                  <button type="submit" className="text-muted-foreground hover:text-foreground transition-colors" style={{ color: agentColor }}>
                     <Send size={12} />
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </ResizablePanel>
@@ -346,7 +396,7 @@ const AgentDetail = () => {
             <div className="p-3 border-b border-border">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-mono tracking-wider" style={{ color: agentColor }}>MARKET LIVE</span>
-                <ExternalLink size={10} className="text-muted-foreground" />
+                <ExternalLink size={10} className="text-muted-foreground cursor-pointer hover:text-foreground" onClick={() => toast({ title: "📊 Market", description: "Opening full market view..." })} />
               </div>
               <div className="border border-border bg-card p-2.5">
                 <div className="flex items-center gap-2 mb-1.5">
@@ -400,6 +450,7 @@ const AgentDetail = () => {
                     initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 + i * 0.06 }}
+                    onClick={() => handleHeadlineClick(headline.text)}
                   >
                     <span className="text-[9px] font-mono text-muted-foreground shrink-0 mt-0.5">{headline.time}</span>
                     <p className={`text-[10px] leading-relaxed group-hover:underline ${
