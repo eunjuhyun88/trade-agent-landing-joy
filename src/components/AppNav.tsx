@@ -15,7 +15,7 @@ const AppNav = () => {
             className="text-sm font-bold tracking-[2px] font-mono cursor-pointer"
             onClick={() => navigate("/")}
           >
-            CLAWHOO
+            STOCKCLAW
           </span>
         </div>
 
