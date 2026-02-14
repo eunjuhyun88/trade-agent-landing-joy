@@ -445,118 +445,124 @@ const Agents = () => {
             {/* CHAT TAB */}
             {mobileTab === "chat" && (
               <div className="h-full flex flex-col overflow-hidden">
-                <div className="px-3 py-2 border-b border-border shrink-0 flex items-center justify-between">
-                  <p className="text-[9px] font-mono text-muted-foreground">StockClaw Terminal</p>
-                  <div className="flex gap-3 text-[8px] font-mono">
-                    <span className="text-muted-foreground">Queries <span className="text-foreground font-semibold">127</span></span>
-                    <span className="text-muted-foreground">Alerts <span className="text-foreground font-semibold">12</span></span>
-                  </div>
-                </div>
-
-                <div className="flex-1 overflow-y-auto px-3 py-2" ref={chatScrollRef}>
-                  {chatMessages.length === 0 && (
-                    <div className="flex flex-col items-center justify-center h-full text-center py-12 opacity-60">
-                      <span className="text-2xl mb-2">⊞</span>
-                      <p className="text-xs font-mono text-muted-foreground mb-1">Terminal Ready</p>
-                      <p className="text-[9px] font-mono text-muted-foreground/60">질문을 입력하세요</p>
+                <ResizablePanelGroup direction="vertical" className="flex-1">
+                  {/* TOP: Chart */}
+                  <ResizablePanel defaultSize={35} minSize={20} maxSize={60}>
+                    <div className="h-full flex flex-col overflow-hidden border-b border-border">
+                      <div className="px-3 py-1.5 flex items-center justify-between shrink-0 border-b border-border">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-[10px] text-accent">{selectedTicker?.ticker}</span>
+                          <span className="text-[8px] font-mono text-muted-foreground">{selectedTicker?.name}</span>
+                        </div>
+                        <span className={`text-[9px] font-mono font-semibold ${selectedTicker.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                          {selectedTicker.change > 0 ? "+" : ""}{selectedTicker.change}%
+                        </span>
+                      </div>
+                      <div className="flex-1 min-h-0">
+                        <TradingViewChart symbol={selectedTicker?.ticker || "BTC"} fillHeight />
+                      </div>
                     </div>
-                  )}
+                  </ResizablePanel>
 
-                  <AnimatePresence>
-                    {chatMessages.map((msg) => (
-                      <motion.div key={msg.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="mb-3">
-                        {msg.type === "user" ? (
-                          <div className="flex justify-end">
-                            <div className="bg-accent/15 border border-accent/30 px-3 py-2 max-w-[85%]">
-                              <div className="flex items-center gap-2 mb-0.5">
-                                <span className="text-[8px] font-mono text-accent font-semibold">YOU</span>
-                                <span className="text-[7px] font-mono text-muted-foreground">{msg.time}</span>
-                              </div>
-                              <p className="text-[11px] leading-relaxed">{msg.content}</p>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="border border-border/50 bg-card/30 p-3">
-                            <div className="flex items-center gap-1.5 mb-1.5">
-                              <span className="text-[9px]">⊞</span>
-                              <span className="text-[8px] font-mono font-semibold text-accent">ORCHESTRATOR</span>
-                              <span className="text-[7px] font-mono text-muted-foreground">{msg.time}</span>
-                            </div>
-                            {msg.isTyping ? (
-                              <div className="flex items-center gap-1 py-1">
-                                <motion.span className="w-1 h-1 rounded-full bg-accent" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, repeat: Infinity }} />
-                                <motion.span className="w-1 h-1 rounded-full bg-accent" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, repeat: Infinity, delay: 0.2 }} />
-                                <motion.span className="w-1 h-1 rounded-full bg-accent" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, repeat: Infinity, delay: 0.4 }} />
-                                <span className="text-[8px] font-mono text-muted-foreground ml-1">analyzing...</span>
-                              </div>
-                            ) : (
-                              <>
-                                <p className="text-[11px] leading-relaxed text-foreground/90 mb-2">{msg.content}</p>
-                                {msg.signal && (
-                                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border/30">
-                                    <span className={`font-mono text-[10px] font-bold ${msg.signal?.includes("LONG") ? "text-status-active" : "text-status-hot"}`}>{msg.signal}</span>
-                                    <span className="font-mono text-[10px] font-bold">{msg.confidence}%</span>
-                                    <div className="flex-1 h-1 bg-border overflow-hidden min-w-[60px]">
-                                      <div className="h-full bg-[hsl(45_90%_55%)]" style={{ width: `${msg.confidence}%` }} />
-                                    </div>
-                                    <button
-                                      onClick={() => {
-                                        const asset = msg.content.match(/BTC|ETH|SOL/)?.[0] || "BTC";
-                                        setSwapSignal({ asset, direction: msg.signal || "LONG" });
-                                        if (msg.signal?.includes("LONG")) { setSwapFrom("USDT"); setSwapTo(asset); }
-                                        else { setSwapFrom(asset); setSwapTo("USDT"); }
-                                        setSwapAmount("");
-                                        setSwapModalOpen(true);
-                                      }}
-                                      className={`font-mono text-[9px] font-bold px-3 py-1.5 border ${
-                                        msg.signal?.includes("LONG")
-                                          ? "border-status-active text-status-active bg-status-active/10"
-                                          : "border-status-hot text-status-hot bg-status-hot/10"
-                                      }`}
-                                    >
-                                      {msg.signal?.includes("LONG") ? "▲ BUY" : "▼ SELL"}
-                                    </button>
-                                  </div>
-                                )}
-                              </>
-                            )}
+                  <ResizableHandle withHandle />
+
+                  {/* BOTTOM: Agent results + input */}
+                  <ResizablePanel defaultSize={65} minSize={40} maxSize={80}>
+                    <div className="h-full flex flex-col overflow-hidden">
+                      {/* Results feed */}
+                      <div className="flex-1 overflow-y-auto px-3 py-2" ref={chatScrollRef}>
+                        {chatMessages.length === 0 && (
+                          <div className="flex flex-col items-center justify-center h-full text-center py-8 opacity-60">
+                            <span className="text-2xl mb-2">⊞</span>
+                            <p className="text-xs font-mono text-muted-foreground mb-1">Terminal Ready</p>
+                            <p className="text-[9px] font-mono text-muted-foreground/60">질문을 입력하세요</p>
                           </div>
                         )}
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
 
-                {/* Mini chart above prompt */}
-                <div className="shrink-0 border-t border-border px-3 pt-2">
-                  <div className="border border-border bg-card overflow-hidden mb-2">
-                    <div className="flex items-center gap-2 px-2.5 pt-1.5 pb-0.5">
-                      <span className="font-bold text-[10px] text-accent">{selectedTicker?.ticker}</span>
-                      <span className="text-[8px] font-mono text-muted-foreground">{selectedTicker?.name}</span>
-                      <span className={`text-[8px] font-mono font-semibold ml-auto ${selectedTicker.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                        {selectedTicker.change > 0 ? "+" : ""}{selectedTicker.change}%
-                      </span>
+                        <AnimatePresence>
+                          {chatMessages.map((msg) => (
+                            <motion.div key={msg.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="mb-3">
+                              {msg.type === "user" ? (
+                                <div className="flex justify-end">
+                                  <div className="bg-accent/15 border border-accent/30 px-3 py-2 max-w-[85%]">
+                                    <div className="flex items-center gap-2 mb-0.5">
+                                      <span className="text-[8px] font-mono text-accent font-semibold">YOU</span>
+                                      <span className="text-[7px] font-mono text-muted-foreground">{msg.time}</span>
+                                    </div>
+                                    <p className="text-[11px] leading-relaxed">{msg.content}</p>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="border border-border/50 bg-card/30 p-3">
+                                  <div className="flex items-center gap-1.5 mb-1.5">
+                                    <span className="text-[9px]">⊞</span>
+                                    <span className="text-[8px] font-mono font-semibold text-accent">ORCHESTRATOR</span>
+                                    <span className="text-[7px] font-mono text-muted-foreground">{msg.time}</span>
+                                  </div>
+                                  {msg.isTyping ? (
+                                    <div className="flex items-center gap-1 py-1">
+                                      <motion.span className="w-1 h-1 rounded-full bg-accent" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, repeat: Infinity }} />
+                                      <motion.span className="w-1 h-1 rounded-full bg-accent" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, repeat: Infinity, delay: 0.2 }} />
+                                      <motion.span className="w-1 h-1 rounded-full bg-accent" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, repeat: Infinity, delay: 0.4 }} />
+                                      <span className="text-[8px] font-mono text-muted-foreground ml-1">analyzing...</span>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <p className="text-[11px] leading-relaxed text-foreground/90 mb-2">{msg.content}</p>
+                                      {msg.signal && (
+                                        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border/30">
+                                          <span className={`font-mono text-[10px] font-bold ${msg.signal?.includes("LONG") ? "text-status-active" : "text-status-hot"}`}>{msg.signal}</span>
+                                          <span className="font-mono text-[10px] font-bold">{msg.confidence}%</span>
+                                          <div className="flex-1 h-1 bg-border overflow-hidden min-w-[60px]">
+                                            <div className="h-full bg-[hsl(45_90%_55%)]" style={{ width: `${msg.confidence}%` }} />
+                                          </div>
+                                          <button
+                                            onClick={() => {
+                                              const asset = msg.content.match(/BTC|ETH|SOL/)?.[0] || "BTC";
+                                              setSwapSignal({ asset, direction: msg.signal || "LONG" });
+                                              if (msg.signal?.includes("LONG")) { setSwapFrom("USDT"); setSwapTo(asset); }
+                                              else { setSwapFrom(asset); setSwapTo("USDT"); }
+                                              setSwapAmount("");
+                                              setSwapModalOpen(true);
+                                            }}
+                                            className={`font-mono text-[9px] font-bold px-3 py-1.5 border ${
+                                              msg.signal?.includes("LONG")
+                                                ? "border-status-active text-status-active bg-status-active/10"
+                                                : "border-status-hot text-status-hot bg-status-hot/10"
+                                            }`}
+                                          >
+                                            {msg.signal?.includes("LONG") ? "▲ BUY" : "▼ SELL"}
+                                          </button>
+                                        </div>
+                                      )}
+                                    </>
+                                  )}
+                                </div>
+                              )}
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
+
+                      {/* Input area */}
+                      <div className="px-3 pt-1 pb-3 border-t border-border shrink-0">
+                        <div className="flex items-center gap-1 mb-2 flex-wrap">
+                          {agents.map((a) => (
+                            <button key={a.id} type="button" onClick={() => toggleAgent(a.id)} className={`text-[9px] px-[5px] py-[2px] transition-colors ${selectedAgents.has(a.id) ? "text-accent-foreground" : "text-muted-foreground/40"}`} style={selectedAgents.has(a.id) ? { backgroundColor: `hsl(${a.color})` } : undefined}>
+                              {a.emoji}
+                            </button>
+                          ))}
+                          <span className="text-[7px] font-mono text-muted-foreground ml-1">{selectedAgents.size}/{agents.length}</span>
+                        </div>
+                        <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="flex items-center gap-2 border border-border bg-card px-3 py-2">
+                          <span className="text-accent font-mono text-xs">&gt;</span>
+                          <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder="Ask agents..." className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40" />
+                          <button type="submit" className="text-accent"><Send size={14} /></button>
+                        </form>
+                      </div>
                     </div>
-                    <TradingViewChart symbol={selectedTicker?.ticker || "BTC"} height={100} />
-                  </div>
-                </div>
-
-                {/* Mobile prompt */}
-                <div className="px-3 pt-1 pb-3 shrink-0">
-                  <div className="flex items-center gap-1 mb-2 flex-wrap">
-                    {agents.map((a) => (
-                      <button key={a.id} type="button" onClick={() => toggleAgent(a.id)} className={`text-[9px] px-[5px] py-[2px] transition-colors ${selectedAgents.has(a.id) ? "text-accent-foreground" : "text-muted-foreground/40"}`} style={selectedAgents.has(a.id) ? { backgroundColor: `hsl(${a.color})` } : undefined}>
-                        {a.emoji}
-                      </button>
-                    ))}
-                    <span className="text-[7px] font-mono text-muted-foreground ml-1">{selectedAgents.size}/{agents.length}</span>
-                  </div>
-                  <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="flex items-center gap-2 border border-border bg-card px-3 py-2">
-                    <span className="text-accent font-mono text-xs">&gt;</span>
-                    <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder="Ask agents..." className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40" />
-                    <button type="submit" className="text-accent"><Send size={14} /></button>
-                  </form>
-                </div>
+                  </ResizablePanel>
+                </ResizablePanelGroup>
               </div>
             )}
 
