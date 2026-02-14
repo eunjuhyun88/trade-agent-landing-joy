@@ -534,29 +534,16 @@ const Agents = () => {
           {/* CENTER: Feed + Prompt */}
           <ResizablePanel defaultSize={52} minSize={35}>
             <div className="h-full flex flex-col overflow-hidden">
-              <div className="px-5 pt-5 pb-3 border-b border-border shrink-0">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <h2 className="text-lg font-bold tracking-tight mb-0.5">Good evening. What are you working on?</h2>
-                    <p className="text-[10px] font-mono text-muted-foreground">StockClaw Terminal — 5 agents online</p>
-                  </div>
-                </div>
+              {/* Header bar */}
+              <div className="px-5 py-2.5 border-b border-border shrink-0 flex items-center justify-between">
+                <p className="text-[10px] font-mono text-muted-foreground">StockClaw Terminal — 5 agents online</p>
                 <div className="flex gap-4 text-[9px] font-mono">
                   {[
-                    { label: "Queries", value: "127", width: "40%" },
-                    { label: "Analyses", value: "34", width: "25%" },
-                    { label: "Alerts Fired", value: "12", width: "15%" },
-                    { label: "Hours Saved", value: "48.2 H", width: "10%" },
+                    { label: "Queries", value: "127" },
+                    { label: "Analyses", value: "34" },
+                    { label: "Alerts", value: "12" },
                   ].map((stat) => (
-                    <div key={stat.label} className="flex-1">
-                      <div className="flex items-center justify-between mb-[2px]">
-                        <span className="text-muted-foreground">{stat.label}</span>
-                        <span className="text-foreground font-semibold">{stat.value}</span>
-                      </div>
-                      <div className="h-[3px] bg-border overflow-hidden">
-                        <div className="h-full bg-status-active" style={{ width: stat.width }} />
-                      </div>
-                    </div>
+                    <span key={stat.label} className="text-muted-foreground">{stat.label} <span className="text-foreground font-semibold">{stat.value}</span></span>
                   ))}
                 </div>
               </div>
