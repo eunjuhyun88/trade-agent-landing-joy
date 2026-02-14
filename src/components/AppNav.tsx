@@ -3,12 +3,9 @@ import { Search, ArrowLeft } from "lucide-react";
 
 interface AppNavProps {
   activeTab?: "trade" | "advisory" | "holdings";
-  activeAgent?: string;
-  agents: { id: string; code: string }[];
-  onAgentChange?: (id: string) => void;
 }
 
-const AppNav = ({ activeTab = "trade", activeAgent, agents, onAgentChange }: AppNavProps) => {
+const AppNav = ({ activeTab = "trade" }: AppNavProps) => {
   const navigate = useNavigate();
 
   return (
@@ -49,22 +46,6 @@ const AppNav = ({ activeTab = "trade", activeAgent, agents, onAgentChange }: App
           })}
         </div>
 
-        {/* Agent Node Switcher */}
-        <div className="flex gap-[2px]">
-          {agents.map((agent) => (
-            <button
-              key={agent.id}
-              onClick={() => onAgentChange?.(agent.id)}
-              className={`font-mono text-[8px] px-[7px] py-[3px] border transition-colors ${
-                agent.id === activeAgent
-                  ? "bg-accent text-accent-foreground border-accent"
-                  : "bg-card border-border text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {agent.code.split("_")[1]}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="flex items-center gap-3">

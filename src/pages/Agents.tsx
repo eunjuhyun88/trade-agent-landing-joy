@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
-  BarChart3, Link2, TrendingUp, MessageSquare, Clock,
+  BarChart3, Link2, TrendingUp, MessageSquare, Clock, Bell,
   ExternalLink, Search, Send, Settings, Plus, ChevronDown,
 } from "lucide-react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
@@ -182,6 +182,17 @@ const agents = [
 
 const timeframes = ["1M", "5M", "15M", "1H", "4H"];
 
+const alertTriggers = [
+  { id: "a1", label: "BTC > $105,000", type: "price", status: "armed" as const, mine: true },
+  { id: "a2", label: "ETH < $3,200", type: "price", status: "armed" as const, mine: true },
+  { id: "a3", label: "SOL RSI > 70", type: "indicator", status: "fired" as const, mine: false },
+  { id: "a4", label: "BTC Vol Spike >200%", type: "volume", status: "armed" as const, mine: false },
+  { id: "a5", label: "Whale Alert > $10M", type: "chain", status: "fired" as const, mine: true },
+  { id: "a6", label: "Funding > 0.02%", type: "deriv", status: "armed" as const, mine: false },
+  { id: "a7", label: "Liquidation > $50M", type: "deriv", status: "armed" as const, mine: true },
+  { id: "a8", label: "ETH Gas > 100 Gwei", type: "chain", status: "standby" as const, mine: false },
+];
+
 const allFeed = agents.flatMap((a) =>
   a.feed.map((f) => ({ ...f, agentName: a.name, agentEmoji: a.emoji, agentColor: a.color }))
 ).sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.time.localeCompare(a.time));
@@ -191,7 +202,9 @@ const Agents = () => {
   const [selectedAgents, setSelectedAgents] = useState<Set<string>>(new Set(agents.map((a) => a.id)));
   const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
   const [selectedTf, setSelectedTf] = useState("1H");
+  const [alertFilter, setAlertFilter] = useState<"all" | "mine">("all");
   const selectedTicker = sharedWatchlist[0];
+  const filteredAlerts = alertFilter === "mine" ? alertTriggers.filter((a) => a.mine) : alertTriggers;
 
   const toggleAgent = (id: string) => {
     setSelectedAgents((prev) => {
@@ -207,12 +220,7 @@ const Agents = () => {
 
   return (
     <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
-      <AppNav
-        activeTab="trade"
-        activeAgent="chart"
-        agents={agents}
-        onAgentChange={(id) => toggleAgent(id)}
-      />
+      <AppNav activeTab="trade" />
 
       {/* Main App */}
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -262,13 +270,58 @@ const Agents = () => {
                     </div>
                   </div>
                 ))}
+                <div className="border-t border-border p-1.5">
+                  <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
+                    <Plus size={9} />
+                    <span>Add Ticker</span>
+                  </button>
+                </div>
               </div>
 
-              <div className="border-t border-border p-1.5 shrink-0">
-                <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
-                  <Plus size={9} />
-                  <span>Add Ticker</span>
-                </button>
+              {/* Alerts Section */}
+              <div className="shrink-0 border-t border-border flex flex-col max-h-[45%] overflow-hidden">
+                <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
+                  <div className="flex items-center gap-1.5">
+                    <Bell size={10} className="text-[hsl(45_90%_55%)]" />
+                    <span className="text-[9px] font-mono font-semibold tracking-[1px] text-[hsl(45_90%_55%)]">ALERTS</span>
+                  </div>
+                  <div className="flex gap-[1px]">
+                    {(["all", "mine"] as const).map((f) => (
+                      <button
+                        key={f}
+                        onClick={() => setAlertFilter(f)}
+                        className={`font-mono text-[8px] px-[7px] py-[2px] transition-colors ${
+                          alertFilter === f ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {f === "all" ? "ALL" : "MINE"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex-1 overflow-y-auto">
+                  {filteredAlerts.map((alert) => (
+                    <div key={alert.id} className="flex items-center justify-between px-3 py-[5px] border-b border-border/50 hover:bg-card/50 cursor-pointer transition-colors">
+                      <div className="min-w-0 flex-1 mr-2">
+                        <div className="font-mono text-[10px] text-foreground/90 truncate">{alert.label}</div>
+                        <span className="text-[7px] font-mono text-muted-foreground uppercase">{alert.type}</span>
+                      </div>
+                      <span className={`text-[7px] font-mono font-semibold px-[4px] py-[1px] ${
+                        alert.status === "fired" ? "bg-status-hot/15 text-status-hot" :
+                        alert.status === "armed" ? "bg-status-active/15 text-status-active" :
+                        "bg-muted text-muted-foreground"
+                      }`}>
+                        {alert.status.toUpperCase()}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="border-t border-border p-1.5 shrink-0">
+                  <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
+                    <Plus size={9} />
+                    <span>Add Alert</span>
+                  </button>
+                </div>
               </div>
             </div>
           </ResizablePanel>
