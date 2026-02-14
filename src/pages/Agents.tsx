@@ -3,9 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
   BarChart3, Link2, TrendingUp, MessageSquare, Clock,
-  ArrowLeft, ExternalLink, Search, Send, ChevronDown, Settings, Plus,
+  ExternalLink, Search, Send, Settings, Plus,
 } from "lucide-react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import AppNav from "@/components/AppNav";
 
 const sharedWatchlist = [
   { ticker: "BTC", name: "Bitcoin", price: "101,890", change: 2.41 },
@@ -25,17 +26,10 @@ const agents = [
     category: "Technical Analysis",
     color: "268 35% 72%",
     icon: <BarChart3 size={16} />,
-    iconSmall: <BarChart3 size={12} />,
     emoji: "📐",
     status: "active" as const,
     score: 88.2,
     description: "Geometric pattern recognition and liquidity void detection across multiple timeframes.",
-    stats: [
-      { label: "FIB_LEVEL", value: "0.618" },
-      { label: "VOL_PROFILE", value: "HIGH" },
-      { label: "RSI_14", value: "58.3" },
-      { label: "STATE", value: "SCANNING" },
-    ],
     clusterDetails: [
       { label: "RANGE_LOW - Support", value: "94.2%" },
       { label: "EQ_REJECTION", value: "12.8%" },
@@ -70,17 +64,10 @@ const agents = [
     category: "Blockchain Intelligence",
     color: "142 70% 45%",
     icon: <Link2 size={16} />,
-    iconSmall: <Link2 size={12} />,
     emoji: "⛓",
     status: "active" as const,
     score: 65.0,
     description: "On-chain flow monitoring, whale wallet heatmaps, and smart money tracking.",
-    stats: [
-      { label: "NET_FLOW", value: "+492M" },
-      { label: "MEMPOOL", value: "ACTIVE" },
-      { label: "GAS", value: "34 Gwei" },
-      { label: "STATE", value: "TRACKING" },
-    ],
     clusterDetails: [
       { label: "Exchange Outflow", value: "+2,340 SOL" },
       { label: "Whale Activity", value: "HIGH" },
@@ -109,17 +96,10 @@ const agents = [
     category: "Futures & Options",
     color: "0 84% 60%",
     icon: <TrendingUp size={16} />,
-    iconSmall: <TrendingUp size={12} />,
     emoji: "📡",
     status: "hot" as const,
     score: 0,
     description: "Open interest spikes, funding rate arbitrage, and liquidation cascade detection.",
-    stats: [
-      { label: "OI", value: "$38.2B" },
-      { label: "FUNDING", value: "0.0122%" },
-      { label: "LIQ_24H", value: "$245M" },
-      { label: "STATE", value: "CRITICAL" },
-    ],
     clusterDetails: [
       { label: "FUNDING", value: "-0.012%", color: "hot" },
       { label: "OI", value: "+3.2%", color: "active" },
@@ -148,17 +128,10 @@ const agents = [
     category: "NLP Analysis",
     color: "280 60% 65%",
     icon: <MessageSquare size={16} />,
-    iconSmall: <MessageSquare size={12} />,
     emoji: "💬",
     status: "active" as const,
     score: 71.8,
     description: "NLP-driven sentiment analysis across 15+ social channels in real-time.",
-    stats: [
-      { label: "SENTIMENT", value: "87/100" },
-      { label: "MENTIONS", value: "4.2K/min" },
-      { label: "MOOD", value: "GREED" },
-      { label: "STATE", value: "AGGREGATING" },
-    ],
     clusterDetails: [],
     clusterMeta: [],
     feed: [
@@ -184,17 +157,10 @@ const agents = [
     category: "Trigger Engine",
     color: "45 90% 55%",
     icon: <Clock size={16} />,
-    iconSmall: <Clock size={12} />,
     emoji: "🌐",
     status: "idle" as const,
     score: 0,
     description: "Custom deterministic triggers, push notifications, and webhook integrations.",
-    stats: [
-      { label: "ACTIVE", value: "42" },
-      { label: "FIRED_24H", value: "3" },
-      { label: "UPTIME", value: "99.97%" },
-      { label: "STATE", value: "STANDBY" },
-    ],
     clusterDetails: [],
     clusterMeta: [],
     feed: [
@@ -222,65 +188,16 @@ const Agents = () => {
   const [selectedTf, setSelectedTf] = useState("1H");
   const selected = agents.find((a) => a.id === selectedId)!;
   const agentColor = `hsl(${selected.color})`;
-
   const selectedTicker = sharedWatchlist[0];
 
   return (
     <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
-      {/* Top Nav */}
-      <nav className="border-b border-border bg-background/95 backdrop-blur-sm flex items-center justify-between px-3 h-[46px] shrink-0">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <button onClick={() => navigate("/")} className="text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft size={14} />
-            </button>
-            <span className="text-sm font-bold tracking-[2px] font-mono">CLAWHOO</span>
-          </div>
-          {/* Page Tabs */}
-          <div className="hidden md:flex items-center">
-            {["Trade", "Advisory", "Holdings"].map((tab, i) => (
-              <span
-                key={tab}
-                className={`px-4 py-[13px] text-[9px] font-mono font-medium tracking-[1.5px] uppercase cursor-pointer border-b-2 transition-colors ${
-                  i === 0
-                    ? "text-foreground border-accent"
-                    : "text-muted-foreground border-transparent hover:text-foreground/70"
-                }`}
-              >
-                {tab}
-              </span>
-            ))}
-          </div>
-          {/* Agent Node Switcher */}
-          <div className="flex gap-[2px]">
-            {agents.map((agent) => (
-              <button
-                key={agent.id}
-                onClick={() => setSelectedId(agent.id)}
-                className={`font-mono text-[8px] px-[7px] py-[3px] border transition-colors ${
-                  agent.id === selectedId
-                    ? "bg-accent text-accent-foreground border-accent"
-                    : "bg-card border-border text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {agent.code.split("_")[1]}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="font-mono text-[10px] font-bold bg-[hsl(45_90%_55%/0.15)] border border-[hsl(45_90%_55%)] text-[hsl(45_90%_55%)] px-2 py-[3px]">
-            ENTRY SCORE 73
-          </div>
-          <div className="hidden sm:flex items-center gap-[5px] bg-card border border-border px-2 py-1 text-[10px] text-muted-foreground">
-            <Search size={10} />
-            <span>Search Markets</span>
-          </div>
-          <span className="font-mono text-[9px] px-[10px] py-1 border border-accent text-accent bg-accent/15">
-            ● 0xAB...5542
-          </span>
-        </div>
-      </nav>
+      <AppNav
+        activeTab="trade"
+        activeAgent={selectedId}
+        agents={agents}
+        onAgentChange={(id) => setSelectedId(id)}
+      />
 
       {/* Main App */}
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -288,7 +205,6 @@ const Agents = () => {
           {/* LEFT: Watchlist + Intel Feed */}
           <ResizablePanel defaultSize={22} minSize={15} maxSize={35}>
             <div className="h-full flex flex-col overflow-hidden">
-              {/* Watchlist Header */}
               <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
                 <span className="text-[9px] font-mono font-semibold tracking-[1px] text-status-active">MY PORTFOLIO</span>
                 <div className="flex gap-2 text-[9px] text-muted-foreground">
@@ -297,7 +213,6 @@ const Agents = () => {
                 </div>
               </div>
 
-              {/* Watchlist Items */}
               <div className="shrink-0 max-h-[40%] overflow-y-auto">
                 {sharedWatchlist.map((item) => (
                   <div
@@ -332,8 +247,7 @@ const Agents = () => {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="font-mono text-[9px] font-semibold tracking-[1px]"
-                      style={{ color: `hsl(45 90% 55%)` }}
+                      className="font-mono text-[9px] font-semibold tracking-[1px] text-[hsl(45_90%_55%)]"
                     >
                       {selectedTicker?.ticker} INTEL
                     </motion.span>
@@ -372,7 +286,7 @@ const Agents = () => {
                   </AnimatePresence>
                 </div>
 
-                {/* Market Sidebar within Intel */}
+                {/* Market Headlines */}
                 <div className="shrink-0 max-h-[30%] overflow-y-auto border-t border-border">
                   <div className="font-mono text-[8px] font-semibold tracking-[1px] text-status-active px-3 py-2 border-b border-border sticky top-0 bg-background">
                     MARKET LIVE
@@ -409,7 +323,7 @@ const Agents = () => {
                   className="flex-1 bg-transparent border-none text-[10px] text-foreground outline-none placeholder:text-muted-foreground"
                 />
                 <span className="font-mono text-[8px] text-muted-foreground whitespace-nowrap">/Deep Research ▾</span>
-                <div className="w-[22px] h-[22px] bg-accent flex items-center justify-center cursor-pointer text-[10px] text-accent-foreground shrink-0">
+                <div className="w-[22px] h-[22px] bg-accent flex items-center justify-center cursor-pointer text-accent-foreground shrink-0">
                   <Send size={10} />
                 </div>
               </div>
@@ -449,7 +363,7 @@ const Agents = () => {
                       </span>
                     ))}
                   </div>
-                  <div className="flex items-center gap-[5px] font-mono text-[8px] text-muted-foreground">
+                  <div className="flex items-center gap-[5px] font-mono text-[8px] text-muted-foreground hidden xl:flex">
                     RISK STEERING
                     <div className="w-[50px] h-[3px] bg-border relative">
                       <div className="absolute left-0 top-0 h-full w-1/2 bg-accent" />
@@ -462,7 +376,6 @@ const Agents = () => {
 
               {/* Chart Area */}
               <div className="flex-1 relative bg-background overflow-hidden">
-                {/* Zone Panel */}
                 <div className="absolute top-2 left-2 bg-background/95 border border-border p-2 px-3 w-[200px] z-[2]">
                   <div className="font-mono text-[9px] font-semibold tracking-[1px]">ZONE MATCH ANALYSIS</div>
                   <div className="font-mono text-[7px] text-status-hot flex items-center gap-1 mt-[2px] mb-[5px]">
@@ -479,7 +392,6 @@ const Agents = () => {
                   <div className="absolute top-2 right-3 font-mono text-[26px] font-bold text-accent">73</div>
                 </div>
 
-                {/* Ghost Match Badge */}
                 <div className="absolute top-[36%] left-[20%] bg-card border border-accent p-[6px] px-3 flex items-center gap-[7px] z-[2]">
                   <div className="w-[22px] h-[22px] rounded-full bg-accent/15 flex items-center justify-center text-[10px]">👻</div>
                   <div className="font-mono text-[8px]">
@@ -488,7 +400,6 @@ const Agents = () => {
                   </div>
                 </div>
 
-                {/* Chart Agent Guidance */}
                 <div className="absolute top-[30%] left-[48%] z-[2] bg-card border border-[hsl(45_90%_55%)] p-[5px] px-[10px] flex items-center gap-[7px]">
                   <div className="w-[18px] h-[18px] bg-[hsl(45_90%_55%/0.15)] flex items-center justify-center text-[9px] text-[hsl(45_90%_55%)]">🔔</div>
                   <div>
@@ -497,25 +408,20 @@ const Agents = () => {
                   </div>
                 </div>
 
-                {/* Alert Trigger */}
                 <div className="absolute top-[23%] right-[13%] border border-[hsl(45_90%_55%)] bg-[hsl(45_90%_55%/0.06)] p-[3px] px-2 font-mono text-[7px] text-[hsl(45_90%_55%)] tracking-[0.5px] z-[2]">
                   ALERT TRIGGER: &gt;108,500
                 </div>
 
-                {/* Ghost Overlay */}
                 <div className="absolute top-[10%] right-[6%] w-[140px] h-[100px] bg-accent/5 border border-dashed border-accent" />
 
-                {/* Price Tag */}
                 <div className="absolute right-0 top-[52%] bg-accent text-accent-foreground font-mono text-[9px] px-[5px] py-[2px]">
                   {selectedTicker?.price}
                 </div>
 
-                {/* Anchor */}
                 <div className="absolute bottom-[38%] left-[50%] font-mono text-[7px] text-muted-foreground tracking-[0.5px]">
                   STATESYNC: OCT-23 ANCHOR
                 </div>
 
-                {/* Simulated chart line */}
                 <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
                   <defs>
                     <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
@@ -602,9 +508,7 @@ const Agents = () => {
                 <span className="font-mono text-[8px] text-muted-foreground">5 PILOTS</span>
               </div>
 
-              {/* Agent Sections */}
               {agents.map((agent) => {
-                const color = `hsl(${agent.color})`;
                 const isActive = agent.status !== "idle";
                 return (
                   <div key={agent.id} className="border-b border-border">
@@ -623,28 +527,22 @@ const Agents = () => {
                         <span className={`w-[6px] h-[6px] rounded-full ${isActive ? "bg-status-active" : "bg-muted-foreground"}`} />
                       </div>
                     </div>
-                    {/* Expanded details for selected agent */}
                     {agent.id === selectedId && agent.clusterDetails.length > 0 && (
                       <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
                         className="px-3 pb-2 overflow-hidden"
                       >
-                        {agent.clusterDetails.length > 0 && (
-                          <>
-                            <div className="font-mono text-[7px] text-muted-foreground mb-[3px] tracking-[0.5px]">IDENTIFIED ZONES</div>
-                            {agent.clusterDetails.map((d, i) => (
-                              <div key={i} className="flex justify-between py-[2px] text-[9px]">
-                                <span className="text-muted-foreground">{d.label}</span>
-                                <span className={`font-mono text-[9px] ${
-                                  (d as any).color === "hot" ? "text-status-hot" :
-                                  (d as any).color === "active" ? "text-status-active" : ""
-                                }`}>{d.value}</span>
-                              </div>
-                            ))}
-                          </>
-                        )}
+                        <div className="font-mono text-[7px] text-muted-foreground mb-[3px] tracking-[0.5px]">IDENTIFIED ZONES</div>
+                        {agent.clusterDetails.map((d, i) => (
+                          <div key={i} className="flex justify-between py-[2px] text-[9px]">
+                            <span className="text-muted-foreground">{d.label}</span>
+                            <span className={`font-mono text-[9px] ${
+                              (d as any).color === "hot" ? "text-status-hot" :
+                              (d as any).color === "active" ? "text-status-active" : ""
+                            }`}>{d.value}</span>
+                          </div>
+                        ))}
                         {agent.clusterMeta.length > 0 && (
                           <div className="flex gap-[10px] mt-[5px] font-mono text-[8px]">
                             {agent.clusterMeta.map((m, i) => (
@@ -655,7 +553,6 @@ const Agents = () => {
                             ))}
                           </div>
                         )}
-                        {/* Heatmap for deriv */}
                         {agent.id === "deriv" && (
                           <div className="mt-[5px]">
                             <div className="font-mono text-[7px] text-muted-foreground mb-[3px] tracking-[0.5px]">LIQUIDATION HEATMAP</div>
@@ -667,7 +564,6 @@ const Agents = () => {
                             <div className="font-mono text-[7px] text-muted-foreground mt-[2px]">$152k — HIGH DENSITY</div>
                           </div>
                         )}
-                        {/* Progress bar for chain */}
                         {agent.id === "chain" && (
                           <div className="mt-[3px]">
                             <div className="h-[3px] bg-border overflow-hidden">
