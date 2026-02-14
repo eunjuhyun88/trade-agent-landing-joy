@@ -182,21 +182,25 @@ const agents = [
 
 const timeframes = ["1M", "5M", "15M", "1H", "4H"];
 
+const allFeed = agents.flatMap((a) =>
+  a.feed.map((f) => ({ ...f, agentName: a.name, agentEmoji: a.emoji, agentColor: a.color }))
+).sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.time.localeCompare(a.time));
+
 const Agents = () => {
   const navigate = useNavigate();
-  const [selectedId, setSelectedId] = useState("chart");
+  const [orchestrationAgent, setOrchestrationAgent] = useState("chart");
   const [selectedTf, setSelectedTf] = useState("1H");
-  const selected = agents.find((a) => a.id === selectedId)!;
-  const agentColor = `hsl(${selected.color})`;
+  const orchAgent = agents.find((a) => a.id === orchestrationAgent)!;
+  const orchColor = `hsl(${orchAgent.color})`;
   const selectedTicker = sharedWatchlist[0];
 
   return (
     <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
       <AppNav
         activeTab="trade"
-        activeAgent={selectedId}
+        activeAgent={orchestrationAgent}
         agents={agents}
-        onAgentChange={(id) => setSelectedId(id)}
+        onAgentChange={(id) => setOrchestrationAgent(id)}
       />
 
       {/* Main App */}
@@ -261,70 +265,52 @@ const Agents = () => {
           <ResizableHandle withHandle />
 
           {/* CENTER: Feed + Prompt */}
-          <ResizablePanel defaultSize={48} minSize={30}>
+          <ResizablePanel defaultSize={52} minSize={35}>
             <div className="h-full flex flex-col overflow-hidden">
-              {/* Agent Info Bar */}
+              {/* General Header */}
               <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
-                <div className="flex items-center gap-3">
-                  <span style={{ color: agentColor }}>{selected.icon}</span>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm tracking-tight">{selected.name}</span>
-                      <span className="text-[10px] font-mono text-muted-foreground">/ {selected.category}</span>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground">{selected.fullName}</p>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-sm tracking-tight">UNIFIED FEED</span>
+                  <span className="text-[10px] font-mono text-muted-foreground">/ All Agents</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-status-active animate-pulse-dot" />
-                    <span className="text-[10px] font-mono text-muted-foreground">ONLINE</span>
+                    <span className="text-[10px] font-mono text-muted-foreground">5 ONLINE</span>
                   </div>
-                  <button
-                    onClick={() => navigate(`/agent/${selectedId}`)}
-                    className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    OVERVIEW <ExternalLink size={10} />
-                  </button>
                 </div>
               </div>
 
-              {/* Feed Area */}
+              {/* Feed Area - unified, not agent-dependent */}
               <div className="flex-1 overflow-y-auto px-5 py-4">
-                <AnimatePresence mode="wait">
+                {allFeed.map((entry, i) => (
                   <motion.div
-                    key={selectedId}
-                    initial={{ opacity: 0, y: 6 }}
+                    key={`feed-${i}`}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ delay: i * 0.05 }}
                   >
-                    {selected.feed.map((entry, i) => (
-                      <motion.div
-                        key={`${selectedId}-${i}`}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.08 }}
-                      >
-                        {entry.date && (
-                          <div className="mb-2 mt-4 first:mt-0">
-                            <span className="font-mono text-[10px] tracking-wide text-foreground/70">{entry.date}</span>
-                          </div>
-                        )}
-                        <div className="mb-4 pb-4 border-b border-border/50 last:border-0">
-                          <span className="text-[9px] font-mono text-muted-foreground">{entry.time}</span>
-                          <p className="mt-1.5 text-xs leading-relaxed text-foreground/90">{entry.content}</p>
-                          <button className="text-[9px] font-mono text-muted-foreground hover:text-foreground mt-1.5 transition-colors">
-                            ..More
-                          </button>
-                        </div>
-                      </motion.div>
-                    ))}
+                    {entry.date && (
+                      <div className="mb-2 mt-4 first:mt-0">
+                        <span className="font-mono text-[10px] tracking-wide text-foreground/70">{entry.date}</span>
+                      </div>
+                    )}
+                    <div className="mb-4 pb-4 border-b border-border/50 last:border-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[10px]">{entry.agentEmoji}</span>
+                        <span className="text-[9px] font-mono font-semibold" style={{ color: `hsl(${entry.agentColor})` }}>{entry.agentName}</span>
+                        <span className="text-[9px] font-mono text-muted-foreground">{entry.time}</span>
+                      </div>
+                      <p className="text-xs leading-relaxed text-foreground/90">{entry.content}</p>
+                      <button className="text-[9px] font-mono text-muted-foreground hover:text-foreground mt-1.5 transition-colors">
+                        ..More
+                      </button>
+                    </div>
                   </motion.div>
-                </AnimatePresence>
+                ))}
               </div>
 
-              {/* Chat Input */}
+              {/* Chat Input with orchestration agent selector */}
               <div className="border-t border-border p-3 shrink-0">
                 <div className="border border-border bg-card px-3 py-2">
                   <div className="flex items-center gap-2 mb-1.5">
@@ -336,10 +322,28 @@ const Agents = () => {
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <button className="text-[9px] font-mono text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
-                      /Deep Research <ChevronDown size={8} />
-                    </button>
-                    <button className="text-muted-foreground hover:text-foreground transition-colors" style={{ color: agentColor }}>
+                    <div className="flex items-center gap-2">
+                      {/* Orchestration agent selector chips */}
+                      <div className="flex items-center gap-[2px]">
+                        {agents.map((a) => (
+                          <button
+                            key={a.id}
+                            onClick={() => setOrchestrationAgent(a.id)}
+                            className={`text-[8px] font-mono px-[6px] py-[2px] transition-colors ${
+                              a.id === orchestrationAgent
+                                ? "text-accent-foreground"
+                                : "text-muted-foreground hover:text-foreground"
+                            }`}
+                            style={a.id === orchestrationAgent ? { backgroundColor: `hsl(${a.color})` } : undefined}
+                            title={a.fullName}
+                          >
+                            {a.emoji}
+                          </button>
+                        ))}
+                      </div>
+                      <span className="text-[8px] font-mono text-muted-foreground">→ {orchAgent.name}</span>
+                    </div>
+                    <button className="transition-colors" style={{ color: orchColor }}>
                       <Send size={12} />
                     </button>
                   </div>
@@ -350,43 +354,38 @@ const Agents = () => {
 
           <ResizableHandle withHandle />
 
-          {/* RIGHT: Chart + Market Data + Headlines (vertical scroll) */}
+          {/* RIGHT: Market + Headlines + Agent Status (vertical scroll) */}
           <ResizablePanel defaultSize={30} minSize={18} maxSize={40}>
             <div className="h-full flex flex-col overflow-y-auto border-l border-border">
-              {/* Market Live Header */}
+              {/* Market Live */}
               <div className="p-3 border-b border-border shrink-0">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-mono tracking-wider" style={{ color: agentColor }}>MARKET LIVE</span>
+                  <span className="text-[10px] font-mono tracking-wider text-accent">MARKET LIVE</span>
                   <ExternalLink size={10} className="text-muted-foreground" />
                 </div>
-                {/* Compact Market Stats */}
                 <div className="border border-border bg-card p-2.5">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="font-bold text-xs" style={{ color: agentColor }}>{selectedTicker?.ticker}</span>
+                    <span className="font-bold text-xs text-accent">{selectedTicker?.ticker}</span>
                     <span className="text-[9px] font-mono text-muted-foreground truncate">{selectedTicker?.name}</span>
                   </div>
                   <div className="flex gap-2 text-[9px] font-mono text-muted-foreground mb-2 flex-wrap">
-                    {selected.marketStats.map((stat) => (
-                      <span key={stat.label} className="whitespace-nowrap">
-                        <span>{stat.label}</span>{" "}
-                        <span className="text-foreground">{stat.value}</span>
-                      </span>
-                    ))}
+                    <span className="whitespace-nowrap">O <span className="text-foreground">98,420</span></span>
+                    <span className="whitespace-nowrap">H <span className="text-foreground">102,350</span></span>
+                    <span className="whitespace-nowrap">L <span className="text-foreground">97,180</span></span>
+                    <span className="whitespace-nowrap">C <span className="text-foreground">101,890</span></span>
                   </div>
-                  {/* Mini Chart */}
                   <div className="relative h-16 overflow-hidden">
                     <svg viewBox="0 0 300 80" className="w-full h-full" preserveAspectRatio="none">
                       <defs>
-                        <linearGradient id={`miniGrad-${selectedId}`} x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor={agentColor} stopOpacity="0.3" />
-                          <stop offset="100%" stopColor={agentColor} stopOpacity="0" />
+                        <linearGradient id="miniGradStatic" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="hsl(var(--accent))" stopOpacity="0.3" />
+                          <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity="0" />
                         </linearGradient>
                       </defs>
                       <motion.polyline
-                        key={`line-${selectedId}`}
                         points="0,55 30,50 60,60 90,45 120,35 150,38 180,25 210,28 240,22 270,18 300,20"
                         fill="none"
-                        stroke={agentColor}
+                        stroke="hsl(var(--accent))"
                         strokeWidth="1.5"
                         vectorEffect="non-scaling-stroke"
                         initial={{ pathLength: 0 }}
@@ -394,9 +393,8 @@ const Agents = () => {
                         transition={{ duration: 1.5 }}
                       />
                       <motion.polygon
-                        key={`area-${selectedId}`}
                         points="0,55 30,50 60,60 90,45 120,35 150,38 180,25 210,28 240,22 270,18 300,20 300,80 0,80"
-                        fill={`url(#miniGrad-${selectedId})`}
+                        fill="url(#miniGradStatic)"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.8 }}
@@ -406,75 +404,56 @@ const Agents = () => {
                 </div>
               </div>
 
-              {/* Headlines */}
+              {/* Headlines - static, not agent-dependent */}
               <div className="p-3 border-b border-border">
                 <div className="mb-2">
                   <span className="font-mono text-[9px] tracking-wider text-muted-foreground">HEADLINES</span>
                 </div>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={selectedId}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.15 }}
-                    className="space-y-2"
-                  >
-                    {selected.headlines.map((h, i) => (
-                      <div key={i} className="flex gap-2 group cursor-pointer py-0.5">
-                        <span className="text-[9px] font-mono text-muted-foreground shrink-0 mt-0.5">{h.time}</span>
-                        <p className={`text-[10px] leading-relaxed group-hover:underline ${
-                          h.sentiment === "bull" ? "text-status-active" : (h.sentiment as string) === "bear" ? "text-status-hot" : "text-foreground/70"
-                        }`}>
-                          {h.text}
-                        </p>
-                      </div>
-                    ))}
-                  </motion.div>
-                </AnimatePresence>
+                <div className="space-y-2">
+                  {agents.flatMap((a) => a.headlines.map((h) => ({ ...h, agentEmoji: a.emoji, agentColor: a.color }))).slice(0, 6).map((h, i) => (
+                    <div key={i} className="flex gap-2 group cursor-pointer py-0.5">
+                      <span className="text-[9px] font-mono text-muted-foreground shrink-0 mt-0.5">{h.time}</span>
+                      <p className={`text-[10px] leading-relaxed group-hover:underline ${
+                        h.sentiment === "bull" ? "text-status-active" : (h.sentiment as string) === "bear" ? "text-status-hot" : "text-foreground/70"
+                      }`}>
+                        {h.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              {/* Agent Cluster */}
+              {/* Agent Cluster - orchestration selector, no feed coupling */}
               <div className="p-3 border-b border-border">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-mono text-[9px] font-semibold tracking-[1px]">AGENT CLUSTER</span>
+                  <span className="font-mono text-[9px] font-semibold tracking-[1px]">ORCHESTRATION</span>
                   <span className="font-mono text-[8px] text-muted-foreground">5 PILOTS</span>
                 </div>
                 {agents.map((agent) => {
                   const isActive = agent.status !== "idle";
+                  const isOrch = agent.id === orchestrationAgent;
                   return (
                     <div key={agent.id} className="border-b border-border last:border-0">
                       <div
-                        className="flex items-center justify-between py-[6px] cursor-pointer hover:bg-card/50 transition-colors"
-                        onClick={() => setSelectedId(agent.id)}
+                        className={`flex items-center justify-between py-[6px] cursor-pointer transition-colors ${
+                          isOrch ? "bg-accent/10" : "hover:bg-card/50"
+                        }`}
+                        onClick={() => setOrchestrationAgent(agent.id)}
                       >
                         <div className="flex items-center gap-[7px]">
                           <span className="text-[11px]">{agent.emoji}</span>
-                          <span className="font-mono text-[9px] font-semibold tracking-[0.5px]">{agent.fullName.toUpperCase()}</span>
+                          <span className={`font-mono text-[9px] font-semibold tracking-[0.5px] ${isOrch ? "text-foreground" : "text-muted-foreground"}`}>
+                            {agent.fullName.toUpperCase()}
+                          </span>
+                          {isOrch && (
+                            <span className="text-[7px] font-mono px-1 py-[1px] bg-accent/20 text-accent tracking-wider">ACTIVE</span>
+                          )}
                         </div>
                         <div className="flex items-center gap-2">
                           {agent.score > 0 && <span className="font-mono text-[10px] font-bold">{agent.score}</span>}
                           <span className={`w-[6px] h-[6px] rounded-full ${isActive ? "bg-status-active" : "bg-muted-foreground"}`} />
                         </div>
                       </div>
-                      {agent.id === selectedId && agent.clusterDetails.length > 0 && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          className="pb-2 overflow-hidden"
-                        >
-                          <div className="font-mono text-[7px] text-muted-foreground mb-[3px] tracking-[0.5px]">IDENTIFIED ZONES</div>
-                          {agent.clusterDetails.map((d, i) => (
-                            <div key={i} className="flex justify-between py-[2px] text-[9px]">
-                              <span className="text-muted-foreground">{d.label}</span>
-                              <span className={`font-mono text-[9px] ${
-                                (d as any).color === "hot" ? "text-status-hot" :
-                                (d as any).color === "active" ? "text-status-active" : ""
-                              }`}>{d.value}</span>
-                            </div>
-                          ))}
-                        </motion.div>
-                      )}
                     </div>
                   );
                 })}
