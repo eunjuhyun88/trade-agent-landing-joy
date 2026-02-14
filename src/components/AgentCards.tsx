@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 const agents = [
   {
     id: "AGT_01",
@@ -61,14 +63,19 @@ const AgentCards = () => {
   return (
     <section className="px-6 md:px-12 py-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-0 border border-border">
-        {agents.map((agent) => (
-          <div
+        {agents.map((agent, i) => (
+          <motion.div
             key={agent.id}
             className={`border border-border p-5 flex flex-col justify-between min-h-[280px] transition-colors ${
               agent.highlighted
                 ? "bg-primary text-primary-foreground"
                 : "bg-card hover:bg-secondary"
             }`}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.4, delay: i * 0.1 }}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
           >
             <div>
               <div className="flex items-center justify-between mb-6">
@@ -98,7 +105,7 @@ const AgentCards = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </section>
