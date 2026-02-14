@@ -538,7 +538,7 @@ const Agents = () => {
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <h2 className="text-lg font-bold tracking-tight mb-0.5">Good evening. What are you working on?</h2>
-                    <p className="text-[10px] font-mono text-muted-foreground">ClawHoo Terminal — 5 agents online</p>
+                    <p className="text-[10px] font-mono text-muted-foreground">StockClaw Terminal — 5 agents online</p>
                   </div>
                 </div>
                 <div className="flex gap-4 text-[9px] font-mono">
@@ -563,24 +563,14 @@ const Agents = () => {
 
               {/* Feed + Chat */}
               <div className="flex-1 overflow-y-auto px-5 py-2" ref={chatScrollRef}>
-                {chatMessages.length === 0 && allFeed.map((entry, i) => (
-                  <motion.div key={`feed-${i}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                    {entry.date && (
-                      <div className="mb-2 mt-4 first:mt-0">
-                        <span className="font-mono text-[10px] tracking-wide text-foreground/70">{entry.date}</span>
-                      </div>
-                    )}
-                    <div className="mb-4 pb-4 border-b border-border/50 last:border-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[10px]">{entry.agentEmoji}</span>
-                        <span className="text-[9px] font-mono font-semibold" style={{ color: `hsl(${entry.agentColor})` }}>{entry.agentName}</span>
-                        <span className="text-[9px] font-mono text-muted-foreground">{entry.time}</span>
-                      </div>
-                      <p className="text-xs leading-relaxed text-foreground/90">{entry.content}</p>
-                      <button className="text-[9px] font-mono text-muted-foreground hover:text-foreground mt-1.5 transition-colors">..More</button>
-                    </div>
-                  </motion.div>
-                ))}
+                {/* Empty state when no messages */}
+                {chatMessages.length === 0 && (
+                  <div className="flex flex-col items-center justify-center h-full text-center py-16 opacity-60">
+                    <span className="text-3xl mb-3">⊞</span>
+                    <p className="text-sm font-mono text-muted-foreground mb-1">StockClaw Terminal Ready</p>
+                    <p className="text-[10px] font-mono text-muted-foreground/60">질문을 입력하면 에이전트들이 분석을 시작합니다</p>
+                  </div>
+                )}
 
                 {/* Chat messages — orchestrated single answer */}
                 <AnimatePresence>
@@ -600,7 +590,7 @@ const Agents = () => {
                         <div className="border border-border/50 bg-card/30 p-4">
                           <div className="flex items-center gap-2 mb-2">
                             <span className="text-[10px]">⊞</span>
-                            <span className="text-[9px] font-mono font-semibold text-accent">CLAWHOO ORCHESTRATOR</span>
+                            <span className="text-[9px] font-mono font-semibold text-accent">STOCKCLAW ORCHESTRATOR</span>
                             <span className="text-[9px] font-mono text-muted-foreground">{msg.time}</span>
                           </div>
                           {msg.isTyping ? (
@@ -799,7 +789,7 @@ const Agents = () => {
               <div className="px-3 py-2 bg-card border-t border-border">
                 <div className="flex items-center gap-[5px] mb-[5px]">
                   <div className="w-[18px] h-[18px] bg-accent/15 flex items-center justify-center text-[8px] text-accent">⊞</div>
-                  <span className="font-mono text-[8px] font-semibold tracking-[1px]">CLAWHOO PILOT</span>
+                  <span className="font-mono text-[8px] font-semibold tracking-[1px]">STOCKCLAW PILOT</span>
                   <span className="font-mono text-[7px] text-muted-foreground border border-border px-[3px]">V2.4</span>
                 </div>
                 <div className="bg-secondary p-[7px] px-[9px] mb-[5px]">
