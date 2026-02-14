@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   BarChart3, Link2, TrendingUp, MessageSquare, Clock, Bell,
   ExternalLink, Search, Send, Settings, Plus, ChevronDown, ArrowDownUp, X,
-  LineChart, List, Activity, PanelLeftClose, PanelLeftOpen,
+  LineChart, List, Activity, PanelLeftClose, PanelLeftOpen, Sun, Moon,
 } from "lucide-react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import AppNav from "@/components/AppNav";
@@ -290,6 +290,15 @@ const Agents = () => {
   const [selectedTickerIndex, setSelectedTickerIndex] = useState(0);
   const timeframes = ["1H", "4H", "1D", "1W"] as const;
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("4H");
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDark]);
   const dataSources = ["On-Chain", "Derivatives", "Social", "Technical", "News", "Private Data"];
   const [selectedSources, setSelectedSources] = useState<Set<string>>(new Set(["On-Chain", "Derivatives", "Social", "Technical"]));
 
@@ -439,7 +448,16 @@ const Agents = () => {
 
   return (
     <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
-      <AppNav />
+      <div className="relative">
+        <AppNav />
+        <button
+          onClick={() => setIsDark((p) => !p)}
+          className="absolute right-[220px] sm:right-[280px] top-1/2 -translate-y-1/2 p-1.5 border border-border hover:border-accent/50 bg-card transition-colors z-10"
+          title={isDark ? "Switch to Light" : "Switch to Dark"}
+        >
+          {isDark ? <Sun size={12} className="text-foreground" /> : <Moon size={12} className="text-foreground" />}
+        </button>
+      </div>
 
       {/* === MOBILE LAYOUT === */}
       {isMobile ? (
