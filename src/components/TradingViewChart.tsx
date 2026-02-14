@@ -4,6 +4,7 @@ import { createChart, ColorType, CandlestickSeries, HistogramSeries, type IChart
 interface TradingViewChartProps {
   symbol?: string;
   height?: number;
+  fillHeight?: boolean;
 }
 
 // Generate realistic-looking candlestick data
@@ -46,15 +47,16 @@ const generateVolumeData = (candles: ReturnType<typeof generateCandleData>) =>
     color: c.close >= c.open ? "rgba(38, 166, 91, 0.3)" : "rgba(239, 83, 80, 0.3)",
   }));
 
-const TradingViewChart = ({ symbol = "BTC", height = 140 }: TradingViewChartProps) => {
+const TradingViewChart = ({ symbol = "BTC", height = 140, fillHeight = false }: TradingViewChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
+    const chartHeight = fillHeight ? containerRef.current.clientHeight : height;
     const chart = createChart(containerRef.current, {
-      height,
+      height: chartHeight,
       layout: {
         background: { type: ColorType.Solid, color: "transparent" },
         textColor: "rgba(255, 255, 255, 0.5)",
@@ -110,9 +112,20 @@ const TradingViewChart = ({ symbol = "BTC", height = 140 }: TradingViewChartProp
       chart.remove();
       chartRef.current = null;
     };
-  }, [symbol, height]);
+  }, [symbol, height, fillHeight]);
 
-  return <div ref={containerRef} className="w-full" />;
+  useEffect(() => {
+    if (!fillHeight || !containerRef.current || !chartRef.current) return;
+    const ro = new ResizeObserver(() => {
+      if (containerRef.current && chartRef.current) {
+        chartRef.current.resize(containerRef.current.clientWidth, containerRef.current.clientHeight);
+      }
+    });
+    ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, [fillHeight]);
+
+  return <div ref={containerRef} className={`w-full ${fillHeight ? "h-full" : ""}`} />;
 };
 
 export default TradingViewChart;
