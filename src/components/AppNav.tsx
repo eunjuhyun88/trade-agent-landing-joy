@@ -29,13 +29,13 @@ const AppNav = () => {
 
   return (
     <>
-      <nav className="border-b border-border bg-background/95 backdrop-blur-sm flex items-center justify-between px-3 h-[46px] shrink-0">
+      <nav className="border-b border-border bg-background/95 backdrop-blur-sm flex items-center justify-between px-3 h-[50px] shrink-0">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <button onClick={() => navigate("/")} className="text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft size={14} />
+              <ArrowLeft size={16} />
             </button>
-            <span className="text-sm font-bold tracking-[2px] font-mono cursor-pointer" onClick={() => navigate("/")}>
+            <span className="text-base font-bold tracking-[2px] font-mono cursor-pointer" onClick={() => navigate("/")}>
               STOCKCLAW
             </span>
           </div>
@@ -47,7 +47,7 @@ const AppNav = () => {
                 <span
                   key={tab.path}
                   onClick={() => navigate(tab.path)}
-                  className={`px-3 sm:px-4 py-[13px] text-[9px] font-mono font-medium tracking-[1.5px] uppercase cursor-pointer border-b-2 transition-colors ${
+                  className={`px-3 sm:px-4 py-[14px] text-[11px] font-mono font-medium tracking-[1.5px] uppercase cursor-pointer border-b-2 transition-colors ${
                     isActive ? "text-foreground border-accent" : "text-muted-foreground border-transparent hover:text-foreground"
                   }`}
                 >
@@ -60,23 +60,23 @@ const AppNav = () => {
 
         <div className="flex items-center gap-3">
           {subscription && subscription !== "FREE" && (
-            <div className="hidden sm:flex font-mono text-[9px] font-bold bg-status-active/15 border border-status-active text-status-active px-2 py-[3px] items-center gap-1">
+            <div className="hidden sm:flex font-mono text-[11px] font-bold bg-status-active/15 border border-status-active text-status-active px-2.5 py-1 items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-status-active" />
               {subscription === "PRO YEARLY" ? "PRO YR" : "PRO"} ACTIVE
             </div>
           )}
-          <div className="font-mono text-[10px] font-bold bg-[hsl(45_90%_55%/0.15)] border border-[hsl(45_90%_55%)] text-[hsl(45_90%_55%)] px-2 py-[3px]">
+          <div className="font-mono text-xs font-bold bg-[hsl(45_90%_55%/0.15)] border border-[hsl(45_90%_55%)] text-[hsl(45_90%_55%)] px-2.5 py-1">
             ENTRY SCORE 73
           </div>
-          <div onClick={() => toast({ title: "🔍 Search", description: "Market search coming soon!" })} className="hidden sm:flex items-center gap-[5px] bg-card border border-border px-2 py-1 text-[10px] text-muted-foreground cursor-pointer hover:border-accent/50 transition-colors">
-            <Search size={10} />
+          <div onClick={() => toast({ title: "🔍 Search", description: "Market search coming soon!" })} className="hidden sm:flex items-center gap-[5px] bg-card border border-border px-2.5 py-1.5 text-xs text-muted-foreground cursor-pointer hover:border-accent/50 transition-colors">
+            <Search size={12} />
             <span>Search Markets</span>
           </div>
 
           {connected ? (
             <button
               onClick={() => setWalletOpen(true)}
-              className="font-mono text-[9px] px-[10px] py-1 border border-accent text-accent bg-accent/15 flex items-center gap-1.5 hover:bg-accent/25 transition-colors"
+              className="font-mono text-[11px] px-3 py-1.5 border border-accent text-accent bg-accent/15 flex items-center gap-1.5 hover:bg-accent/25 transition-colors"
             >
               <span>{connectedWallet?.icon}</span>
               <span>{address}</span>
@@ -84,7 +84,7 @@ const AppNav = () => {
           ) : (
             <button
               onClick={() => setWalletOpen(true)}
-              className="font-mono text-[9px] px-[10px] py-1 border border-accent text-accent bg-accent/15 hover:bg-accent/25 transition-colors"
+              className="font-mono text-[11px] px-3 py-1.5 border border-accent text-accent bg-accent/15 hover:bg-accent/25 transition-colors"
             >
               Connect Wallet
             </button>
