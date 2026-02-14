@@ -286,6 +286,7 @@ const Agents = () => {
   const [swapSignal, setSwapSignal] = useState<{ asset: string; direction: string } | null>(null);
   const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
   const [alertFilter, setAlertFilter] = useState<"all" | "mine">("all");
+  const [watchlistCollapsed, setWatchlistCollapsed] = useState(false);
   const dataSources = ["On-Chain", "Derivatives", "Social", "Technical", "News", "Private Data"];
   const [selectedSources, setSelectedSources] = useState<Set<string>>(new Set(["On-Chain", "Derivatives", "Social", "Technical"]));
 
@@ -779,61 +780,68 @@ const Agents = () => {
           {/* LEFT: Watchlist */}
           <ResizablePanel defaultSize={18} minSize={12} maxSize={28}>
             <div className="h-full flex flex-col overflow-hidden">
-              <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
-                <span className="text-[9px] font-mono font-semibold tracking-[1px] text-status-active">WATCHLIST</span>
-                <Settings size={12} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
-              </div>
-
-              <div className="shrink-0 px-2 py-1 border-b border-border">
-                <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-[3px]">
-                  <Search size={9} className="text-muted-foreground" />
-                  <input type="text" placeholder="search ..." className="bg-transparent text-[9px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50" />
+              <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0 cursor-pointer" onClick={() => setWatchlistCollapsed(!watchlistCollapsed)}>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[9px] font-mono font-semibold tracking-[1px] text-status-active">WATCHLIST</span>
+                  <ChevronDown size={10} className={`text-muted-foreground transition-transform ${watchlistCollapsed ? "-rotate-90" : ""}`} />
                 </div>
+                <Settings size={12} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" onClick={(e) => e.stopPropagation()} />
               </div>
 
-              <div className="shrink-0 flex items-center px-3 py-[3px] border-b border-border text-[7px] font-mono text-muted-foreground tracking-wider">
-                <span className="flex-1">Ticker</span>
-                <span className="w-14 text-right">% 1D</span>
-                <span className="w-16 text-right">Price</span>
-              </div>
-
-              <div className="flex-1 overflow-y-auto">
-                <div className="px-3 py-[3px] border-b border-border bg-card/50">
-                  <span className="text-[7px] font-mono font-semibold text-muted-foreground tracking-wider">CRYPTO</span>
-                </div>
-                {sharedWatchlist.map((item) => (
-                  <div key={item.ticker} className={`flex items-center px-3 py-[5px] cursor-pointer transition-colors border-b border-border/30 ${item.ticker === selectedTicker?.ticker ? "bg-accent/10" : "hover:bg-card/50"}`}>
-                    <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
-                    <span className={`w-14 text-right font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                      {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
-                    </span>
-                    <span className="w-16 text-right font-mono text-[9px] text-foreground/70">{item.price}</span>
+              {!watchlistCollapsed && (
+                <>
+                  <div className="shrink-0 px-2 py-1 border-b border-border">
+                    <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-[3px]">
+                      <Search size={9} className="text-muted-foreground" />
+                      <input type="text" placeholder="search ..." className="bg-transparent text-[9px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50" />
+                    </div>
                   </div>
-                ))}
 
-                <div className="px-3 py-[3px] border-b border-border bg-card/50 border-t">
-                  <span className="text-[7px] font-mono font-semibold text-muted-foreground tracking-wider">MOST ACTIVE</span>
-                </div>
-                {[
-                  { ticker: "PEPE", change: 12.44, price: "0.00001842" },
-                  { ticker: "WIF", change: -5.23, price: "2.4100" },
-                  { ticker: "BONK", change: 8.91, price: "0.00003150" },
-                ].map((item) => (
-                  <div key={item.ticker} className="flex items-center px-3 py-[5px] cursor-pointer hover:bg-card/50 transition-colors border-b border-border/30">
-                    <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
-                    <span className={`w-14 text-right font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                      {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
-                    </span>
-                    <span className="w-16 text-right font-mono text-[9px] text-foreground/70">{item.price}</span>
+                  <div className="shrink-0 flex items-center px-3 py-[3px] border-b border-border text-[7px] font-mono text-muted-foreground tracking-wider">
+                    <span className="flex-1">Ticker</span>
+                    <span className="w-14 text-right">% 1D</span>
+                    <span className="w-16 text-right">Price</span>
                   </div>
-                ))}
-              </div>
 
-              <div className="border-t border-border p-1.5 shrink-0">
-                <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
-                  <Plus size={9} /><span>Add Ticker</span>
-                </button>
-              </div>
+                  <div className="flex-1 overflow-y-auto">
+                    <div className="px-3 py-[3px] border-b border-border bg-card/50">
+                      <span className="text-[7px] font-mono font-semibold text-muted-foreground tracking-wider">CRYPTO</span>
+                    </div>
+                    {sharedWatchlist.map((item) => (
+                      <div key={item.ticker} className={`flex items-center px-3 py-[5px] cursor-pointer transition-colors border-b border-border/30 ${item.ticker === selectedTicker?.ticker ? "bg-accent/10" : "hover:bg-card/50"}`}>
+                        <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
+                        <span className={`w-14 text-right font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                          {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
+                        </span>
+                        <span className="w-16 text-right font-mono text-[9px] text-foreground/70">{item.price}</span>
+                      </div>
+                    ))}
+
+                    <div className="px-3 py-[3px] border-b border-border bg-card/50 border-t">
+                      <span className="text-[7px] font-mono font-semibold text-muted-foreground tracking-wider">MOST ACTIVE</span>
+                    </div>
+                    {[
+                      { ticker: "PEPE", change: 12.44, price: "0.00001842" },
+                      { ticker: "WIF", change: -5.23, price: "2.4100" },
+                      { ticker: "BONK", change: 8.91, price: "0.00003150" },
+                    ].map((item) => (
+                      <div key={item.ticker} className="flex items-center px-3 py-[5px] cursor-pointer hover:bg-card/50 transition-colors border-b border-border/30">
+                        <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
+                        <span className={`w-14 text-right font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                          {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
+                        </span>
+                        <span className="w-16 text-right font-mono text-[9px] text-foreground/70">{item.price}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="border-t border-border p-1.5 shrink-0">
+                    <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
+                      <Plus size={9} /><span>Add Ticker</span>
+                    </button>
+                  </div>
+                </>
+              )}
 
               {/* Alerts */}
               <div className="shrink-0 border-t border-border flex flex-col max-h-[45%] overflow-hidden">
@@ -1053,7 +1061,7 @@ const Agents = () => {
                       {selectedTicker.change > 0 ? "+" : ""}{selectedTicker.change}%
                     </span>
                   </div>
-                  <TradingViewChart symbol={selectedTicker?.ticker || "BTC"} height={140} />
+                  <TradingViewChart symbol={selectedTicker?.ticker || "BTC"} height={220} />
                 </div>
               </div>
 
