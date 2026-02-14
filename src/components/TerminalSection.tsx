@@ -19,7 +19,6 @@ const ALL_ICONS = ICON_GROUPS.flatMap((g, gi) =>
     Icon,
     color: g.color,
     id: `${gi}-${ii}`,
-    // scattered positions (percentage based)
     startX: 15 + ((gi * 4 + ii) * 17) % 70,
     startY: 10 + ((ii * 3 + gi * 7) * 13) % 75,
   }))
@@ -61,16 +60,16 @@ const TerminalSection = () => {
               VIEW LIVE STATE
               <span>→</span>
             </button>
-            <button className="border border-foreground px-6 py-3 text-xs font-mono tracking-wider hover:bg-secondary transition-colors">
+            <button className="border border-foreground/30 px-6 py-3 text-xs font-mono tracking-wider hover:bg-secondary transition-colors">
               DOCUMENTATION
             </button>
           </div>
         </motion.div>
 
-        {/* Floating icons → converge animation */}
+        {/* Floating icons → converge animation — FIXED: use bg-card for dark mode */}
         <motion.div
           ref={containerRef}
-          className="bg-primary border border-border relative overflow-hidden min-h-[300px] sm:min-h-[400px] md:min-h-[500px]"
+          className="bg-card border border-border relative overflow-hidden min-h-[300px] sm:min-h-[400px] md:min-h-[500px]"
           initial={{ opacity: 0, x: 40 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -152,7 +151,6 @@ const TerminalSection = () => {
                   />
                 );
               })}
-              {/* Outer ring */}
               <motion.circle
                 cx="50%"
                 cy="50%"
@@ -205,35 +203,17 @@ const TerminalSection = () => {
                 background: "hsl(var(--accent) / 0.1)",
               }}
             >
-              {/* Pulse ring */}
               <motion.div
                 className="absolute inset-0 border border-accent rounded-sm"
-                animate={
-                  converged
-                    ? {
-                        scale: [1, 1.6, 1.6],
-                        opacity: [0.5, 0, 0],
-                      }
-                    : {}
-                }
+                animate={converged ? { scale: [1, 1.6, 1.6], opacity: [0.5, 0, 0] } : {}}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 1.5 }}
               />
               <motion.div
                 className="absolute inset-0 border border-accent rounded-sm"
-                animate={
-                  converged
-                    ? {
-                        scale: [1, 1.6, 1.6],
-                        opacity: [0.5, 0, 0],
-                      }
-                    : {}
-                }
+                animate={converged ? { scale: [1, 1.6, 1.6], opacity: [0.5, 0, 0] } : {}}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 2.0 }}
               />
-
               <Blocks size={40} className="text-accent" />
-
-              {/* Orbiting dots */}
               {[0, 1, 2, 3].map((j) => (
                 <motion.div
                   key={j}
@@ -262,7 +242,7 @@ const TerminalSection = () => {
               ))}
             </motion.div>
             <motion.span
-              className="text-xs font-mono tracking-[0.3em] text-primary-foreground/80 mt-6"
+              className="text-xs font-mono tracking-[0.3em] text-foreground/80 mt-6"
               initial={{ opacity: 0, y: 10 }}
               animate={converged ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 1.2 }}
@@ -276,11 +256,7 @@ const TerminalSection = () => {
               transition={{ delay: 1.5 }}
             >
               {ICON_GROUPS.map((g) => (
-                <span
-                  key={g.label}
-                  className="text-[10px] font-mono tracking-wider"
-                  style={{ color: g.color }}
-                >
+                <span key={g.label} className="text-[10px] font-mono tracking-wider" style={{ color: g.color }}>
                   {g.label}
                 </span>
               ))}
@@ -288,7 +264,7 @@ const TerminalSection = () => {
           </motion.div>
 
           <div className="absolute bottom-4 left-4 right-4 z-10">
-            <span className="text-xs font-mono tracking-wider text-primary-foreground/60">
+            <span className="text-xs font-mono tracking-wider text-foreground/60">
               {converged ? "ENGINE_INITIALIZED" : "AGGREGATING_SOURCES..."}
             </span>
           </div>
