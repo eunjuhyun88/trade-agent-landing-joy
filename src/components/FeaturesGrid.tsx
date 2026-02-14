@@ -1,28 +1,66 @@
 import { motion } from "framer-motion";
 
-const features = [
-  {
-    id: "01",
-    label: "ARCHITECTURE",
-    description: "Moving beyond reactive indicators into deterministic state transitions. We don't guess price; we map possibilities.",
-  },
-  {
-    id: "02",
-    label: "LATENCY",
-    description: "Sub-millisecond data ingestion across 40+ decentralized exchanges and perpetual markets simultaneously.",
-  },
-  {
-    id: "03",
-    label: "EXECUTION",
-    description: "Autonomous agent coordination for risk-adjusted entry and exit based on multi-vector sentiment analysis.",
-  },
-];
-
 const FeaturesGrid = () => {
   return (
     <section className="px-6 md:px-12 py-16">
+      {/* Section tag */}
+      <motion.div
+        className="mb-4"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <span className="text-xs font-mono tracking-wider text-accent">CORE_ARCHITECTURE</span>
+      </motion.div>
+
+      {/* Headline */}
+      <motion.h2
+        className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tighter mb-6"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        ONE MODEL CAN'T
+        <br />
+        READ THE MARKET.
+        <br />
+        <span className="text-accent">FIVE CAN.</span>
+      </motion.h2>
+
+      {/* Subcopy */}
+      <motion.p
+        className="text-sm leading-relaxed text-muted-foreground max-w-lg mb-12"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.15 }}
+      >
+        General-purpose AI knows everything at surface level.
+        We built domain-specific models that go deep.
+        When they disagree — that's the real signal.
+      </motion.p>
+
+      {/* 3 Feature Blocks */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-border pt-8">
-        {features.map((f, i) => (
+        {[
+          {
+            id: "01",
+            label: "SPECIALIZED",
+            description: "BTC chart structure model. On-chain flow model. Derivatives structure model. Sentiment NLP model.",
+          },
+          {
+            id: "02",
+            label: "INDEPENDENT",
+            description: "Each model analyzes without referencing the others. Zero cross-contamination. Parallel, unbiased.",
+          },
+          {
+            id: "03",
+            label: "CONVERGED",
+            description: "Agreement raises signal strength. Conflict triggers priority rules. Output: Entry Score (0–100).",
+          },
+        ].map((f, i) => (
           <motion.div
             key={f.id}
             className="space-y-4"
