@@ -9,7 +9,6 @@ const Navbar = () => {
           <span className="text-xl font-bold tracking-tight cursor-pointer" onClick={() => navigate("/")}>CLAWHOO.</span>
           <div className="hidden md:flex items-center gap-1 text-sm font-mono tracking-wide">
             <span onClick={() => navigate("/agents")} className="border-r border-border pr-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">TERMINAL</span>
-            <span onClick={() => navigate("/agents")} className="border-r border-border px-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">AGENTS</span>
             <span className="px-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">DOCS_V2</span>
           </div>
         </div>
