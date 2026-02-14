@@ -257,53 +257,73 @@ const Agents = () => {
           <ResizablePanel defaultSize={18} minSize={12} maxSize={28}>
             <div className="h-full flex flex-col overflow-hidden">
               <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
-                <span className="text-[9px] font-mono font-semibold tracking-[1px] text-status-active">MY WATCHLIST</span>
+                <span className="text-[9px] font-mono font-semibold tracking-[1px] text-status-active">WATCHLIST</span>
                 <Settings size={12} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
               </div>
 
-              <div className="shrink-0 px-2 py-1.5 border-b border-border">
-                <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-1">
-                  <Search size={10} className="text-muted-foreground" />
+              {/* Search */}
+              <div className="shrink-0 px-2 py-1 border-b border-border">
+                <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-[3px]">
+                  <Search size={9} className="text-muted-foreground" />
                   <input
                     type="text"
-                    placeholder="Search..."
-                    className="bg-transparent text-[10px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50"
+                    placeholder="search ..."
+                    className="bg-transparent text-[9px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50"
                   />
                 </div>
               </div>
 
-              <div className="shrink-0 px-3 py-1 border-b border-border flex items-center justify-between">
-                <span className="text-[9px] font-mono text-muted-foreground tracking-wider">Default Watchlist</span>
-                <ChevronDown size={9} className="text-muted-foreground" />
+              {/* Table Header */}
+              <div className="shrink-0 flex items-center px-3 py-[3px] border-b border-border text-[7px] font-mono text-muted-foreground tracking-wider">
+                <span className="flex-1">Ticker</span>
+                <span className="w-14 text-right">% 1D</span>
+                <span className="w-16 text-right">Price</span>
               </div>
 
+              {/* Section: Crypto */}
               <div className="flex-1 overflow-y-auto">
+                <div className="px-3 py-[3px] border-b border-border bg-card/50">
+                  <span className="text-[7px] font-mono font-semibold text-muted-foreground tracking-wider">CRYPTO</span>
+                </div>
                 {sharedWatchlist.map((item) => (
                   <div
                     key={item.ticker}
-                    className={`flex items-center justify-between px-3 py-[6px] cursor-pointer transition-colors border-l-[3px] ${
-                      item.ticker === selectedTicker?.ticker
-                        ? "bg-accent/15 border-l-accent"
-                        : "border-l-transparent hover:bg-card"
+                    className={`flex items-center px-3 py-[5px] cursor-pointer transition-colors border-b border-border/30 ${
+                      item.ticker === selectedTicker?.ticker ? "bg-accent/10" : "hover:bg-card/50"
                     }`}
                   >
-                    <div className="min-w-0 flex-1 mr-2">
-                      <span className="font-mono text-[11px] font-semibold text-accent block">{item.ticker}</span>
-                      <span className="text-[8px] text-muted-foreground">{item.name}</span>
-                    </div>
-                    <div className="text-right">
-                      <div className={`font-mono text-[10px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                        {item.change > 0 ? "+" : ""}{item.change.toFixed(1)}%
-                      </div>
-                    </div>
+                    <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
+                    <span className={`w-14 text-right font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                      {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
+                    </span>
+                    <span className="w-16 text-right font-mono text-[9px] text-foreground/70">{item.price}</span>
                   </div>
                 ))}
-                <div className="border-t border-border p-1.5">
-                  <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
-                    <Plus size={9} />
-                    <span>Add Ticker</span>
-                  </button>
+
+                {/* Most Active section */}
+                <div className="px-3 py-[3px] border-b border-border bg-card/50 border-t">
+                  <span className="text-[7px] font-mono font-semibold text-muted-foreground tracking-wider">MOST ACTIVE</span>
                 </div>
+                {[
+                  { ticker: "PEPE", change: 12.44, price: "0.00001842" },
+                  { ticker: "WIF", change: -5.23, price: "2.4100" },
+                  { ticker: "BONK", change: 8.91, price: "0.00003150" },
+                ].map((item) => (
+                  <div key={item.ticker} className="flex items-center px-3 py-[5px] cursor-pointer hover:bg-card/50 transition-colors border-b border-border/30">
+                    <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
+                    <span className={`w-14 text-right font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                      {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
+                    </span>
+                    <span className="w-16 text-right font-mono text-[9px] text-foreground/70">{item.price}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-t border-border p-1.5 shrink-0">
+                <button className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
+                  <Plus size={9} />
+                  <span>Add Ticker</span>
+                </button>
               </div>
 
               {/* Alerts Section */}
@@ -372,22 +392,97 @@ const Agents = () => {
           {/* CENTER: Feed + Prompt */}
           <ResizablePanel defaultSize={52} minSize={35}>
             <div className="h-full flex flex-col overflow-hidden">
-              {/* General Header */}
-              <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-sm tracking-tight">UNIFIED FEED</span>
-                  <span className="text-[10px] font-mono text-muted-foreground">/ All Agents</span>
+              {/* Greeting + Performance */}
+              <div className="px-5 pt-5 pb-3 border-b border-border shrink-0">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h2 className="text-lg font-bold tracking-tight mb-0.5">Good evening. What are you working on?</h2>
+                    <p className="text-[10px] font-mono text-muted-foreground">ClawHoo Terminal — 5 agents online</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-status-active animate-pulse-dot" />
-                    <span className="text-[10px] font-mono text-muted-foreground">5 ONLINE</span>
+                {/* Performance Stats */}
+                <div className="flex gap-4 text-[9px] font-mono">
+                  {[
+                    { label: "Queries", value: "127", width: "40%" },
+                    { label: "Analyses", value: "34", width: "25%" },
+                    { label: "Alerts Fired", value: "12", width: "15%" },
+                    { label: "Hours Saved", value: "48.2 H", width: "10%" },
+                  ].map((stat) => (
+                    <div key={stat.label} className="flex-1">
+                      <div className="flex items-center justify-between mb-[2px]">
+                        <span className="text-muted-foreground">{stat.label}</span>
+                        <span className="text-foreground font-semibold">{stat.value}</span>
+                      </div>
+                      <div className="h-[3px] bg-border overflow-hidden">
+                        <div className="h-full bg-status-active" style={{ width: stat.width }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Prompt Area */}
+              <div className="px-5 pt-4 shrink-0">
+                {/* Source selector chips */}
+                <div className="flex items-center gap-2 mb-3 flex-wrap">
+                  <span className="text-[9px] font-mono text-muted-foreground">Searching from :</span>
+                  {["On-Chain", "Derivatives", "Social", "Technical", "News", "Private Data"].map((source, i) => (
+                    <button
+                      key={source}
+                      className={`text-[8px] font-mono px-2 py-[3px] border transition-colors ${
+                        i < 4
+                          ? "border-accent/50 text-foreground bg-accent/5 hover:bg-accent/15"
+                          : "border-border text-muted-foreground hover:text-foreground hover:border-accent/30"
+                      }`}
+                    >
+                      {source}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Chat Input */}
+                <div className="border border-border bg-card px-3 py-2 mb-3">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-accent font-mono text-xs">&gt;</span>
+                    <input
+                      type="text"
+                      placeholder="Ask your Agent to start your workflow"
+                      className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-[2px]">
+                        {agents.map((a) => (
+                          <button
+                            key={a.id}
+                            onClick={() => toggleAgent(a.id)}
+                            className={`text-[8px] font-mono px-[6px] py-[2px] transition-colors ${
+                              selectedAgents.has(a.id)
+                                ? "text-accent-foreground"
+                                : "text-muted-foreground/40 hover:text-muted-foreground"
+                            }`}
+                            style={selectedAgents.has(a.id) ? { backgroundColor: `hsl(${a.color})` } : undefined}
+                            title={a.fullName}
+                          >
+                            {a.emoji}
+                          </button>
+                        ))}
+                      </div>
+                      <span className="text-[8px] font-mono text-muted-foreground">{selectedAgents.size}/{agents.length}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[8px] font-mono text-muted-foreground">/? for help, shortcuts</span>
+                      <button className="transition-colors text-accent hover:text-foreground">
+                        <Send size={12} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Feed Area - unified, not agent-dependent */}
-              <div className="flex-1 overflow-y-auto px-5 py-4">
+              {/* Feed Area */}
+              <div className="flex-1 overflow-y-auto px-5 py-2">
                 {allFeed.map((entry, i) => (
                   <motion.div
                     key={`feed-${i}`}
@@ -413,46 +508,6 @@ const Agents = () => {
                     </div>
                   </motion.div>
                 ))}
-              </div>
-
-              {/* Chat Input with orchestration agent selector */}
-              <div className="border-t border-border p-3 shrink-0">
-                <div className="border border-border bg-card px-3 py-2">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-muted-foreground/50 font-mono text-xs">&gt;</span>
-                    <input
-                      type="text"
-                      placeholder="Ask your agent anything..."
-                      className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {/* Multi-select agent chips */}
-                      <div className="flex items-center gap-[2px]">
-                        {agents.map((a) => (
-                          <button
-                            key={a.id}
-                            onClick={() => toggleAgent(a.id)}
-                            className={`text-[8px] font-mono px-[6px] py-[2px] transition-colors ${
-                              selectedAgents.has(a.id)
-                                ? "text-accent-foreground"
-                                : "text-muted-foreground/40 hover:text-muted-foreground"
-                            }`}
-                            style={selectedAgents.has(a.id) ? { backgroundColor: `hsl(${a.color})` } : undefined}
-                            title={a.fullName}
-                          >
-                            {a.emoji}
-                          </button>
-                        ))}
-                      </div>
-                      <span className="text-[8px] font-mono text-muted-foreground">{selectedAgents.size}/{agents.length}</span>
-                    </div>
-                    <button className="transition-colors text-accent hover:text-foreground">
-                      <Send size={12} />
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
           </ResizablePanel>
