@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -239,6 +239,112 @@ const Agents = () => {
   const selectedTicker = sharedWatchlist[0];
   const filteredAlerts = alertFilter === "mine" ? liveAlerts.filter((a) => a.mine) : liveAlerts;
 
+  // Chat state
+  const [chatInput, setChatInput] = useState("");
+  const [chatMessages, setChatMessages] = useState<Array<{
+    id: string;
+    type: "user" | "agent";
+    content: string;
+    agentName?: string;
+    agentEmoji?: string;
+    agentColor?: string;
+    time: string;
+    isTyping?: boolean;
+  }>>([]);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+  const msgCounter = useRef(0);
+
+  const agentResponses: Record<string, Array<{ content: string; agentId: string }>> = useMemo(() => ({
+    default: [
+      { content: "BTC is currently testing the $101,890 resistance zone. RSI shows bullish divergence on the 4H timeframe with a potential breakout target of $108,500. The descending wedge pattern suggests upward momentum.", agentId: "chart" },
+      { content: "Whale activity detected: 15,000 BTC transferred from cold storage. Net exchange outflow of -$492M indicates accumulation phase. On-chain metrics suggest strong hands are positioning.", agentId: "chain" },
+      { content: "Open interest surged 12% in the last 4 hours reaching $38.2B. Funding rate at 0.0122% — short squeeze potential is building. Liquidation cluster at $103K could trigger cascade.", agentId: "deriv" },
+      { content: "Social sentiment is EXTREME GREED across 15+ channels. X mention volume at 4.2K/min. Dominant narrative: institutional adoption cycle. Contrarian signal approaching threshold.", agentId: "social" },
+    ],
+    btc: [
+      { content: "BTC forming ascending triangle on 1H chart. Key resistance at $102,350 with Fibonacci extension target at $108,500. Volume profile shows high activity zone between $99K-$101K.", agentId: "chart" },
+      { content: "BTC exchange reserves dropped 3.2% this week. Miner outflows remain low — no capitulation signals. Long-term holder supply at ATH.", agentId: "chain" },
+    ],
+    eth: [
+      { content: "ETH/BTC ratio testing critical support at 0.032. Historical bounce probability: 78%. Independent ETH structure shows cup-and-handle on daily.", agentId: "chart" },
+      { content: "Ethereum staking deposits surged 40% in 24H. 32,000 ETH entered beacon chain. Gas at 34 Gwei indicates healthy network activity.", agentId: "chain" },
+    ],
+    sol: [
+      { content: "SOL completed cup-and-handle on weekly chart. Measured move target: $285. Support at $230 holding with strong volume confirmation.", agentId: "chart" },
+      { content: "SOL DeFi TVL increased 18% this week. DEX volume hitting new records. On-chain activity metrics are all green.", agentId: "chain" },
+    ],
+  }), []);
+
+  const getTimeNow = () => {
+    const now = new Date();
+    const h = now.getHours();
+    const m = now.getMinutes().toString().padStart(2, "0");
+    const period = h >= 12 ? "PM" : "AM";
+    return `${h > 12 ? h - 12 : h}:${m} ${period}`;
+  };
+
+  const handleSendMessage = useCallback(() => {
+    if (!chatInput.trim()) return;
+    const userMsg = chatInput.trim();
+    setChatInput("");
+
+    const userMsgId = `user-${++msgCounter.current}`;
+    setChatMessages((prev) => [...prev, {
+      id: userMsgId,
+      type: "user",
+      content: userMsg,
+      time: getTimeNow(),
+    }]);
+
+    // Determine which response set to use
+    const lower = userMsg.toLowerCase();
+    let responseKey = "default";
+    if (lower.includes("btc") || lower.includes("bitcoin")) responseKey = "btc";
+    else if (lower.includes("eth") || lower.includes("ethereum")) responseKey = "eth";
+    else if (lower.includes("sol") || lower.includes("solana")) responseKey = "sol";
+
+    const responses = agentResponses[responseKey] || agentResponses.default;
+
+    // Filter responses to only selected agents
+    const activeResponses = responses.filter((r) => selectedAgents.has(r.agentId));
+    const toSend = activeResponses.length > 0 ? activeResponses : responses.slice(0, 2);
+
+    // Simulate sequential agent responses with typing indicators
+    toSend.forEach((resp, i) => {
+      const agent = agents.find((a) => a.id === resp.agentId);
+      if (!agent) return;
+
+      // Show typing indicator
+      const typingId = `typing-${++msgCounter.current}`;
+      setTimeout(() => {
+        setChatMessages((prev) => [...prev, {
+          id: typingId,
+          type: "agent",
+          content: "",
+          agentName: agent.name,
+          agentEmoji: agent.emoji,
+          agentColor: agent.color,
+          time: getTimeNow(),
+          isTyping: true,
+        }]);
+      }, 600 + i * 1800);
+
+      // Replace typing with actual response
+      setTimeout(() => {
+        setChatMessages((prev) =>
+          prev.map((m) => m.id === typingId ? { ...m, content: resp.content, isTyping: false } : m)
+        );
+      }, 1400 + i * 1800);
+    });
+  }, [chatInput, selectedAgents, agentResponses]);
+
+  // Auto-scroll chat
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    }
+  }, [chatMessages]);
+
   useEffect(() => {
     const interval = setInterval(() => {
       alertCounter.current += 1;
@@ -458,48 +564,54 @@ const Agents = () => {
 
                 {/* Chat Input */}
                 <div className="border border-border bg-card px-3 py-2 mb-3">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-accent font-mono text-xs">&gt;</span>
-                    <input
-                      type="text"
-                      placeholder="Ask your Agent to start your workflow"
-                      className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-[2px]">
-                        {agents.map((a) => (
-                          <button
-                            key={a.id}
-                            onClick={() => toggleAgent(a.id)}
-                            className={`text-[8px] font-mono px-[6px] py-[2px] transition-colors ${
-                              selectedAgents.has(a.id)
-                                ? "text-accent-foreground"
-                                : "text-muted-foreground/40 hover:text-muted-foreground"
-                            }`}
-                            style={selectedAgents.has(a.id) ? { backgroundColor: `hsl(${a.color})` } : undefined}
-                            title={a.fullName}
-                          >
-                            {a.emoji}
-                          </button>
-                        ))}
+                  <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-accent font-mono text-xs">&gt;</span>
+                      <input
+                        type="text"
+                        value={chatInput}
+                        onChange={(e) => setChatInput(e.target.value)}
+                        placeholder="Ask your agents — try 'Analyze BTC' or 'What's happening with ETH?'"
+                        className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-[2px]">
+                          {agents.map((a) => (
+                            <button
+                              key={a.id}
+                              type="button"
+                              onClick={() => toggleAgent(a.id)}
+                              className={`text-[8px] font-mono px-[6px] py-[2px] transition-colors ${
+                                selectedAgents.has(a.id)
+                                  ? "text-accent-foreground"
+                                  : "text-muted-foreground/40 hover:text-muted-foreground"
+                              }`}
+                              style={selectedAgents.has(a.id) ? { backgroundColor: `hsl(${a.color})` } : undefined}
+                              title={a.fullName}
+                            >
+                              {a.emoji}
+                            </button>
+                          ))}
+                        </div>
+                        <span className="text-[8px] font-mono text-muted-foreground">{selectedAgents.size}/{agents.length}</span>
                       </div>
-                      <span className="text-[8px] font-mono text-muted-foreground">{selectedAgents.size}/{agents.length}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[8px] font-mono text-muted-foreground">/? for help, shortcuts</span>
+                        <button type="submit" className="transition-colors text-accent hover:text-foreground">
+                          <Send size={12} />
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[8px] font-mono text-muted-foreground">/? for help, shortcuts</span>
-                      <button className="transition-colors text-accent hover:text-foreground">
-                        <Send size={12} />
-                      </button>
-                    </div>
-                  </div>
+                  </form>
                 </div>
               </div>
 
-              {/* Feed Area */}
-              <div className="flex-1 overflow-y-auto px-5 py-2">
-                {allFeed.map((entry, i) => (
+              {/* Feed + Chat Area */}
+              <div className="flex-1 overflow-y-auto px-5 py-2" ref={chatScrollRef}>
+                {/* Static feed entries (shown when no chat messages yet) */}
+                {chatMessages.length === 0 && allFeed.map((entry, i) => (
                   <motion.div
                     key={`feed-${i}`}
                     initial={{ opacity: 0, y: 10 }}
@@ -524,6 +636,68 @@ const Agents = () => {
                     </div>
                   </motion.div>
                 ))}
+
+                {/* Chat messages */}
+                <AnimatePresence>
+                  {chatMessages.map((msg) => (
+                    <motion.div
+                      key={msg.id}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="mb-4"
+                    >
+                      {msg.type === "user" ? (
+                        <div className="flex justify-end">
+                          <div className="bg-accent/15 border border-accent/30 px-4 py-2.5 max-w-[80%]">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-[9px] font-mono text-accent font-semibold">YOU</span>
+                              <span className="text-[8px] font-mono text-muted-foreground">{msg.time}</span>
+                            </div>
+                            <p className="text-xs leading-relaxed">{msg.content}</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="border-b border-border/50 pb-4">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[10px]">{msg.agentEmoji}</span>
+                            <span className="text-[9px] font-mono font-semibold" style={{ color: `hsl(${msg.agentColor})` }}>{msg.agentName}</span>
+                            <span className="text-[9px] font-mono text-muted-foreground">{msg.time}</span>
+                          </div>
+                          {msg.isTyping ? (
+                            <div className="flex items-center gap-1.5 py-1">
+                              <motion.span
+                                className="w-1.5 h-1.5 rounded-full bg-accent"
+                                animate={{ opacity: [0.3, 1, 0.3] }}
+                                transition={{ duration: 0.8, repeat: Infinity, delay: 0 }}
+                              />
+                              <motion.span
+                                className="w-1.5 h-1.5 rounded-full bg-accent"
+                                animate={{ opacity: [0.3, 1, 0.3] }}
+                                transition={{ duration: 0.8, repeat: Infinity, delay: 0.2 }}
+                              />
+                              <motion.span
+                                className="w-1.5 h-1.5 rounded-full bg-accent"
+                                animate={{ opacity: [0.3, 1, 0.3] }}
+                                transition={{ duration: 0.8, repeat: Infinity, delay: 0.4 }}
+                              />
+                              <span className="text-[9px] font-mono text-muted-foreground ml-1">analyzing...</span>
+                            </div>
+                          ) : (
+                            <motion.p
+                              className="text-xs leading-relaxed text-foreground/90"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              {msg.content}
+                            </motion.p>
+                          )}
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
             </div>
           </ResizablePanel>
