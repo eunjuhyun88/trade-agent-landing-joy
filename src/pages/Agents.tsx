@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
   BarChart3, Link2, TrendingUp, MessageSquare, Clock,
-  ExternalLink, Search, Send, Settings, Plus,
+  ExternalLink, Search, Send, Settings, Plus, ChevronDown,
 } from "lucide-react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import AppNav from "@/components/AppNav";
@@ -332,253 +332,228 @@ const Agents = () => {
 
           <ResizableHandle withHandle />
 
-          {/* CENTER: Chart Area */}
+          {/* CENTER: Feed + Prompt */}
           <ResizablePanel defaultSize={48} minSize={30}>
             <div className="h-full flex flex-col overflow-hidden">
-              {/* Trade Header */}
-              <div className="flex items-center justify-between px-3 py-[7px] border-b border-border bg-background shrink-0">
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-sm font-bold">{selectedTicker?.ticker} / USDT</span>
-                  <span className="font-mono text-[7px] tracking-[0.7px] px-[6px] py-[2px] bg-accent/15 text-accent uppercase">Ghost Layer</span>
-                  <span className="font-mono text-[7px] tracking-[0.7px] px-[6px] py-[2px] bg-[hsl(var(--status-active)/0.12)] text-status-active uppercase">Orch Active</span>
-                  <div className="flex gap-[1px]">
-                    {timeframes.map((tf) => (
-                      <button
-                        key={tf}
-                        onClick={() => setSelectedTf(tf)}
-                        className={`font-mono text-[8px] px-[7px] py-[3px] border-none cursor-pointer ${
-                          tf === selectedTf ? "bg-accent text-accent-foreground" : "text-muted-foreground"
-                        }`}
-                      >
-                        {tf}
-                      </button>
-                    ))}
+              {/* Agent Info Bar */}
+              <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
+                <div className="flex items-center gap-3">
+                  <span style={{ color: agentColor }}>{selected.icon}</span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-sm tracking-tight">{selected.name}</span>
+                      <span className="text-[10px] font-mono text-muted-foreground">/ {selected.category}</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">{selected.fullName}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="font-mono text-[9px] text-foreground/70 hidden lg:block">
-                    {selected.marketStats.map((s, i) => (
-                      <span key={i} className="mr-2">
-                        <span className="text-muted-foreground">{s.label}</span> {s.value}
-                      </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-status-active animate-pulse-dot" />
+                    <span className="text-[10px] font-mono text-muted-foreground">ONLINE</span>
+                  </div>
+                  <button
+                    onClick={() => navigate(`/agent/${selectedId}`)}
+                    className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    OVERVIEW <ExternalLink size={10} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Feed Area */}
+              <div className="flex-1 overflow-y-auto px-5 py-4">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedId}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {selected.feed.map((entry, i) => (
+                      <motion.div
+                        key={`${selectedId}-${i}`}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.08 }}
+                      >
+                        {entry.date && (
+                          <div className="mb-2 mt-4 first:mt-0">
+                            <span className="font-mono text-[10px] tracking-wide text-foreground/70">{entry.date}</span>
+                          </div>
+                        )}
+                        <div className="mb-4 pb-4 border-b border-border/50 last:border-0">
+                          <span className="text-[9px] font-mono text-muted-foreground">{entry.time}</span>
+                          <p className="mt-1.5 text-xs leading-relaxed text-foreground/90">{entry.content}</p>
+                          <button className="text-[9px] font-mono text-muted-foreground hover:text-foreground mt-1.5 transition-colors">
+                            ..More
+                          </button>
+                        </div>
+                      </motion.div>
                     ))}
-                  </div>
-                  <div className="flex items-center gap-[5px] font-mono text-[8px] text-muted-foreground hidden xl:flex">
-                    RISK STEERING
-                    <div className="w-[50px] h-[3px] bg-border relative">
-                      <div className="absolute left-0 top-0 h-full w-1/2 bg-accent" />
-                      <div className="absolute top-[-3px] left-1/2 w-[9px] h-[9px] rounded-full bg-foreground border-2 border-accent -translate-x-1/2" />
-                    </div>
-                    BALANCED
-                  </div>
-                </div>
+                  </motion.div>
+                </AnimatePresence>
               </div>
 
-              {/* Chart Area */}
-              <div className="flex-1 relative bg-background overflow-hidden">
-                <div className="absolute top-2 left-2 bg-background/95 border border-border p-2 px-3 w-[200px] z-[2]">
-                  <div className="font-mono text-[9px] font-semibold tracking-[1px]">ZONE MATCH ANALYSIS</div>
-                  <div className="font-mono text-[7px] text-status-hot flex items-center gap-1 mt-[2px] mb-[5px]">
-                    <span className="w-1 h-1 rounded-full bg-status-hot animate-pulse-dot" />
-                    SYNCING AI FEEDBACK
+              {/* Chat Input */}
+              <div className="border-t border-border p-3 shrink-0">
+                <div className="border border-border bg-card px-3 py-2">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-muted-foreground/50 font-mono text-xs">&gt;</span>
+                    <input
+                      type="text"
+                      placeholder="Ask your agent anything..."
+                      className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
+                    />
                   </div>
-                  <div className="h-[3px] bg-border overflow-hidden mb-[5px]">
-                    <div className="h-full w-[73%] bg-gradient-to-r from-accent to-status-active" />
-                  </div>
-                  <div className="flex justify-between font-mono text-[8px]">
-                    <span className="text-muted-foreground">HISTORICAL STATE PH02</span>
-                    <span className="text-status-active">+24.8% EXPECTED</span>
-                  </div>
-                  <div className="absolute top-2 right-3 font-mono text-[26px] font-bold text-accent">73</div>
-                </div>
-
-                <div className="absolute top-[36%] left-[20%] bg-card border border-accent p-[6px] px-3 flex items-center gap-[7px] z-[2]">
-                  <div className="w-[22px] h-[22px] rounded-full bg-accent/15 flex items-center justify-center text-[10px]">👻</div>
-                  <div className="font-mono text-[8px]">
-                    <div className="font-semibold text-accent">GHOST MATCH DETECTED</div>
-                    <div className="text-foreground/70">Historical State: PH02-EXPANSION</div>
+                  <div className="flex items-center justify-between">
+                    <button className="text-[9px] font-mono text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
+                      /Deep Research <ChevronDown size={8} />
+                    </button>
+                    <button className="text-muted-foreground hover:text-foreground transition-colors" style={{ color: agentColor }}>
+                      <Send size={12} />
+                    </button>
                   </div>
                 </div>
-
-                <div className="absolute top-[30%] left-[48%] z-[2] bg-card border border-[hsl(45_90%_55%)] p-[5px] px-[10px] flex items-center gap-[7px]">
-                  <div className="w-[18px] h-[18px] bg-[hsl(45_90%_55%/0.15)] flex items-center justify-center text-[9px] text-[hsl(45_90%_55%)]">🔔</div>
-                  <div>
-                    <div className="font-mono text-[8px] font-semibold text-[hsl(45_90%_55%)]">CHART AGENT GUIDANCE</div>
-                    <div className="font-mono text-[8px] text-foreground/70">Target Zone: $108,500</div>
-                  </div>
-                </div>
-
-                <div className="absolute top-[23%] right-[13%] border border-[hsl(45_90%_55%)] bg-[hsl(45_90%_55%/0.06)] p-[3px] px-2 font-mono text-[7px] text-[hsl(45_90%_55%)] tracking-[0.5px] z-[2]">
-                  ALERT TRIGGER: &gt;108,500
-                </div>
-
-                <div className="absolute top-[10%] right-[6%] w-[140px] h-[100px] bg-accent/5 border border-dashed border-accent" />
-
-                <div className="absolute right-0 top-[52%] bg-accent text-accent-foreground font-mono text-[9px] px-[5px] py-[2px]">
-                  {selectedTicker?.price}
-                </div>
-
-                <div className="absolute bottom-[38%] left-[50%] font-mono text-[7px] text-muted-foreground tracking-[0.5px]">
-                  STATESYNC: OCT-23 ANCHOR
-                </div>
-
-                <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={agentColor} stopOpacity="0.2" />
-                      <stop offset="100%" stopColor={agentColor} stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <motion.polyline
-                    points="0,70 50,68 100,72 150,65 200,60 250,58 300,62 350,55 400,50 450,48 500,52 550,45 600,40 650,38 700,42 750,35 800,30 850,33 900,28 950,25 1000,30"
-                    fill="none"
-                    stroke={agentColor}
-                    strokeWidth="1.5"
-                    vectorEffect="non-scaling-stroke"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 2 }}
-                  />
-                  <motion.polygon
-                    points="0,70 50,68 100,72 150,65 200,60 250,58 300,62 350,55 400,50 450,48 500,52 550,45 600,40 650,38 700,42 750,35 800,30 850,33 900,28 950,25 1000,30 1000,100 0,100"
-                    fill="url(#chartGrad)"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 1, delay: 1 }}
-                  />
-                </svg>
-              </div>
-
-              {/* Judgment Memory */}
-              <div className="flex items-center px-3 py-[5px] border-t border-border bg-card gap-[10px] shrink-0">
-                <span className="font-mono text-[8px] font-semibold tracking-[1px] text-accent whitespace-nowrap flex items-center gap-[5px]">
-                  ⊙ JUDGMENT MEMORY
-                </span>
-                <span className="flex items-center gap-[5px] font-mono text-[8px] text-muted-foreground whitespace-nowrap">
-                  SIMILARITY:
-                  <span className="w-[80px] h-1 bg-border overflow-hidden inline-block align-middle">
-                    <span className="block h-full w-[94%] bg-gradient-to-r from-[hsl(45_90%_55%)] to-status-active" />
-                  </span>
-                  94.2%
-                </span>
-                <span className="flex-1 text-[9px] text-foreground/70 overflow-hidden text-ellipsis whitespace-nowrap">
-                  Current state mirrors Oct 2023 accumulation (PH02). High order flow absorption similarity.
-                </span>
-              </div>
-
-              {/* Portfolio Stats */}
-              <div className="flex items-center px-3 py-[6px] border-t border-border bg-background gap-7 shrink-0">
-                {[
-                  { label: "Portfolio Balance", value: "$142,500.00" },
-                  { label: "24H P&L", value: "+$4,210.15", color: "text-status-active" },
-                  { label: "Open Positions", value: "04" },
-                  { label: "Risk", value: "LOW", color: "text-status-active" },
-                ].map((item) => (
-                  <div key={item.label} className="flex flex-col">
-                    <span className="font-mono text-[7px] tracking-[0.7px] text-muted-foreground uppercase">{item.label}</span>
-                    <span className={`font-mono text-sm font-semibold ${item.color || ""}`}>{item.value}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Condition Log */}
-              <div className="px-3 py-[5px] border-t border-border bg-background shrink-0 max-h-14 overflow-y-auto">
-                <div className="font-mono text-[8px] font-semibold tracking-[1px] text-muted-foreground mb-[2px]">⊞ CONDITION LOG</div>
-                {[
-                  { time: "14:22:10", text: "[SYS] ALERT INIT: BTC/USDT_PUMP_DETECTOR" },
-                  { time: "14:22:15", text: "Evaluating correlation... Match: OCT-2023." },
-                  { time: "14:22:18", text: "CONDITION VALID. 4 HISTORICAL REVERSALS.", ok: true },
-                ].map((log, i) => (
-                  <div key={i} className="font-mono text-[8px] text-muted-foreground flex gap-2 py-[1px]">
-                    <span>{log.time}</span>
-                    <span className={log.ok ? "text-status-active" : ""}>{log.text}</span>
-                  </div>
-                ))}
               </div>
             </div>
           </ResizablePanel>
 
           <ResizableHandle withHandle />
 
-          {/* RIGHT: Agent Cluster */}
+          {/* RIGHT: Chart + Market Data + Headlines (vertical scroll) */}
           <ResizablePanel defaultSize={30} minSize={18} maxSize={40}>
-            <div className="h-full flex flex-col overflow-y-auto">
-              <div className="px-3 py-2 border-b border-border flex items-center justify-between shrink-0">
-                <span className="font-mono text-[9px] font-semibold tracking-[1px]">AGENT CLUSTER</span>
-                <span className="font-mono text-[8px] text-muted-foreground">5 PILOTS</span>
+            <div className="h-full flex flex-col overflow-y-auto border-l border-border">
+              {/* Market Live Header */}
+              <div className="p-3 border-b border-border shrink-0">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-mono tracking-wider" style={{ color: agentColor }}>MARKET LIVE</span>
+                  <ExternalLink size={10} className="text-muted-foreground" />
+                </div>
+                {/* Compact Market Stats */}
+                <div className="border border-border bg-card p-2.5">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="font-bold text-xs" style={{ color: agentColor }}>{selectedTicker?.ticker}</span>
+                    <span className="text-[9px] font-mono text-muted-foreground truncate">{selectedTicker?.name}</span>
+                  </div>
+                  <div className="flex gap-2 text-[9px] font-mono text-muted-foreground mb-2 flex-wrap">
+                    {selected.marketStats.map((stat) => (
+                      <span key={stat.label} className="whitespace-nowrap">
+                        <span>{stat.label}</span>{" "}
+                        <span className="text-foreground">{stat.value}</span>
+                      </span>
+                    ))}
+                  </div>
+                  {/* Mini Chart */}
+                  <div className="relative h-16 overflow-hidden">
+                    <svg viewBox="0 0 300 80" className="w-full h-full" preserveAspectRatio="none">
+                      <defs>
+                        <linearGradient id={`miniGrad-${selectedId}`} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor={agentColor} stopOpacity="0.3" />
+                          <stop offset="100%" stopColor={agentColor} stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      <motion.polyline
+                        key={`line-${selectedId}`}
+                        points="0,55 30,50 60,60 90,45 120,35 150,38 180,25 210,28 240,22 270,18 300,20"
+                        fill="none"
+                        stroke={agentColor}
+                        strokeWidth="1.5"
+                        vectorEffect="non-scaling-stroke"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 1.5 }}
+                      />
+                      <motion.polygon
+                        key={`area-${selectedId}`}
+                        points="0,55 30,50 60,60 90,45 120,35 150,38 180,25 210,28 240,22 270,18 300,20 300,80 0,80"
+                        fill={`url(#miniGrad-${selectedId})`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.8 }}
+                      />
+                    </svg>
+                  </div>
+                </div>
               </div>
 
-              {agents.map((agent) => {
-                const isActive = agent.status !== "idle";
-                return (
-                  <div key={agent.id} className="border-b border-border">
-                    <div
-                      className="flex items-center justify-between px-3 py-[7px] cursor-pointer hover:bg-card/50 transition-colors"
-                      onClick={() => setSelectedId(agent.id)}
-                    >
-                      <div className="flex items-center gap-[7px]">
-                        <span className="text-[11px]">{agent.emoji}</span>
-                        <span className="font-mono text-[9px] font-semibold tracking-[0.5px]">{agent.fullName.toUpperCase()}</span>
+              {/* Headlines */}
+              <div className="p-3 border-b border-border">
+                <div className="mb-2">
+                  <span className="font-mono text-[9px] tracking-wider text-muted-foreground">HEADLINES</span>
+                </div>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedId}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                    className="space-y-2"
+                  >
+                    {selected.headlines.map((h, i) => (
+                      <div key={i} className="flex gap-2 group cursor-pointer py-0.5">
+                        <span className="text-[9px] font-mono text-muted-foreground shrink-0 mt-0.5">{h.time}</span>
+                        <p className={`text-[10px] leading-relaxed group-hover:underline ${
+                          h.sentiment === "bull" ? "text-status-active" : (h.sentiment as string) === "bear" ? "text-status-hot" : "text-foreground/70"
+                        }`}>
+                          {h.text}
+                        </p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {agent.score > 0 && (
-                          <span className="font-mono text-[10px] font-bold">{agent.score}</span>
-                        )}
-                        <span className={`w-[6px] h-[6px] rounded-full ${isActive ? "bg-status-active" : "bg-muted-foreground"}`} />
-                      </div>
-                    </div>
-                    {agent.id === selectedId && agent.clusterDetails.length > 0 && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        className="px-3 pb-2 overflow-hidden"
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Agent Cluster */}
+              <div className="p-3 border-b border-border">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-mono text-[9px] font-semibold tracking-[1px]">AGENT CLUSTER</span>
+                  <span className="font-mono text-[8px] text-muted-foreground">5 PILOTS</span>
+                </div>
+                {agents.map((agent) => {
+                  const isActive = agent.status !== "idle";
+                  return (
+                    <div key={agent.id} className="border-b border-border last:border-0">
+                      <div
+                        className="flex items-center justify-between py-[6px] cursor-pointer hover:bg-card/50 transition-colors"
+                        onClick={() => setSelectedId(agent.id)}
                       >
-                        <div className="font-mono text-[7px] text-muted-foreground mb-[3px] tracking-[0.5px]">IDENTIFIED ZONES</div>
-                        {agent.clusterDetails.map((d, i) => (
-                          <div key={i} className="flex justify-between py-[2px] text-[9px]">
-                            <span className="text-muted-foreground">{d.label}</span>
-                            <span className={`font-mono text-[9px] ${
-                              (d as any).color === "hot" ? "text-status-hot" :
-                              (d as any).color === "active" ? "text-status-active" : ""
-                            }`}>{d.value}</span>
-                          </div>
-                        ))}
-                        {agent.clusterMeta.length > 0 && (
-                          <div className="flex gap-[10px] mt-[5px] font-mono text-[8px]">
-                            {agent.clusterMeta.map((m, i) => (
-                              <span key={i}>
-                                <span className="text-muted-foreground">{m.label}:</span>{" "}
-                                <span className={m.color === "green" ? "text-status-active" : "text-accent"}>{m.value}</span>
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        {agent.id === "deriv" && (
-                          <div className="mt-[5px]">
-                            <div className="font-mono text-[7px] text-muted-foreground mb-[3px] tracking-[0.5px]">LIQUIDATION HEATMAP</div>
-                            <div className="flex gap-[2px]">
-                              <div className="h-2 flex-[3] bg-accent/15" />
-                              <div className="h-2 flex-[1] bg-status-hot/15" />
-                              <div className="h-2 flex-[0.5] bg-status-hot" />
+                        <div className="flex items-center gap-[7px]">
+                          <span className="text-[11px]">{agent.emoji}</span>
+                          <span className="font-mono text-[9px] font-semibold tracking-[0.5px]">{agent.fullName.toUpperCase()}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {agent.score > 0 && <span className="font-mono text-[10px] font-bold">{agent.score}</span>}
+                          <span className={`w-[6px] h-[6px] rounded-full ${isActive ? "bg-status-active" : "bg-muted-foreground"}`} />
+                        </div>
+                      </div>
+                      {agent.id === selectedId && agent.clusterDetails.length > 0 && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          className="pb-2 overflow-hidden"
+                        >
+                          <div className="font-mono text-[7px] text-muted-foreground mb-[3px] tracking-[0.5px]">IDENTIFIED ZONES</div>
+                          {agent.clusterDetails.map((d, i) => (
+                            <div key={i} className="flex justify-between py-[2px] text-[9px]">
+                              <span className="text-muted-foreground">{d.label}</span>
+                              <span className={`font-mono text-[9px] ${
+                                (d as any).color === "hot" ? "text-status-hot" :
+                                (d as any).color === "active" ? "text-status-active" : ""
+                              }`}>{d.value}</span>
                             </div>
-                            <div className="font-mono text-[7px] text-muted-foreground mt-[2px]">$152k — HIGH DENSITY</div>
-                          </div>
-                        )}
-                        {agent.id === "chain" && (
-                          <div className="mt-[3px]">
-                            <div className="h-[3px] bg-border overflow-hidden">
-                              <div className="h-full w-[65%] bg-[hsl(45_90%_55%)]" />
-                            </div>
-                          </div>
-                        )}
-                      </motion.div>
-                    )}
-                  </div>
-                );
-              })}
+                          ))}
+                        </motion.div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
 
               {/* Unified Intelligence */}
-              <div className="px-3 py-2 bg-[hsl(45_90%_55%/0.15)] shrink-0">
+              <div className="px-3 py-2 bg-[hsl(45_90%_55%/0.15)]">
                 <div className="font-mono text-[7px] text-muted-foreground tracking-[1px] mb-[2px]">UNIFIED INTELLIGENCE</div>
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-lg font-bold">LONG SIGNAL</span>
@@ -593,7 +568,7 @@ const Agents = () => {
               </div>
 
               {/* Pilot Section */}
-              <div className="px-3 py-2 bg-card border-t border-border shrink-0">
+              <div className="px-3 py-2 bg-card border-t border-border">
                 <div className="flex items-center gap-[5px] mb-[5px]">
                   <div className="w-[18px] h-[18px] bg-accent/15 flex items-center justify-center text-[8px] text-accent">⊞</div>
                   <span className="font-mono text-[8px] font-semibold tracking-[1px]">CLAWHOO PILOT</span>
@@ -608,16 +583,6 @@ const Agents = () => {
                 <button className="w-full py-[7px] bg-[hsl(45_90%_55%/0.15)] border border-[hsl(45_90%_55%)] text-[hsl(45_90%_55%)] font-mono text-[9px] font-semibold tracking-[2px] uppercase cursor-pointer hover:bg-[hsl(45_90%_55%/0.25)] transition-colors">
                   EXECUTE HISTORICAL TRADE
                 </button>
-              </div>
-
-              {/* Command Input */}
-              <div className="flex items-center px-3 py-[5px] border-t border-border bg-card gap-[5px] mt-auto shrink-0">
-                <span className="font-mono text-[10px] text-muted-foreground">&gt;</span>
-                <input
-                  type="text"
-                  placeholder="Orchestration command..."
-                  className="flex-1 bg-transparent border-none font-mono text-[10px] text-foreground outline-none placeholder:text-muted-foreground"
-                />
               </div>
             </div>
           </ResizablePanel>
