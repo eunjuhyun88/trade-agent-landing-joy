@@ -1,14 +1,15 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   BarChart3, Link2, MessageSquare, TrendingUp,
   Plus, Send, Search, Settings,
-  ChevronDown, ExternalLink, Clock
+  ChevronDown, ExternalLink, Clock, Lock, Zap
 } from "lucide-react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import AppNav from "@/components/AppNav";
 import { useToast } from "@/hooks/use-toast";
+import { useWallet } from "@/contexts/WalletContext";
 
 const agentList = [
   { id: "chart", code: "AGT_01" },
@@ -189,10 +190,15 @@ const AgentDetail = () => {
   const { agentId } = useParams<{ agentId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { chatCount, maxFreeChats, incrementChat, subscription } = useWallet();
   const agent = agentData[agentId || "chart"];
   const [chatInput, setChatInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedFeed, setExpandedFeed] = useState<number | null>(null);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  const isPro = subscription && subscription !== "FREE";
+  const remaining = isPro ? Infinity : maxFreeChats - chatCount;
 
   if (!agent) {
     return (
@@ -214,6 +220,10 @@ const AgentDetail = () => {
 
   const handleSendChat = () => {
     if (!chatInput.trim()) return;
+    if (!incrementChat()) {
+      setShowUpgradeModal(true);
+      return;
+    }
     toast({
       title: `${agent.name} Agent`,
       description: `Processing: "${chatInput.trim()}" — Agent response coming soon.`,
@@ -362,6 +372,26 @@ const AgentDetail = () => {
 
             {/* Chat Input */}
             <div className="border-t border-border p-3">
+              {/* Remaining count */}
+              <div className="flex items-center justify-between mb-1.5">
+                {isPro ? (
+                  <span className="text-[8px] font-mono text-status-active flex items-center gap-1">
+                    <Zap size={8} /> UNLIMITED QUERIES
+                  </span>
+                ) : (
+                  <span className={`text-[8px] font-mono flex items-center gap-1 ${remaining <= 2 ? "text-status-hot" : "text-muted-foreground"}`}>
+                    <MessageSquare size={8} /> {remaining}/{maxFreeChats} FREE QUERIES LEFT
+                  </span>
+                )}
+                {!isPro && remaining <= 2 && (
+                  <button
+                    onClick={() => navigate("/#pricing")}
+                    className="text-[8px] font-mono text-accent hover:underline"
+                  >
+                    UPGRADE →
+                  </button>
+                )}
+              </div>
               <form onSubmit={(e) => { e.preventDefault(); handleSendChat(); }} className="border border-border bg-card px-3 py-2">
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className="text-muted-foreground/50 font-mono text-xs">&gt;</span>
@@ -369,8 +399,9 @@ const AgentDetail = () => {
                     type="text"
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
-                    placeholder="Ask your agent anything..."
+                    placeholder={remaining <= 0 && !isPro ? "Upgrade to PRO for unlimited queries..." : "Ask your agent anything..."}
                     className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
+                    disabled={remaining <= 0 && !isPro}
                   />
                 </div>
                 <div className="flex items-center justify-between">
@@ -379,8 +410,8 @@ const AgentDetail = () => {
                       /Deep Research <ChevronDown size={8} />
                     </button>
                   </div>
-                  <button type="submit" className="text-muted-foreground hover:text-foreground transition-colors" style={{ color: agentColor }}>
-                    <Send size={12} />
+                  <button type="submit" className="text-muted-foreground hover:text-foreground transition-colors" style={{ color: remaining <= 0 && !isPro ? undefined : agentColor }} disabled={remaining <= 0 && !isPro}>
+                    {remaining <= 0 && !isPro ? <Lock size={12} /> : <Send size={12} />}
                   </button>
                 </div>
               </form>
@@ -486,6 +517,55 @@ const AgentDetail = () => {
           <span>v2.4.1</span>
         </div>
       </div>
+
+      {/* Upgrade Modal */}
+      <AnimatePresence>
+        {showUpgradeModal && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowUpgradeModal(false)}
+          >
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+            <motion.div
+              className="relative w-full max-w-md border border-border bg-card shadow-2xl"
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-8 text-center">
+                <div className="w-14 h-14 mx-auto mb-4 border border-accent/30 bg-accent/10 flex items-center justify-center">
+                  <Lock size={24} className="text-accent" />
+                </div>
+                <h3 className="text-sm font-bold font-mono tracking-[2px] mb-2">FREE LIMIT REACHED</h3>
+                <p className="text-xs text-muted-foreground font-mono mb-1">
+                  You've used all {maxFreeChats} free agent queries.
+                </p>
+                <p className="text-[10px] text-muted-foreground/70 font-mono mb-6">
+                  Upgrade to PRO for unlimited AI agent access, priority responses, and advanced analysis.
+                </p>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => { setShowUpgradeModal(false); navigate("/#pricing"); }}
+                    className="w-full py-3 bg-accent text-accent-foreground text-[10px] font-mono font-bold tracking-[2px] hover:bg-accent/90 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <Zap size={12} /> UPGRADE TO PRO
+                  </button>
+                  <button
+                    onClick={() => setShowUpgradeModal(false)}
+                    className="w-full py-2.5 border border-border text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    MAYBE LATER
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
