@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown, ExternalLink, Plus } from "lucide-react";
+import { TrendingUp, TrendingDown, Plus, Wallet, Copy, ExternalLink } from "lucide-react";
 import AppNav from "@/components/AppNav";
+import { useWallet } from "@/contexts/WalletContext";
 
 const mockPortfolio = [
   { asset: "BTC", name: "Bitcoin", amount: "0.2451", value: "$24,973.29", price: "$101,890", change: 2.41, pnl: "+$1,842.30", pnlPct: "+7.95%", allocation: 48 },
@@ -21,6 +22,7 @@ const mockActivity = [
 
 const Holdings = () => {
   const [tab, setTab] = useState<"portfolio" | "activity">("portfolio");
+  const { connected, address, connectedWallet } = useWallet();
   const totalValue = "$51,598.28";
   const totalPnl = "+$3,753.08";
   const totalPnlPct = "+7.84%";
@@ -31,6 +33,53 @@ const Holdings = () => {
 
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-5xl mx-auto px-6 py-8">
+
+          {/* Wallet Info Card */}
+          {connected ? (
+            <motion.div
+              className="border border-accent/30 bg-accent/5 p-4 mb-6"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{connectedWallet?.icon}</span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-xs font-mono font-bold">{connectedWallet?.name}</p>
+                      <span className="text-[7px] font-mono px-1.5 py-[1px] bg-status-active/20 text-status-active border border-status-active/30">CONNECTED</span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <p className="text-[10px] font-mono text-muted-foreground">{address}</p>
+                      <Copy size={9} className="text-muted-foreground hover:text-foreground cursor-pointer" />
+                      <ExternalLink size={9} className="text-muted-foreground hover:text-foreground cursor-pointer" />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-6 text-right">
+                  <div>
+                    <p className="text-[8px] font-mono text-muted-foreground tracking-wider">BALANCE</p>
+                    <p className="text-sm font-mono font-bold">2.4521 ETH</p>
+                  </div>
+                  <div>
+                    <p className="text-[8px] font-mono text-muted-foreground tracking-wider">USD VALUE</p>
+                    <p className="text-sm font-mono font-bold">$9,424.18</p>
+                  </div>
+                  <div>
+                    <p className="text-[8px] font-mono text-muted-foreground tracking-wider">NETWORK</p>
+                    <p className="text-sm font-mono font-bold">{connectedWallet?.id === "base" ? "Base" : "Ethereum"}</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="border border-border border-dashed p-6 mb-6 flex flex-col items-center justify-center text-center">
+              <Wallet size={24} className="text-muted-foreground mb-2" />
+              <p className="text-xs font-mono text-muted-foreground mb-1">지갑이 연결되지 않았습니다</p>
+              <p className="text-[9px] font-mono text-muted-foreground/60">상단의 Connect Wallet 버튼을 눌러 지갑을 연결하세요</p>
+            </div>
+          )}
+
           {/* Portfolio Summary */}
           <div className="border border-border p-6 mb-6">
             <div className="flex items-center justify-between mb-4">

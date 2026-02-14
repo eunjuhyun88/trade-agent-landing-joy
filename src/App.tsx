@@ -8,6 +8,7 @@ import AgentDetail from "./pages/AgentDetail";
 import Agents from "./pages/Agents";
 import Holdings from "./pages/Holdings";
 import NotFound from "./pages/NotFound";
+import { WalletProvider } from "./contexts/WalletContext";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <WalletProvider>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/agents" element={<Agents />} />
@@ -25,6 +27,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </WalletProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

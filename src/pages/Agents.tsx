@@ -3,12 +3,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
   BarChart3, Link2, TrendingUp, MessageSquare, Clock, Bell,
-  ExternalLink, Search, Send, Settings, Plus, ChevronDown,
+  ExternalLink, Search, Send, Settings, Plus, ChevronDown, ArrowDownUp,
 } from "lucide-react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import AppNav from "@/components/AppNav";
 import TradingViewChart from "@/components/TradingViewChart";
 import TickerBar from "@/components/TickerBar";
+import { useWallet } from "@/contexts/WalletContext";
 
 const sharedWatchlist = [
   { ticker: "BTC", name: "Bitcoin", price: "101,890", change: 2.41 },
@@ -270,7 +271,11 @@ const orchestratedResponses: Record<string, OrchestratedResponse> = {
 
 const Agents = () => {
   const navigate = useNavigate();
+  const { connected } = useWallet();
   const [selectedAgents, setSelectedAgents] = useState<Set<string>>(new Set(agents.map((a) => a.id)));
+  const [swapFrom, setSwapFrom] = useState("ETH");
+  const [swapTo, setSwapTo] = useState("BTC");
+  const [swapAmount, setSwapAmount] = useState("");
   const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
   const [alertFilter, setAlertFilter] = useState<"all" | "mine">("all");
   const dataSources = ["On-Chain", "Derivatives", "Social", "Technical", "News", "Private Data"];
@@ -773,22 +778,88 @@ const Agents = () => {
                 </div>
               </div>
 
-              {/* Pilot */}
+              {/* Quick Swap */}
               <div className="px-3 py-2 bg-card border-t border-border">
-                <div className="flex items-center gap-[5px] mb-[5px]">
-                  <div className="w-[18px] h-[18px] bg-accent/15 flex items-center justify-center text-[8px] text-accent">⊞</div>
-                  <span className="font-mono text-[8px] font-semibold tracking-[1px]">STOCKCLAW PILOT</span>
-                  <span className="font-mono text-[7px] text-muted-foreground border border-border px-[3px]">V2.4</span>
+                <div className="flex items-center gap-[5px] mb-2">
+                  <ArrowDownUp size={12} className="text-accent" />
+                  <span className="font-mono text-[8px] font-semibold tracking-[1px]">QUICK SWAP</span>
                 </div>
-                <div className="bg-secondary p-[7px] px-[9px] mb-[5px]">
-                  <div className="font-mono text-[7px] font-semibold text-accent tracking-[0.5px] mb-[2px]">■ MARKET SENTIMENT</div>
-                  <p className="text-[10px] text-foreground leading-[1.4]">
-                    Algorithmic convergence at $152k. Expecting volatility compression before asymmetric breakout.
-                  </p>
-                </div>
-                <button className="w-full py-[7px] bg-[hsl(45_90%_55%/0.15)] border border-[hsl(45_90%_55%)] text-[hsl(45_90%_55%)] font-mono text-[9px] font-semibold tracking-[2px] uppercase cursor-pointer hover:bg-[hsl(45_90%_55%/0.25)] transition-colors">
-                  EXECUTE HISTORICAL TRADE
-                </button>
+
+                {connected ? (
+                  <div className="space-y-2">
+                    <div className="border border-border p-2">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[7px] font-mono text-muted-foreground">FROM</span>
+                        <span className="text-[7px] font-mono text-muted-foreground">Balance: {swapFrom === "ETH" ? "2.4521" : "0.2451"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={swapFrom}
+                          onChange={(e) => setSwapFrom(e.target.value)}
+                          className="bg-secondary border border-border text-[10px] font-mono font-bold px-2 py-1 outline-none text-foreground"
+                        >
+                          <option value="ETH">ETH</option>
+                          <option value="BTC">BTC</option>
+                          <option value="SOL">SOL</option>
+                          <option value="USDT">USDT</option>
+                        </select>
+                        <input
+                          type="text"
+                          value={swapAmount}
+                          onChange={(e) => setSwapAmount(e.target.value)}
+                          placeholder="0.00"
+                          className="flex-1 text-right bg-transparent text-sm font-mono outline-none placeholder:text-muted-foreground/30"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => { const tmp = swapFrom; setSwapFrom(swapTo); setSwapTo(tmp); }}
+                        className="w-6 h-6 border border-border bg-secondary flex items-center justify-center hover:border-accent/50 transition-colors"
+                      >
+                        <ArrowDownUp size={10} className="text-muted-foreground" />
+                      </button>
+                    </div>
+
+                    <div className="border border-border p-2">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[7px] font-mono text-muted-foreground">TO</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={swapTo}
+                          onChange={(e) => setSwapTo(e.target.value)}
+                          className="bg-secondary border border-border text-[10px] font-mono font-bold px-2 py-1 outline-none text-foreground"
+                        >
+                          <option value="BTC">BTC</option>
+                          <option value="ETH">ETH</option>
+                          <option value="SOL">SOL</option>
+                          <option value="USDT">USDT</option>
+                        </select>
+                        <span className="flex-1 text-right text-sm font-mono text-muted-foreground">
+                          {swapAmount ? (parseFloat(swapAmount) * (swapFrom === "ETH" && swapTo === "BTC" ? 0.0377 : 1.2)).toFixed(6) : "0.00"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {swapAmount && (
+                      <div className="text-[8px] font-mono text-muted-foreground flex justify-between px-1">
+                        <span>Rate: 1 {swapFrom} ≈ {swapFrom === "ETH" && swapTo === "BTC" ? "0.0377" : "1.20"} {swapTo}</span>
+                        <span>Gas: ~$2.40</span>
+                      </div>
+                    )}
+
+                    <button className="w-full py-[7px] bg-[hsl(45_90%_55%/0.15)] border border-[hsl(45_90%_55%)] text-[hsl(45_90%_55%)] font-mono text-[9px] font-semibold tracking-[2px] uppercase cursor-pointer hover:bg-[hsl(45_90%_55%/0.25)] transition-colors">
+                      SWAP
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-center py-3">
+                    <p className="text-[9px] font-mono text-muted-foreground mb-1">지갑을 연결하면 스왑할 수 있습니다</p>
+                    <p className="text-[8px] font-mono text-muted-foreground/50">Connect Wallet →</p>
+                  </div>
+                )}
               </div>
             </div>
           </ResizablePanel>

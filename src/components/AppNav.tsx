@@ -2,33 +2,23 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Search, ArrowLeft, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const wallets = [
-  { id: "metamask", name: "MetaMask", icon: "🦊", color: "45 90% 55%" },
-  { id: "base", name: "Base Wallet", icon: "🔵", color: "220 80% 55%" },
-];
+import { useWallet } from "@/contexts/WalletContext";
 
 const AppNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { connected, address, wallets, connectedWallet, connect, disconnect } = useWallet();
   const [walletOpen, setWalletOpen] = useState(false);
-  const [connected, setConnected] = useState<string | null>(null);
-  const [address, setAddress] = useState("0xAB...5542");
 
   const handleConnect = (walletId: string) => {
-    setConnected(walletId);
-    const addr = walletId === "metamask" ? "0x7F2c...aE41" : "0xB3d1...9c82";
-    setAddress(addr);
+    connect(walletId);
     setWalletOpen(false);
   };
 
   const handleDisconnect = () => {
-    setConnected(null);
-    setAddress("");
+    disconnect();
     setWalletOpen(false);
   };
-
-  const connectedWallet = wallets.find((w) => w.id === connected);
 
   const tabs = [
     { label: "Terminal", path: "/agents" },
