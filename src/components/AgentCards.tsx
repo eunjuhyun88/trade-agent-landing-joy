@@ -72,12 +72,10 @@ const AgentCards = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
+            onClick={() => setExpandedAgent(null)}
           >
             {/* Backdrop */}
-            <motion.div
-              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-              onClick={() => setExpandedAgent(null)}
-            />
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
 
             {/* Modal Content */}
             <motion.div
@@ -88,6 +86,7 @@ const AgentCards = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
+              onClick={(e) => e.stopPropagation()}
             >
               {/* Close button */}
               <button
