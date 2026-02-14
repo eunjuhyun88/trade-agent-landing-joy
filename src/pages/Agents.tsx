@@ -804,7 +804,7 @@ const Agents = () => {
               <div className="h-full flex flex-col overflow-hidden">
                 <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[9px] font-mono font-semibold tracking-[1px] text-status-active">WATCHLIST</span>
+                    <span className="text-[11px] font-mono font-semibold tracking-[1px] text-status-active">WATCHLIST</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Settings size={12} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" onClick={() => toast({ title: "⚙️ Settings", description: "Watchlist settings coming soon!" })} />
@@ -816,12 +816,12 @@ const Agents = () => {
 
                 <div className="shrink-0 px-2 py-1 border-b border-border">
                   <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-[3px]">
-                    <Search size={9} className="text-muted-foreground" />
-                    <input type="text" placeholder="search ..." className="bg-transparent text-[9px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50" />
+                    <Search size={10} className="text-muted-foreground" />
+                    <input type="text" placeholder="search ..." className="bg-transparent text-[11px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50" />
                   </div>
                 </div>
 
-                <div className="shrink-0 flex items-center px-3 py-[3px] border-b border-border text-[7px] font-mono text-muted-foreground tracking-wider">
+                <div className="shrink-0 flex items-center px-3 py-[3px] border-b border-border text-[9px] font-mono text-muted-foreground tracking-wider">
                   <span className="flex-1">Ticker</span>
                   <span className="w-14 text-right">% 1D</span>
                   <span className="w-16 text-right">Price</span>
@@ -829,39 +829,39 @@ const Agents = () => {
 
                 <div className="flex-1 overflow-y-auto">
                   <div className="px-3 py-[3px] border-b border-border bg-card/50">
-                    <span className="text-[7px] font-mono font-semibold text-muted-foreground tracking-wider">CRYPTO</span>
+                    <span className="text-[9px] font-mono font-semibold text-muted-foreground tracking-wider">CRYPTO</span>
                   </div>
                   {sharedWatchlist.map((item, idx) => (
-                    <div key={item.ticker} onClick={() => setSelectedTickerIndex(idx)} className={`flex items-center px-3 py-[5px] cursor-pointer transition-colors border-b border-border/30 ${idx === selectedTickerIndex ? "bg-accent/10" : "hover:bg-card/50"}`}>
-                      <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
-                      <span className={`w-14 text-right font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                    <div key={item.ticker} onClick={() => setSelectedTickerIndex(idx)} className={`flex items-center px-3 py-[6px] cursor-pointer transition-colors border-b border-border/30 ${idx === selectedTickerIndex ? "bg-accent/10" : "hover:bg-card/50"}`}>
+                      <span className="flex-1 font-mono text-xs font-semibold text-accent">{item.ticker}</span>
+                      <span className={`w-14 text-right font-mono text-[11px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
                         {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
                       </span>
-                      <span className="w-16 text-right font-mono text-[9px] text-foreground/70">{item.price}</span>
+                      <span className="w-16 text-right font-mono text-[11px] text-foreground/70">{item.price}</span>
                     </div>
                   ))}
 
                   <div className="px-3 py-[3px] border-b border-border bg-card/50 border-t">
-                    <span className="text-[7px] font-mono font-semibold text-muted-foreground tracking-wider">MOST ACTIVE</span>
+                    <span className="text-[9px] font-mono font-semibold text-muted-foreground tracking-wider">MOST ACTIVE</span>
                   </div>
                   {[
                     { ticker: "PEPE", change: 12.44, price: "0.00001842" },
                     { ticker: "WIF", change: -5.23, price: "2.4100" },
                     { ticker: "BONK", change: 8.91, price: "0.00003150" },
                   ].map((item) => (
-                    <div key={item.ticker} className="flex items-center px-3 py-[5px] cursor-pointer hover:bg-card/50 transition-colors border-b border-border/30">
-                      <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
-                      <span className={`w-14 text-right font-mono text-[9px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                    <div key={item.ticker} className="flex items-center px-3 py-[6px] cursor-pointer hover:bg-card/50 transition-colors border-b border-border/30">
+                      <span className="flex-1 font-mono text-xs font-semibold text-accent">{item.ticker}</span>
+                      <span className={`w-14 text-right font-mono text-[11px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
                         {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
                       </span>
-                      <span className="w-16 text-right font-mono text-[9px] text-foreground/70">{item.price}</span>
+                      <span className="w-16 text-right font-mono text-[11px] text-foreground/70">{item.price}</span>
                     </div>
                   ))}
                 </div>
 
                 <div className="border-t border-border p-1.5 shrink-0">
-                  <button onClick={() => toast({ title: "➕ Add Ticker", description: "Custom ticker tracking coming soon!" })} className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
-                    <Plus size={9} /><span>Add Ticker</span>
+                  <button onClick={() => toast({ title: "➕ Add Ticker", description: "Custom ticker tracking coming soon!" })} className="flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
+                    <Plus size={10} /><span>Add Ticker</span>
                   </button>
                 </div>
 
@@ -869,12 +869,12 @@ const Agents = () => {
                 <div className="shrink-0 border-t border-border flex flex-col max-h-[45%] overflow-hidden">
                   <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-1.5">
-                      <Bell size={10} className="text-[hsl(45_90%_55%)]" />
-                      <span className="text-[9px] font-mono font-semibold tracking-[1px] text-[hsl(45_90%_55%)]">ALERTS</span>
+                      <Bell size={12} className="text-[hsl(45_90%_55%)]" />
+                      <span className="text-[11px] font-mono font-semibold tracking-[1px] text-[hsl(45_90%_55%)]">ALERTS</span>
                     </div>
                     <div className="flex gap-[1px]">
                       {(["all", "mine"] as const).map((f) => (
-                        <button key={f} onClick={() => setAlertFilter(f)} className={`font-mono text-[8px] px-[7px] py-[2px] transition-colors ${alertFilter === f ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                        <button key={f} onClick={() => setAlertFilter(f)} className={`font-mono text-[10px] px-[7px] py-[2px] transition-colors ${alertFilter === f ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
                           {f === "all" ? "ALL" : "MINE"}
                         </button>
                       ))}
@@ -886,15 +886,15 @@ const Agents = () => {
                         <motion.div key={alert.id} initial={{ opacity: 0, height: 0, x: -20 }} animate={{ opacity: 1, height: "auto", x: 0 }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeOut" }} className="overflow-hidden">
                           <div className="px-3 py-[6px] border-b border-border/50 hover:bg-card/50 cursor-pointer transition-colors">
                             <div className="flex items-center gap-1.5 mb-[2px]">
-                              <span className="text-[9px] font-mono text-accent">{alert.exchange}</span>
-                              <span className="text-[7px] font-mono text-muted-foreground uppercase">{alert.type}</span>
+                              <span className="text-[11px] font-mono text-accent">{alert.exchange}</span>
+                              <span className="text-[9px] font-mono text-muted-foreground uppercase">{alert.type}</span>
                             </div>
                             <div className="flex items-center gap-1.5">
                               <span className={`w-2 h-2 rounded-full ${alert.side === "BUY" ? "bg-status-active" : "bg-status-hot"}`} />
-                              <span className="font-mono text-[10px] text-foreground/90">{alert.pair} {alert.side} {alert.amount} @ {alert.price}</span>
+                              <span className="font-mono text-xs text-foreground/90">{alert.pair} {alert.side} {alert.amount} @ {alert.price}</span>
                             </div>
                             <div className="flex items-center justify-end mt-[2px]">
-                              <span className="text-[7px] font-mono text-muted-foreground">{alert.time}</span>
+                              <span className="text-[9px] font-mono text-muted-foreground">{alert.time}</span>
                             </div>
                           </div>
                         </motion.div>
@@ -902,8 +902,8 @@ const Agents = () => {
                     </AnimatePresence>
                   </div>
                   <div className="border-t border-border p-1.5 shrink-0">
-                    <button onClick={() => toast({ title: "🔔 Add Alert", description: "Custom alert creation coming soon!" })} className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
-                      <Plus size={9} /><span>Add Alert</span>
+                    <button onClick={() => toast({ title: "🔔 Add Alert", description: "Custom alert creation coming soon!" })} className="flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
+                      <Plus size={10} /><span>Add Alert</span>
                     </button>
                   </div>
                 </div>
@@ -922,20 +922,20 @@ const Agents = () => {
                 <div className="h-full flex flex-col overflow-hidden border-b border-border">
                   <div className="px-3 pt-2 pb-1 flex items-center justify-between shrink-0">
                      <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono tracking-wider text-accent">MARKET LIVE</span>
-                      <span className="font-bold text-xs text-accent ml-2">{selectedTicker?.ticker}</span>
-                      <span className="text-[9px] font-mono text-muted-foreground">{selectedTicker?.name}</span>
-                      <span className={`text-[9px] font-mono font-semibold ${selectedTicker.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                      <span className="text-xs font-mono tracking-wider text-accent">MARKET LIVE</span>
+                      <span className="font-bold text-sm text-accent ml-2">{selectedTicker?.ticker}</span>
+                      <span className="text-[11px] font-mono text-muted-foreground">{selectedTicker?.name}</span>
+                      <span className={`text-[11px] font-mono font-semibold ${selectedTicker.change > 0 ? "text-status-active" : "text-status-hot"}`}>
                         {selectedTicker.change > 0 ? "+" : ""}{selectedTicker.change}%
                       </span>
                     </div>
                     <div className="flex items-center gap-1">
                       {timeframes.map((tf) => (
-                        <button key={tf} onClick={() => setSelectedTimeframe(tf)} className={`font-mono text-[8px] px-1.5 py-[2px] transition-colors ${selectedTimeframe === tf ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                        <button key={tf} onClick={() => setSelectedTimeframe(tf)} className={`font-mono text-[10px] px-2 py-[2px] transition-colors ${selectedTimeframe === tf ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
                           {tf}
                         </button>
                       ))}
-                      <ExternalLink size={10} className="text-muted-foreground ml-1 cursor-pointer hover:text-foreground" onClick={() => toast({ title: "📊 Full Chart", description: "Opening full chart view..." })} />
+                      <ExternalLink size={12} className="text-muted-foreground ml-1 cursor-pointer hover:text-foreground" onClick={() => toast({ title: "📊 Full Chart", description: "Opening full chart view..." })} />
                     </div>
                   </div>
                   <div className="flex-1 min-h-0">
@@ -953,8 +953,8 @@ const Agents = () => {
                   <ResizablePanel defaultSize={58} minSize={30}>
                     <div className="h-full flex flex-col overflow-hidden">
                       <div className="px-4 py-1.5 border-b border-border shrink-0 flex items-center justify-between">
-                        <p className="text-[9px] font-mono text-muted-foreground whitespace-nowrap">Terminal — 5 agents</p>
-                        <div className="flex gap-3 text-[8px] font-mono shrink-0">
+                        <p className="text-[11px] font-mono text-muted-foreground whitespace-nowrap">Terminal — 5 agents</p>
+                        <div className="flex gap-3 text-[10px] font-mono shrink-0">
                           {[
                             { label: "Q", value: "127" },
                             { label: "A", value: "34" },
@@ -968,9 +968,9 @@ const Agents = () => {
                       <div className="flex-1 overflow-y-auto px-4 py-2" ref={chatScrollRef}>
                         {chatMessages.length === 0 && (
                           <div className="flex flex-col items-center justify-center h-full text-center opacity-50">
-                            <span className="text-xl mb-1">⊞</span>
-                            <p className="text-[10px] font-mono text-muted-foreground mb-0.5">Terminal Ready</p>
-                            <p className="text-[8px] font-mono text-muted-foreground/50">Enter a query to start</p>
+                            <span className="text-2xl mb-1">⊞</span>
+                            <p className="text-xs font-mono text-muted-foreground mb-0.5">Terminal Ready</p>
+                            <p className="text-[10px] font-mono text-muted-foreground/50">Enter a query to start</p>
                           </div>
                         )}
                         <AnimatePresence>
@@ -980,37 +980,37 @@ const Agents = () => {
                                 <div className="flex justify-end">
                                   <div className="bg-accent/15 border border-accent/30 px-4 py-2.5 max-w-[80%]">
                                     <div className="flex items-center gap-2 mb-1">
-                                      <span className="text-[9px] font-mono text-accent font-semibold">YOU</span>
-                                      <span className="text-[8px] font-mono text-muted-foreground">{msg.time}</span>
+                                      <span className="text-[11px] font-mono text-accent font-semibold">YOU</span>
+                                      <span className="text-[10px] font-mono text-muted-foreground">{msg.time}</span>
                                     </div>
-                                    <p className="text-xs leading-relaxed">{msg.content}</p>
+                                    <p className="text-sm leading-relaxed">{msg.content}</p>
                                   </div>
                                 </div>
                               ) : (
                                 <div className="border border-border/50 bg-card/30 p-4">
                                   <div className="flex items-center gap-2 mb-2">
-                                    <span className="text-[10px]">⊞</span>
-                                    <span className="text-[9px] font-mono font-semibold text-accent">STOCKCLAW ORCHESTRATOR</span>
-                                    <span className="text-[9px] font-mono text-muted-foreground">{msg.time}</span>
+                                    <span className="text-xs">⊞</span>
+                                    <span className="text-[11px] font-mono font-semibold text-accent">STOCKCLAW ORCHESTRATOR</span>
+                                    <span className="text-[11px] font-mono text-muted-foreground">{msg.time}</span>
                                   </div>
                                   {msg.isTyping ? (
                                     <div className="flex items-center gap-1.5 py-1">
                                       <motion.span className="w-1.5 h-1.5 rounded-full bg-accent" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, repeat: Infinity }} />
                                       <motion.span className="w-1.5 h-1.5 rounded-full bg-accent" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, repeat: Infinity, delay: 0.2 }} />
                                       <motion.span className="w-1.5 h-1.5 rounded-full bg-accent" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, repeat: Infinity, delay: 0.4 }} />
-                                      <span className="text-[9px] font-mono text-muted-foreground ml-1">
+                                      <span className="text-[11px] font-mono text-muted-foreground ml-1">
                                         {selectedAgents.size === 1 ? `${agents.find(a => a.id === Array.from(selectedAgents)[0])?.name} analyzing...` : `orchestrating ${selectedAgents.size} agents...`}
                                       </span>
                                     </div>
                                   ) : (
                                     <>
-                                      <motion.p className="text-xs leading-relaxed text-foreground/90 mb-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                      <motion.p className="text-sm leading-relaxed text-foreground/90 mb-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                                         {msg.content}
                                       </motion.p>
                                       {msg.signal && (
                                         <motion.div className="flex items-center gap-3 pt-2 border-t border-border/30" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-                                          <span className={`font-mono text-[10px] font-bold ${msg.signal?.includes("LONG") ? "text-status-active" : "text-status-hot"}`}>{msg.signal}</span>
-                                          <span className="font-mono text-[10px] font-bold">{msg.confidence}%</span>
+                                          <span className={`font-mono text-xs font-bold ${msg.signal?.includes("LONG") ? "text-status-active" : "text-status-hot"}`}>{msg.signal}</span>
+                                          <span className="font-mono text-xs font-bold">{msg.confidence}%</span>
                                           <div className="flex-1 h-1 bg-border overflow-hidden">
                                             <motion.div className="h-full bg-[hsl(45_90%_55%)]" initial={{ width: 0 }} animate={{ width: `${msg.confidence}%` }} transition={{ duration: 0.8, delay: 0.3 }} />
                                           </div>
@@ -1023,7 +1023,7 @@ const Agents = () => {
                                               setSwapAmount("");
                                               setSwapModalOpen(true);
                                             }}
-                                            className={`font-mono text-[9px] font-bold px-3 py-1.5 border ${
+                                            className={`font-mono text-[11px] font-bold px-3 py-1.5 border ${
                                               msg.signal?.includes("LONG")
                                                 ? "border-status-active text-status-active bg-status-active/10"
                                                 : "border-status-hot text-status-hot bg-status-hot/10"
@@ -1044,51 +1044,51 @@ const Agents = () => {
 
                        {/* Prompt */}
                        <div className="px-4 py-2 border-t border-border shrink-0">
-                         <div className="flex items-center justify-between mb-1 px-1">
+                         <div className="flex items-center justify-between mb-1.5 px-1">
                            {isPro ? (
-                             <span className="text-[8px] font-mono text-status-active flex items-center gap-1">
-                               <Zap size={8} /> UNLIMITED
+                             <span className="text-[11px] font-mono text-status-active flex items-center gap-1">
+                               <Zap size={10} /> UNLIMITED
                              </span>
                            ) : (
-                             <span className={`text-[8px] font-mono flex items-center gap-1 ${remaining <= 2 ? "text-status-hot" : "text-muted-foreground"}`}>
-                               <MessageSquare size={8} /> {remaining}/{maxFreeChats} FREE
+                             <span className={`text-[11px] font-mono flex items-center gap-1 ${remaining <= 2 ? "text-status-hot" : "text-muted-foreground"}`}>
+                               <MessageSquare size={10} /> {remaining}/{maxFreeChats} FREE QUERIES
                              </span>
                            )}
                            {!isPro && remaining <= 2 && (
-                             <button onClick={() => navigate("/#pricing")} className="text-[8px] font-mono text-accent hover:underline">
+                             <button onClick={() => navigate("/#pricing")} className="text-[10px] font-mono text-accent hover:underline">
                                UPGRADE →
                              </button>
                            )}
                          </div>
                          <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
-                           <div className="flex items-center gap-2 border border-border bg-card px-3 py-2">
-                             <span className="text-accent font-mono text-sm">&gt;</span>
+                           <div className="flex items-center gap-2 border border-border bg-card px-3 py-2.5">
+                             <span className="text-accent font-mono text-base">&gt;</span>
                              <div className="flex items-center gap-1 shrink-0 border-r border-border/50 pr-2 mr-1">
-                               <LineChart size={10} className="text-accent" />
-                               <span className="text-[8px] font-mono text-accent font-semibold">{selectedTicker?.ticker} {selectedTimeframe}</span>
+                               <LineChart size={12} className="text-accent" />
+                               <span className="text-[10px] font-mono text-accent font-semibold">{selectedTicker?.ticker} {selectedTimeframe}</span>
                              </div>
-                             <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder={remaining <= 0 && !isPro ? "Upgrade to PRO for unlimited..." : "Ask your agents..."} className="bg-transparent text-xs font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40" disabled={remaining <= 0 && !isPro} />
+                             <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder={remaining <= 0 && !isPro ? "Upgrade to PRO for unlimited..." : "Ask your agents..."} className="bg-transparent text-sm font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40" disabled={remaining <= 0 && !isPro} />
                              <button type="submit" className="transition-colors text-accent hover:text-foreground" disabled={remaining <= 0 && !isPro}>
-                               {remaining <= 0 && !isPro ? <Lock size={12} /> : <Send size={12} />}
+                               {remaining <= 0 && !isPro ? <Lock size={14} /> : <Send size={14} />}
                              </button>
                            </div>
-                           <div className="flex items-center gap-1 mt-1 px-1">
+                           <div className="flex items-center gap-1.5 mt-1.5 px-1">
                              <div className="flex gap-[2px]">
                                {agents.map((a) => (
-                                 <button key={a.id} type="button" onClick={() => toggleAgent(a.id)} className={`w-5 h-5 flex items-center justify-center text-[10px] transition-colors ${selectedAgents.has(a.id) ? "text-accent-foreground" : "text-muted-foreground/30"}`} style={selectedAgents.has(a.id) ? { backgroundColor: `hsl(${a.color})` } : undefined}>
+                                 <button key={a.id} type="button" onClick={() => toggleAgent(a.id)} className={`w-6 h-6 flex items-center justify-center text-xs transition-colors ${selectedAgents.has(a.id) ? "text-accent-foreground" : "text-muted-foreground/30"}`} style={selectedAgents.has(a.id) ? { backgroundColor: `hsl(${a.color})` } : undefined}>
                                    {a.emoji}
                                  </button>
                                ))}
                              </div>
-                             <span className="text-[8px] font-mono text-muted-foreground">{selectedAgents.size}/{agents.length}</span>
+                             <span className="text-[10px] font-mono text-muted-foreground">{selectedAgents.size}/{agents.length}</span>
                              <div className="w-px h-3 bg-border mx-1" />
                              {dataSources.map((source) => (
-                               <button key={source} type="button" onClick={() => toggleSource(source)} className={`text-[7px] font-mono px-1.5 py-[1px] transition-colors ${selectedSources.has(source) ? "text-accent" : "text-muted-foreground/30 hover:text-muted-foreground/50"}`}>
+                               <button key={source} type="button" onClick={() => toggleSource(source)} className={`text-[9px] font-mono px-1.5 py-[1px] transition-colors ${selectedSources.has(source) ? "text-accent" : "text-muted-foreground/30 hover:text-muted-foreground/50"}`}>
                                  {selectedSources.has(source) && "✓"}{source}
                                </button>
                              ))}
                              <div className="flex-1" />
-                             <span className="text-[7px] font-mono text-muted-foreground">/? for help</span>
+                             <span className="text-[9px] font-mono text-muted-foreground">/? for help</span>
                            </div>
                          </form>
                        </div>
@@ -1103,13 +1103,13 @@ const Agents = () => {
                       {/* Headlines */}
                       <div className="px-2.5 py-2 border-b border-border">
                         <div className="mb-1">
-                          <span className="font-mono text-[8px] tracking-wider text-muted-foreground font-semibold">HEADLINES</span>
+                          <span className="font-mono text-[10px] tracking-wider text-muted-foreground font-semibold">HEADLINES</span>
                         </div>
-                        <div className="space-y-[3px]">
+                        <div className="space-y-[4px]">
                           {agents.flatMap((a) => a.headlines.map((h) => ({ ...h, agentEmoji: a.emoji, agentColor: a.color }))).slice(0, 5).map((h, i) => (
                             <div key={i} className="flex gap-1.5 group cursor-pointer">
-                              <span className="text-[7px] font-mono text-muted-foreground shrink-0 w-7">{h.time}</span>
-                              <p className={`text-[8px] leading-tight group-hover:underline line-clamp-1 ${h.sentiment === "bull" ? "text-status-active font-medium" : (h.sentiment as string) === "bear" ? "text-status-hot font-medium" : "text-foreground/60"}`}>{h.text}</p>
+                              <span className="text-[9px] font-mono text-muted-foreground shrink-0 w-8">{h.time}</span>
+                              <p className={`text-[10px] leading-tight group-hover:underline line-clamp-1 ${h.sentiment === "bull" ? "text-status-active font-medium" : (h.sentiment as string) === "bear" ? "text-status-hot font-medium" : "text-foreground/60"}`}>{h.text}</p>
                             </div>
                           ))}
                         </div>
@@ -1118,8 +1118,8 @@ const Agents = () => {
                       {/* Agent Breakdowns */}
                       <div className="px-2.5 py-2 border-b border-border">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-mono text-[8px] font-bold tracking-[1px]">AGENT ANALYSIS</span>
-                          <span className="font-mono text-[7px] text-muted-foreground">{selectedAgents.size}/{agents.length}</span>
+                          <span className="font-mono text-[10px] font-bold tracking-[1px]">AGENT ANALYSIS</span>
+                          <span className="font-mono text-[9px] text-muted-foreground">{selectedAgents.size}/{agents.length}</span>
                         </div>
                         {agents.map((agent) => {
                           const isSelected = selectedAgents.has(agent.id);
@@ -1128,31 +1128,31 @@ const Agents = () => {
                           return (
                             <div key={agent.id} className="border-b border-border/50 last:border-0">
                               <div
-                                className={`flex items-center justify-between py-[4px] cursor-pointer transition-colors ${isSelected ? "" : "opacity-40"}`}
+                                className={`flex items-center justify-between py-[5px] cursor-pointer transition-colors ${isSelected ? "" : "opacity-40"}`}
                                 onClick={() => { if (breakdown) setExpandedBreakdown(isExpanded ? null : agent.id); }}
                               >
                                 <div className="flex items-center gap-1.5">
                                   <button
                                     onClick={(e) => { e.stopPropagation(); toggleAgent(agent.id); }}
-                                    className={`w-3 h-3 border flex items-center justify-center text-[6px] transition-colors ${isSelected ? "border-accent bg-accent/20 text-accent" : "border-muted-foreground/50"}`}
+                                    className={`w-3.5 h-3.5 border flex items-center justify-center text-[8px] transition-colors ${isSelected ? "border-accent bg-accent/20 text-accent" : "border-muted-foreground/50"}`}
                                   >
                                     {isSelected && "✓"}
                                   </button>
-                                  <span className="text-[10px]">{agent.emoji}</span>
-                                  <span className={`font-mono text-[8px] font-semibold ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
+                                  <span className="text-xs">{agent.emoji}</span>
+                                  <span className={`font-mono text-[10px] font-semibold ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
                                     {agent.name}
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                  {breakdown && <span className="font-mono text-[6px] text-accent px-1 border border-accent/30">DATA</span>}
-                                  <span className={`w-[5px] h-[5px] rounded-full ${agent.status !== "idle" ? "bg-status-active" : "bg-muted-foreground/40"}`} />
+                                  {breakdown && <span className="font-mono text-[8px] text-accent px-1 border border-accent/30">DATA</span>}
+                                  <span className={`w-[6px] h-[6px] rounded-full ${agent.status !== "idle" ? "bg-status-active" : "bg-muted-foreground/40"}`} />
                                 </div>
                               </div>
                               {isExpanded && breakdown && (
                                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="pb-1.5 overflow-hidden">
-                                  <p className="text-[9px] leading-snug text-foreground/80 mb-1.5">{breakdown.summary}</p>
+                                  <p className="text-[11px] leading-snug text-foreground/80 mb-1.5">{breakdown.summary}</p>
                                   {breakdown.keyData.map((d, i) => (
-                                    <div key={i} className="flex justify-between py-[1px] text-[8px]">
+                                    <div key={i} className="flex justify-between py-[2px] text-[10px]">
                                       <span className="text-muted-foreground">{d.label}</span>
                                       <span className="font-mono text-accent font-medium">{d.value}</span>
                                     </div>
@@ -1167,10 +1167,10 @@ const Agents = () => {
                       {/* Unified Intelligence */}
                       <div className="px-2.5 py-2 bg-[hsl(45_90%_55%/0.06)] border-t border-[hsl(45_90%_55%/0.15)]">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="font-mono text-[7px] text-muted-foreground tracking-[2px]">UNIFIED INTELLIGENCE</span>
+                          <span className="font-mono text-[9px] text-muted-foreground tracking-[2px]">UNIFIED INTELLIGENCE</span>
                           <div className="flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-status-active animate-pulse" />
-                            <span className="font-mono text-[8px] font-bold tracking-[1px]">LONG</span>
+                            <span className="font-mono text-[10px] font-bold tracking-[1px]">LONG</span>
                           </div>
                         </div>
                         <div className="flex items-center gap-3 mb-2">
@@ -1187,10 +1187,10 @@ const Agents = () => {
                               <circle cx="60" cy="55" r="3" fill="hsl(45 90% 55%)" />
                             </svg>
                             <div className="absolute bottom-[-2px] left-1/2 -translate-x-1/2">
-                              <span className="font-mono text-[16px] font-black">73</span>
+                              <span className="font-mono text-[18px] font-black">73</span>
                             </div>
                           </div>
-                          <div className="flex-1 space-y-[3px]">
+                          <div className="flex-1 space-y-[4px]">
                             {[
                               { emoji: "📐", name: "CHART", score: 88, color: "268 35% 72%" },
                               { emoji: "⛓", name: "CHAIN", score: 65, color: "142 70% 45%" },
@@ -1198,18 +1198,18 @@ const Agents = () => {
                               { emoji: "💬", name: "SOCIAL", score: 72, color: "280 60% 65%" },
                             ].map((a) => (
                               <div key={a.name} className="flex items-center gap-1">
-                                <span className="font-mono text-[6px] w-7 text-muted-foreground">{a.name}</span>
-                                <div className="flex-1 h-[3px] bg-border overflow-hidden">
+                                <span className="font-mono text-[8px] w-8 text-muted-foreground">{a.name}</span>
+                                <div className="flex-1 h-[4px] bg-border overflow-hidden">
                                   <div className="h-full" style={{ width: `${a.score}%`, backgroundColor: `hsl(${a.color})` }} />
                                 </div>
-                                <span className="font-mono text-[7px] w-4 text-right font-medium">{a.score}</span>
+                                <span className="font-mono text-[9px] w-5 text-right font-medium">{a.score}</span>
                               </div>
                             ))}
                           </div>
                         </div>
                         <div className="flex items-center justify-between pt-1.5 border-t border-[hsl(45_90%_55%/0.12)]">
-                          <span className="text-[7px] font-mono text-muted-foreground">COMPOSITE <span className="text-foreground font-bold">73</span></span>
-                          <span className="text-[7px] font-mono text-status-active font-bold">BULLISH</span>
+                          <span className="text-[9px] font-mono text-muted-foreground">COMPOSITE <span className="text-foreground font-bold">73</span></span>
+                          <span className="text-[9px] font-mono text-status-active font-bold">BULLISH</span>
                         </div>
                       </div>
                     </div>
@@ -1347,12 +1347,12 @@ const Agents = () => {
 
       {/* Status Ticker Bar */}
       <div className="shrink-0 border-t border-border">
-        <div className="bg-background text-muted-foreground py-0 overflow-hidden h-[22px] flex items-center">
+        <div className="bg-background text-muted-foreground py-0 overflow-hidden h-[24px] flex items-center">
           <div className="animate-ticker whitespace-nowrap flex">
-            <span className="text-[8px] font-mono tracking-[1px] px-4">
+            <span className="text-[10px] font-mono tracking-[1px] px-4">
               <span className="text-status-active">●</span> CONNECTED | 5 AGENTS | GAS: 14 GWEI | SOL_PRICE: $142.22 | BTC_DOMINANCE: 52.4% | TRADING_VOLUME_24H: $4.2B | LIQUIDATIONS_1H: $1.2M | SYSTEM_STABILITY: 99.98% | BLOCK_HEIGHT: 1982/... | LATENCY: 12ms | UPTIME: 99.98% | v2.4.1
             </span>
-            <span className="text-[8px] font-mono tracking-[1px] px-4">
+            <span className="text-[10px] font-mono tracking-[1px] px-4">
               <span className="text-status-active">●</span> CONNECTED | 5 AGENTS | GAS: 14 GWEI | SOL_PRICE: $142.22 | BTC_DOMINANCE: 52.4% | TRADING_VOLUME_24H: $4.2B | LIQUIDATIONS_1H: $1.2M | SYSTEM_STABILITY: 99.98% | BLOCK_HEIGHT: 1982/... | LATENCY: 12ms | UPTIME: 99.98% | v2.4.1
             </span>
           </div>
