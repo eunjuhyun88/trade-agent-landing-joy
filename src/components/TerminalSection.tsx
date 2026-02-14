@@ -126,6 +126,53 @@ const TerminalSection = () => {
             </motion.div>
           ))}
 
+          {/* Connection lines SVG */}
+          {converged && (
+            <svg className="absolute inset-0 w-full h-full z-[5] pointer-events-none">
+              {ICON_GROUPS.map((g, j) => {
+                const angle = (j * Math.PI) / 2 - Math.PI / 4;
+                const endX = 50 + Math.cos(angle) * 18;
+                const endY = 50 + Math.sin(angle) * 18;
+                return (
+                  <motion.line
+                    key={g.label}
+                    x1="50%"
+                    y1="50%"
+                    x2={`${endX}%`}
+                    y2={`${endY}%`}
+                    stroke={g.color}
+                    strokeWidth="1"
+                    strokeDasharray="4 4"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ pathLength: 1, opacity: [0, 0.6, 0.3, 0.6] }}
+                    transition={{
+                      pathLength: { duration: 0.8, delay: 0.8 + j * 0.15 },
+                      opacity: { duration: 2, repeat: Infinity, repeatType: "reverse", delay: 1.5 + j * 0.3 },
+                    }}
+                  />
+                );
+              })}
+              {/* Outer ring */}
+              <motion.circle
+                cx="50%"
+                cy="50%"
+                r="80"
+                fill="none"
+                stroke="hsl(var(--accent))"
+                strokeWidth="0.5"
+                strokeDasharray="6 6"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: [0, 0.3, 0.15, 0.3], scale: 1, rotate: 360 }}
+                transition={{
+                  opacity: { duration: 3, repeat: Infinity, repeatType: "reverse", delay: 1.2 },
+                  scale: { duration: 1, delay: 0.6 },
+                  rotate: { duration: 20, repeat: Infinity, ease: "linear" },
+                }}
+                style={{ transformOrigin: "50% 50%" }}
+              />
+            </svg>
+          )}
+
           {/* Core engine reveal */}
           <motion.div
             className="absolute inset-0 flex flex-col items-center justify-center z-10"
@@ -136,29 +183,72 @@ const TerminalSection = () => {
             <motion.div
               className="w-24 h-24 md:w-32 md:h-32 border-2 border-accent rounded-sm flex items-center justify-center relative"
               initial={{ scale: 0, rotate: -180 }}
-              animate={converged ? { scale: 1, rotate: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.4, type: "spring", stiffness: 120 }}
+              animate={
+                converged
+                  ? {
+                      scale: 1,
+                      rotate: 0,
+                      boxShadow: [
+                        "0 0 30px hsl(268 35% 72% / 0.2), inset 0 0 20px hsl(268 35% 72% / 0.05)",
+                        "0 0 80px hsl(268 35% 72% / 0.5), inset 0 0 40px hsl(268 35% 72% / 0.15)",
+                        "0 0 30px hsl(268 35% 72% / 0.2), inset 0 0 20px hsl(268 35% 72% / 0.05)",
+                      ],
+                    }
+                  : {}
+              }
+              transition={{
+                scale: { duration: 0.8, delay: 0.4, type: "spring", stiffness: 120 },
+                rotate: { duration: 0.8, delay: 0.4, type: "spring", stiffness: 120 },
+                boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1.2 },
+              }}
               style={{
                 background: "hsl(var(--accent) / 0.1)",
-                boxShadow: "0 0 60px hsl(var(--accent) / 0.3), inset 0 0 30px hsl(var(--accent) / 0.1)",
               }}
             >
+              {/* Pulse ring */}
+              <motion.div
+                className="absolute inset-0 border border-accent rounded-sm"
+                animate={
+                  converged
+                    ? {
+                        scale: [1, 1.6, 1.6],
+                        opacity: [0.5, 0, 0],
+                      }
+                    : {}
+                }
+                transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 1.5 }}
+              />
+              <motion.div
+                className="absolute inset-0 border border-accent rounded-sm"
+                animate={
+                  converged
+                    ? {
+                        scale: [1, 1.6, 1.6],
+                        opacity: [0.5, 0, 0],
+                      }
+                    : {}
+                }
+                transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 2.0 }}
+              />
+
               <Blocks size={40} className="text-accent" />
+
               {/* Orbiting dots */}
               {[0, 1, 2, 3].map((j) => (
                 <motion.div
                   key={j}
-                  className="absolute w-2 h-2 rounded-full"
+                  className="absolute w-2.5 h-2.5 rounded-full"
                   style={{
                     background: ICON_GROUPS[j].color,
-                    boxShadow: `0 0 8px ${ICON_GROUPS[j].color}`,
+                    boxShadow: `0 0 12px ${ICON_GROUPS[j].color}, 0 0 4px ${ICON_GROUPS[j].color}`,
                   }}
                   animate={
                     converged
                       ? {
                           rotate: 360,
-                          x: [0, Math.cos((j * Math.PI) / 2) * 52],
-                          y: [0, Math.sin((j * Math.PI) / 2) * 52],
+                          x: [0, Math.cos((j * Math.PI) / 2) * 56],
+                          y: [0, Math.sin((j * Math.PI) / 2) * 56],
+                          scale: [1, 1.3, 1],
                         }
                       : {}
                   }
@@ -166,6 +256,7 @@ const TerminalSection = () => {
                     rotate: { duration: 6, repeat: Infinity, ease: "linear", delay: j * 1.5 },
                     x: { duration: 0.5, delay: 0.6 + j * 0.1 },
                     y: { duration: 0.5, delay: 0.6 + j * 0.1 },
+                    scale: { duration: 1.5, repeat: Infinity, repeatType: "reverse", delay: 1 + j * 0.4 },
                   }}
                 />
               ))}
