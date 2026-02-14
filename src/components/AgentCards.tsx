@@ -3,7 +3,116 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 
 const agents = [
-// ... keep existing code (agents array lines 4-131)
+  {
+    id: "AGT_01",
+    name: "CHART",
+    description: "Geometric pattern recognition + liquidity void detection across multiple timeframes.",
+    status: "active",
+    highlighted: false,
+    color: "142 70% 45%",
+    role: "BTC price structure specialist model",
+    chartData: "0,60 30,55 60,40 90,45 120,30 150,35 180,20 210,25 240,15 270,30 300,20",
+    analyzes: [
+      "Pattern detection (Wedge, Triangle, H&S)",
+      "Support/Resistance, Order Blocks, FVG",
+      "RSI, MACD, Bollinger Bands, ATR",
+      "Multi-timeframe (1H / 4H / 1D)"
+    ],
+    sampleOutput: { SIGNAL: "LONG", CONFIDENCE: "88.2", ZONE: "RANGE_LOW - Support (94.2%)" },
+    stats: [
+      { label: "FIB_LEVEL", value: "0.618" },
+      { label: "VOL_PROFILE", value: "HIGH" },
+      { label: "STATE", value: "SCANNING" },
+    ],
+  },
+  {
+    id: "AGT_02",
+    name: "CHAIN",
+    description: "On-chain flow monitoring + whale wallet heatmaps.",
+    status: "active",
+    highlighted: false,
+    color: "200 80% 50%",
+    role: "On-chain fund flow specialist model",
+    chartData: "0,40 30,42 60,38 90,50 120,45 150,55 180,50 210,60 240,55 270,65 300,50",
+    analyzes: [
+      "Exchange inflows/outflows (Binance, Coinbase, Kraken)",
+      "$10M+ whale transfers in real-time",
+      "Holder distribution shifts (LTH / STH)",
+      "Mempool activity"
+    ],
+    sampleOutput: { SIGNAL: "ACCUMULATION", NET_FLOW: "-$492M (outflow)", MEMPOOL: "ACTIVE" },
+    stats: [
+      { label: "MEMPOOL", value: "ACTIVE" },
+      { label: "NET_FLOW", value: "+492M" },
+      { label: "STATE", value: "TRACKING" },
+    ],
+  },
+  {
+    id: "AGT_03",
+    name: "DERIV",
+    description: "Open interest spikes + funding rate arbitrage.",
+    status: "hot",
+    highlighted: true,
+    color: "0 85% 55%",
+    role: "Derivatives structure specialist model",
+    chartData: "0,70 30,60 60,65 90,40 120,50 150,30 180,35 210,20 240,40 270,25 300,10",
+    analyzes: [
+      "Open Interest rate of change",
+      "Funding Rate history",
+      "Liquidation heatmap (long/short cluster zones)",
+      "Unusual options activity detection"
+    ],
+    sampleOutput: { SIGNAL: "SHORT_SQUEEZE_POTENTIAL", OI_CHANGE: "+12%", FUNDING: "0.0122" },
+    stats: [
+      { label: "OI_CHANGE", value: "+12%" },
+      { label: "FUNDING", value: "0.0122" },
+      { label: "STATE", value: "CRITICAL" },
+    ],
+  },
+  {
+    id: "AGT_04",
+    name: "SOCIAL",
+    description: "NLP-driven sentiment analysis across 15+ channels.",
+    status: "active",
+    highlighted: false,
+    color: "270 70% 55%",
+    role: "Market sentiment specialist NLP model",
+    chartData: "0,50 30,45 60,55 90,60 120,50 150,65 180,60 210,70 240,65 270,55 300,60",
+    analyzes: [
+      "Twitter / Reddit / Telegram — 15+ channels",
+      "Mention volume + sentiment scoring",
+      "Dominant narrative tracking",
+      "Memecoin trend detection"
+    ],
+    sampleOutput: { SIGNAL: "CONTRARIAN_BULLISH", SENTIMENT: "BULL", X_VOL: "4.2K/MIN" },
+    stats: [
+      { label: "SENTIMENT", value: "BULL" },
+      { label: "X_VOL", value: "4.2K/MIN" },
+      { label: "STATE", value: "AGGREGATING" },
+    ],
+  },
+  {
+    id: "AGT_05",
+    name: "ALERT",
+    description: "Custom deterministic triggers + push notifications.",
+    status: "active",
+    highlighted: false,
+    color: "45 90% 55%",
+    role: "Condition-based trigger + notification system",
+    chartData: "0,40 30,40 60,40 90,20 120,40 150,40 180,40 210,10 240,40 270,40 300,40",
+    analyzes: [
+      "User-defined trigger conditions",
+      "Price, indicator, on-chain event combinations",
+      "Webhook + push notifications",
+      "Multi-confirmation support"
+    ],
+    sampleOutput: { TRIGGERS: "42 ACTIVE", WEBHOOK: "STABLE", LAST_FIRED: "BTC crossed $100K" },
+    stats: [
+      { label: "TRIGGERS", value: "42" },
+      { label: "WEBHOOK", value: "STABLE" },
+      { label: "STATE", value: "STANDBY" },
+    ],
+  },
 ];
 
 const AgentCards = () => {
