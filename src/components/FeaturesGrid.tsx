@@ -5,19 +5,19 @@ const features = [
   {
     id: "01",
     label: "SPECIALIZED",
-    description: "BTC chart structure model. On-chain flow model. Derivatives structure model. Sentiment NLP model.",
+    description: "Not one generic AI — each chain gets its own trained model. BTC model, ETH model, SOL model. Domain-specific, coin-specific, zero generalization.",
     Icon: Layers,
   },
   {
     id: "02",
     label: "INDEPENDENT",
-    description: "Each model analyzes without referencing the others. Zero cross-contamination. Parallel, unbiased.",
+    description: "Each model analyzes without referencing the others. Zero cross-contamination. Parallel, unbiased. 5 agents × N chains = full coverage.",
     Icon: Split,
   },
   {
     id: "03",
     label: "CONVERGED",
-    description: "Agreement raises signal strength. Conflict triggers priority rules. Output: Entry Score (0–100).",
+    description: "Agreement raises signal strength. Conflict triggers priority rules. Output: Entry Score (0–100) — per coin, per model, per timeframe.",
     Icon: Target,
   },
 ];
@@ -48,7 +48,7 @@ const FeaturesGrid = () => {
         <br />
         READ THE MARKET.
         <br />
-        <span className="text-accent">FIVE CAN.</span>
+        <span className="text-accent">FIVE × EVERY CHAIN.</span>
       </motion.h2>
 
       {/* Subcopy */}
@@ -59,9 +59,9 @@ const FeaturesGrid = () => {
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay: 0.15 }}
       >
-        General-purpose AI knows everything at surface level.
-        We built domain-specific models that go deep.
-        When they disagree — that's the real signal.
+        General-purpose AI uses one model for everything.
+        We train separate models for each coin — BTC, ETH, SOL, and more.
+        5 specialist agents per chain. When they disagree — that's the real signal.
       </motion.p>
 
       {/* 3 Feature Blocks */}
