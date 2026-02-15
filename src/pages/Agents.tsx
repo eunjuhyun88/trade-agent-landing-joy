@@ -629,72 +629,80 @@ const Agents = () => {
             {mobileTab === "market" && (
               <div className="h-full overflow-y-auto">
                 {/* Headlines */}
-                <div className="p-3 border-b border-border">
-                  <span className="font-mono text-[9px] tracking-wider text-muted-foreground mb-2 block">HEADLINES</span>
-                  <div className="space-y-1.5">
-                    {agents.flatMap((a) => a.headlines.map((h) => ({ ...h, agentEmoji: a.emoji }))).slice(0, 6).map((h, i) => (
-                      <div key={i} className="flex gap-2">
-                        <span className="text-[8px] font-mono text-muted-foreground shrink-0">{h.time}</span>
-                        <p className={`text-[9px] leading-snug ${h.sentiment === "bull" ? "text-status-active" : "text-foreground/70"}`}>{h.text}</p>
+                <div className="px-3 py-2 border-b border-border">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="font-mono text-[10px] tracking-wider text-muted-foreground font-semibold">HEADLINES</span>
+                    <span className="text-[8px] font-mono text-muted-foreground">{agents.flatMap((a) => a.headlines).length} items</span>
+                  </div>
+                  <div className="space-y-1">
+                    {agents.flatMap((a) => a.headlines.map((h) => ({ ...h, agentEmoji: a.emoji }))).slice(0, 8).map((h, i) => (
+                      <div key={i} className="flex gap-2 py-0.5">
+                        <span className="text-[9px] font-mono text-muted-foreground shrink-0 w-8">{h.time}</span>
+                        <p className={`text-[10px] leading-snug line-clamp-2 ${h.sentiment === "bull" ? "text-status-active font-medium" : (h.sentiment as string) === "bear" ? "text-status-hot font-medium" : "text-foreground/70"}`}>{h.text}</p>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 {/* Unified Intelligence */}
-                <div className="p-3 bg-[hsl(45_90%_55%/0.08)]">
-                  <div className="font-mono text-[7px] text-muted-foreground tracking-[2px] mb-3">UNIFIED INTELLIGENCE</div>
-                  <div className="flex items-center justify-center mb-3">
-                    <div className="relative w-[100px] h-[50px]">
+                <div className="px-3 py-2 bg-[hsl(45_90%_55%/0.08)]">
+                  <div className="font-mono text-[8px] text-muted-foreground tracking-[2px] mb-2">UNIFIED INTELLIGENCE</div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="relative w-[80px] h-[40px] shrink-0">
                       <svg viewBox="0 0 120 60" className="w-full h-full overflow-visible">
                         <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(var(--border))" strokeWidth="6" strokeLinecap="round" />
                         <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(45 90% 55%)" strokeWidth="6" strokeLinecap="round" strokeDasharray={`${Math.PI * 50 * 0.73} ${Math.PI * 50}`} />
                         {(() => { const a = Math.PI - (73/100)*Math.PI; return <line x1="60" y1="55" x2={60+36*Math.cos(a)} y2={55-36*Math.sin(a)} stroke="hsl(45 90% 55%)" strokeWidth="2" strokeLinecap="round" />; })()}
                         <circle cx="60" cy="55" r="3" fill="hsl(45 90% 55%)" />
                       </svg>
-                      <div className="absolute bottom-[-2px] left-1/2 -translate-x-1/2"><span className="font-mono text-[18px] font-black">73</span></div>
+                      <div className="absolute bottom-[-2px] left-1/2 -translate-x-1/2"><span className="font-mono text-[16px] font-black">73</span></div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-1.5 mb-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-status-active animate-pulse" />
+                        <span className="font-mono text-[10px] font-bold tracking-[1px]">LONG SIGNAL</span>
+                      </div>
+                      <div className="space-y-[3px]">
+                        {[
+                          { emoji: "📐", name: "CHART", score: 88, color: "268 35% 72%" },
+                          { emoji: "⛓", name: "CHAIN", score: 65, color: "142 70% 45%" },
+                          { emoji: "📡", name: "DERIV", score: 78, color: "0 84% 60%" },
+                          { emoji: "💬", name: "SOCIAL", score: 72, color: "280 60% 65%" },
+                        ].map((a) => (
+                          <div key={a.name} className="flex items-center gap-1.5">
+                            <span className="font-mono text-[8px] w-8 text-muted-foreground">{a.name}</span>
+                            <div className="flex-1 h-[3px] bg-border overflow-hidden">
+                              <div className="h-full" style={{ width: `${a.score}%`, backgroundColor: `hsl(${a.color})` }} />
+                            </div>
+                            <span className="font-mono text-[9px] w-5 text-right text-foreground/70">{a.score}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <span className="w-2 h-2 rounded-full bg-status-active animate-pulse" />
-                    <span className="font-mono text-[10px] font-bold tracking-[2px]">LONG SIGNAL</span>
-                  </div>
-                  <div className="space-y-[4px]">
-                    {[
-                      { emoji: "📐", name: "CHART", score: 88, color: "268 35% 72%" },
-                      { emoji: "⛓", name: "CHAIN", score: 65, color: "142 70% 45%" },
-                      { emoji: "📡", name: "DERIV", score: 78, color: "0 84% 60%" },
-                      { emoji: "💬", name: "SOCIAL", score: 72, color: "280 60% 65%" },
-                    ].map((a) => (
-                      <div key={a.name} className="flex items-center gap-2">
-                        <span className="text-[9px]">{a.emoji}</span>
-                        <span className="font-mono text-[7px] w-10 text-muted-foreground">{a.name}</span>
-                        <div className="flex-1 h-[4px] bg-border overflow-hidden">
-                          <div className="h-full" style={{ width: `${a.score}%`, backgroundColor: `hsl(${a.color})` }} />
-                        </div>
-                        <span className="font-mono text-[8px] w-5 text-right text-foreground/70">{a.score}</span>
-                      </div>
-                    ))}
+                  <div className="flex items-center justify-between pt-1.5 border-t border-[hsl(45_90%_55%/0.12)]">
+                    <span className="text-[9px] font-mono text-muted-foreground">COMPOSITE <span className="text-foreground font-bold">73</span></span>
+                    <span className="text-[9px] font-mono text-status-active font-bold">BULLISH</span>
                   </div>
                 </div>
 
                 {/* Agent Breakdowns */}
-                <div className="p-3">
-                  <span className="font-mono text-[9px] font-semibold tracking-[1px] mb-2 block">AGENT ANALYSIS</span>
+                <div className="px-3 py-2">
+                  <span className="font-mono text-[10px] font-semibold tracking-[1px] mb-1.5 block">AGENT ANALYSIS</span>
                   {agents.map((agent) => {
                     const isSelected = selectedAgents.has(agent.id);
                     const breakdown = activeBreakdowns.find((b) => b.agentId === agent.id);
                     const isExpanded = expandedBreakdown === agent.id;
                     return (
                       <div key={agent.id} className="border-b border-border last:border-0">
-                        <div className={`flex items-center justify-between py-2 cursor-pointer ${isSelected ? "bg-accent/10" : "opacity-50"}`}
+                        <div className={`flex items-center justify-between py-1.5 cursor-pointer ${isSelected ? "bg-accent/10" : "opacity-50"}`}
                           onClick={() => { if (breakdown) setExpandedBreakdown(isExpanded ? null : agent.id); }}>
                           <div className="flex items-center gap-2">
                             <span className="text-[11px]">{agent.emoji}</span>
-                            <span className={`font-mono text-[9px] font-semibold ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>{agent.fullName.toUpperCase()}</span>
+                            <span className={`font-mono text-[10px] font-semibold ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>{agent.fullName.toUpperCase()}</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            {breakdown && <span className="font-mono text-[7px] text-accent px-1 border border-accent/30">DATA</span>}
+                            {breakdown && <span className="font-mono text-[8px] text-accent px-1 border border-accent/30">DATA</span>}
                             <span className={`w-[6px] h-[6px] rounded-full ${agent.status !== "idle" ? "bg-status-active" : "bg-muted-foreground"}`} />
                           </div>
                         </div>
@@ -833,68 +841,68 @@ const Agents = () => {
             <ResizablePanel defaultSize={18} minSize={12} maxSize={28}>
               <ResizablePanelGroup direction="vertical">
                 {/* Watchlist */}
-                <ResizablePanel defaultSize={45} minSize={20}>
+                <ResizablePanel defaultSize={45} minSize={15}>
                   <div className="h-full flex flex-col overflow-hidden">
-                    <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
+                    <div className="p-2 border-b border-border flex items-center justify-between shrink-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[11px] font-mono font-semibold tracking-[1px] text-status-active">WATCHLIST</span>
+                        <span className="text-[10px] font-mono font-semibold tracking-[1px] text-status-active">WATCHLIST</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Settings size={12} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" onClick={() => toast({ title: "⚙️ Settings", description: "Watchlist settings coming soon!" })} />
+                        <Settings size={11} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" onClick={() => toast({ title: "⚙️ Settings", description: "Watchlist settings coming soon!" })} />
                         <button onClick={() => setWatchlistCollapsed(true)} className="hover:bg-card/50 p-0.5 transition-colors" title="Hide Watchlist">
-                          <PanelLeftClose size={12} className="text-muted-foreground hover:text-foreground" />
+                          <PanelLeftClose size={11} className="text-muted-foreground hover:text-foreground" />
                         </button>
                       </div>
                     </div>
 
-                    <div className="shrink-0 px-2 py-1 border-b border-border">
-                      <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-[3px]">
-                        <Search size={10} className="text-muted-foreground" />
-                        <input type="text" placeholder="search ..." className="bg-transparent text-[11px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50" />
+                    <div className="shrink-0 px-2 py-0.5 border-b border-border">
+                      <div className="flex items-center gap-1.5 border border-border bg-card px-2 py-[2px]">
+                        <Search size={9} className="text-muted-foreground" />
+                        <input type="text" placeholder="search ..." className="bg-transparent text-[10px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/50" />
                       </div>
                     </div>
 
-                    <div className="shrink-0 flex items-center px-3 py-[3px] border-b border-border text-[9px] font-mono text-muted-foreground tracking-wider">
+                    <div className="shrink-0 flex items-center px-2.5 py-[2px] border-b border-border text-[8px] font-mono text-muted-foreground tracking-wider">
                       <span className="flex-1">Ticker</span>
-                      <span className="w-14 text-right">% 1D</span>
-                      <span className="w-16 text-right">Price</span>
+                      <span className="w-12 text-right">% 1D</span>
+                      <span className="w-14 text-right">Price</span>
                     </div>
 
                     <div className="flex-1 overflow-y-auto">
-                      <div className="px-3 py-[3px] border-b border-border bg-card/50">
-                        <span className="text-[9px] font-mono font-semibold text-muted-foreground tracking-wider">CRYPTO</span>
+                      <div className="px-2.5 py-[2px] border-b border-border bg-card/50">
+                        <span className="text-[8px] font-mono font-semibold text-muted-foreground tracking-wider">CRYPTO</span>
                       </div>
                       {sharedWatchlist.map((item, idx) => (
-                        <div key={item.ticker} onClick={() => setSelectedTickerIndex(idx)} className={`flex items-center px-3 py-[6px] cursor-pointer transition-colors border-b border-border/30 ${idx === selectedTickerIndex ? "bg-accent/10" : "hover:bg-card/50"}`}>
-                          <span className="flex-1 font-mono text-xs font-semibold text-accent">{item.ticker}</span>
-                          <span className={`w-14 text-right font-mono text-[11px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                        <div key={item.ticker} onClick={() => setSelectedTickerIndex(idx)} className={`flex items-center px-2.5 py-[5px] cursor-pointer transition-colors border-b border-border/30 ${idx === selectedTickerIndex ? "bg-accent/10" : "hover:bg-card/50"}`}>
+                          <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
+                          <span className={`w-12 text-right font-mono text-[10px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
                             {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
                           </span>
-                          <span className="w-16 text-right font-mono text-[11px] text-foreground/70">{item.price}</span>
+                          <span className="w-14 text-right font-mono text-[10px] text-foreground/70">{item.price}</span>
                         </div>
                       ))}
 
-                      <div className="px-3 py-[3px] border-b border-border bg-card/50 border-t">
-                        <span className="text-[9px] font-mono font-semibold text-muted-foreground tracking-wider">MOST ACTIVE</span>
+                      <div className="px-2.5 py-[2px] border-b border-border bg-card/50 border-t">
+                        <span className="text-[8px] font-mono font-semibold text-muted-foreground tracking-wider">MOST ACTIVE</span>
                       </div>
                       {[
                         { ticker: "PEPE", change: 12.44, price: "0.00001842" },
                         { ticker: "WIF", change: -5.23, price: "2.4100" },
                         { ticker: "BONK", change: 8.91, price: "0.00003150" },
                       ].map((item) => (
-                        <div key={item.ticker} className="flex items-center px-3 py-[6px] cursor-pointer hover:bg-card/50 transition-colors border-b border-border/30">
-                          <span className="flex-1 font-mono text-xs font-semibold text-accent">{item.ticker}</span>
-                          <span className={`w-14 text-right font-mono text-[11px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                        <div key={item.ticker} className="flex items-center px-2.5 py-[5px] cursor-pointer hover:bg-card/50 transition-colors border-b border-border/30">
+                          <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
+                          <span className={`w-12 text-right font-mono text-[10px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
                             {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
                           </span>
-                          <span className="w-16 text-right font-mono text-[11px] text-foreground/70">{item.price}</span>
+                          <span className="w-14 text-right font-mono text-[10px] text-foreground/70">{item.price}</span>
                         </div>
                       ))}
                     </div>
 
-                    <div className="border-t border-border p-1.5 shrink-0">
-                      <button onClick={() => toast({ title: "➕ Add Ticker", description: "Custom ticker tracking coming soon!" })} className="flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
-                        <Plus size={10} /><span>Add Ticker</span>
+                    <div className="border-t border-border p-1 shrink-0">
+                      <button onClick={() => toast({ title: "➕ Add Ticker", description: "Custom ticker tracking coming soon!" })} className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-0.5">
+                        <Plus size={9} /><span>Add Ticker</span>
                       </button>
                     </div>
                   </div>
@@ -903,16 +911,16 @@ const Agents = () => {
                 <ResizableHandle />
 
                 {/* Headlines */}
-                <ResizablePanel defaultSize={25} minSize={10}>
+                <ResizablePanel defaultSize={25} minSize={12}>
                   <div className="h-full flex flex-col overflow-hidden">
-                    <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
-                      <span className="font-mono text-[10px] tracking-wider text-muted-foreground font-semibold">HEADLINES</span>
+                    <div className="p-2 border-b border-border flex items-center justify-between shrink-0">
+                      <span className="font-mono text-[9px] tracking-wider text-muted-foreground font-semibold">HEADLINES</span>
                     </div>
-                    <div className="flex-1 overflow-y-auto px-2.5 py-1.5 space-y-[4px]">
+                    <div className="flex-1 overflow-y-auto px-2 py-1 space-y-[3px]">
                       {agents.flatMap((a) => a.headlines.map((h) => ({ ...h, agentEmoji: a.emoji, agentColor: a.color }))).slice(0, 8).map((h, i) => (
                         <div key={i} className="flex gap-1.5 group cursor-pointer">
-                          <span className="text-[9px] font-mono text-muted-foreground shrink-0 w-8">{h.time}</span>
-                          <p className={`text-[10px] leading-tight group-hover:underline line-clamp-1 ${h.sentiment === "bull" ? "text-status-active font-medium" : (h.sentiment as string) === "bear" ? "text-status-hot font-medium" : "text-foreground/60"}`}>{h.text}</p>
+                          <span className="text-[8px] font-mono text-muted-foreground shrink-0 w-7">{h.time}</span>
+                          <p className={`text-[9px] leading-tight group-hover:underline line-clamp-1 ${h.sentiment === "bull" ? "text-status-active font-medium" : (h.sentiment as string) === "bear" ? "text-status-hot font-medium" : "text-foreground/60"}`}>{h.text}</p>
                         </div>
                       ))}
                     </div>
@@ -922,16 +930,16 @@ const Agents = () => {
                 <ResizableHandle />
 
                 {/* Alerts */}
-                <ResizablePanel defaultSize={30} minSize={10}>
+                <ResizablePanel defaultSize={30} minSize={12}>
                   <div className="h-full flex flex-col overflow-hidden">
-                    <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
+                    <div className="p-2 border-b border-border flex items-center justify-between shrink-0">
                       <div className="flex items-center gap-1.5">
-                        <Bell size={12} className="text-[hsl(45_90%_55%)]" />
-                        <span className="text-[11px] font-mono font-semibold tracking-[1px] text-[hsl(45_90%_55%)]">ALERTS</span>
+                        <Bell size={11} className="text-[hsl(45_90%_55%)]" />
+                        <span className="text-[10px] font-mono font-semibold tracking-[1px] text-[hsl(45_90%_55%)]">ALERTS</span>
                       </div>
                       <div className="flex gap-[1px]">
                         {(["all", "mine"] as const).map((f) => (
-                          <button key={f} onClick={() => setAlertFilter(f)} className={`font-mono text-[10px] px-[7px] py-[2px] transition-colors ${alertFilter === f ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                          <button key={f} onClick={() => setAlertFilter(f)} className={`font-mono text-[9px] px-[6px] py-[2px] transition-colors ${alertFilter === f ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
                             {f === "all" ? "ALL" : "MINE"}
                           </button>
                         ))}
@@ -941,26 +949,26 @@ const Agents = () => {
                       <AnimatePresence initial={false}>
                         {filteredAlerts.map((alert) => (
                           <motion.div key={alert.id} initial={{ opacity: 0, height: 0, x: -20 }} animate={{ opacity: 1, height: "auto", x: 0 }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeOut" }} className="overflow-hidden">
-                            <div className="px-3 py-[6px] border-b border-border/50 hover:bg-card/50 cursor-pointer transition-colors">
-                              <div className="flex items-center gap-1.5 mb-[2px]">
-                                <span className="text-[11px] font-mono text-accent">{alert.exchange}</span>
-                                <span className="text-[9px] font-mono text-muted-foreground uppercase">{alert.type}</span>
+                            <div className="px-2.5 py-[5px] border-b border-border/50 hover:bg-card/50 cursor-pointer transition-colors">
+                              <div className="flex items-center gap-1.5 mb-[1px]">
+                                <span className="text-[10px] font-mono text-accent">{alert.exchange}</span>
+                                <span className="text-[8px] font-mono text-muted-foreground uppercase">{alert.type}</span>
                               </div>
                               <div className="flex items-center gap-1.5">
-                                <span className={`w-2 h-2 rounded-full ${alert.side === "BUY" ? "bg-status-active" : "bg-status-hot"}`} />
-                                <span className="font-mono text-xs text-foreground/90">{alert.pair} {alert.side} {alert.amount} @ {alert.price}</span>
+                                <span className={`w-1.5 h-1.5 rounded-full ${alert.side === "BUY" ? "bg-status-active" : "bg-status-hot"}`} />
+                                <span className="font-mono text-[10px] text-foreground/90">{alert.pair} {alert.side} {alert.amount} @ {alert.price}</span>
                               </div>
-                              <div className="flex items-center justify-end mt-[2px]">
-                                <span className="text-[9px] font-mono text-muted-foreground">{alert.time}</span>
+                              <div className="flex items-center justify-end mt-[1px]">
+                                <span className="text-[8px] font-mono text-muted-foreground">{alert.time}</span>
                               </div>
                             </div>
                           </motion.div>
                         ))}
                       </AnimatePresence>
                     </div>
-                    <div className="border-t border-border p-1.5 shrink-0">
-                      <button onClick={() => toast({ title: "🔔 Add Alert", description: "Custom alert creation coming soon!" })} className="flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-1">
-                        <Plus size={10} /><span>Add Alert</span>
+                    <div className="border-t border-border p-1 shrink-0">
+                      <button onClick={() => toast({ title: "🔔 Add Alert", description: "Custom alert creation coming soon!" })} className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors w-full px-2 py-0.5">
+                        <Plus size={9} /><span>Add Alert</span>
                       </button>
                     </div>
                   </div>
@@ -1157,106 +1165,111 @@ const Agents = () => {
 
                   {/* RIGHT: Agent Analysis + Unified Intelligence */}
                   <ResizablePanel defaultSize={42} minSize={20} maxSize={55}>
-                    <div className="h-full overflow-y-auto border-l border-border">
-
+                    <ResizablePanelGroup direction="vertical">
                       {/* Agent Breakdowns */}
-                      <div className="px-2.5 py-2 border-b border-border">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-mono text-[10px] font-bold tracking-[1px]">AGENT ANALYSIS</span>
-                          <span className="font-mono text-[9px] text-muted-foreground">{selectedAgents.size}/{agents.length}</span>
-                        </div>
-                        {agents.map((agent) => {
-                          const isSelected = selectedAgents.has(agent.id);
-                          const breakdown = activeBreakdowns.find((b) => b.agentId === agent.id);
-                          const isExpanded = expandedBreakdown === agent.id;
-                          return (
-                            <div key={agent.id} className="border-b border-border/50 last:border-0">
-                              <div
-                                className={`flex items-center justify-between py-[5px] cursor-pointer transition-colors ${isSelected ? "" : "opacity-40"}`}
-                                onClick={() => { if (breakdown) setExpandedBreakdown(isExpanded ? null : agent.id); }}
-                              >
-                                <div className="flex items-center gap-1.5">
-                                  <button
-                                    onClick={(e) => { e.stopPropagation(); toggleAgent(agent.id); }}
-                                    className={`w-3.5 h-3.5 border flex items-center justify-center text-[8px] transition-colors ${isSelected ? "border-accent bg-accent/20 text-accent" : "border-muted-foreground/50"}`}
-                                  >
-                                    {isSelected && "✓"}
-                                  </button>
-                                  <span className="text-xs">{agent.emoji}</span>
-                                  <span className={`font-mono text-[10px] font-semibold ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
-                                    {agent.name}
-                                  </span>
+                      <ResizablePanel defaultSize={60} minSize={20}>
+                        <div className="h-full overflow-y-auto border-l border-border px-2.5 py-2">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-mono text-[10px] font-bold tracking-[1px]">AGENT ANALYSIS</span>
+                            <span className="font-mono text-[9px] text-muted-foreground">{selectedAgents.size}/{agents.length}</span>
+                          </div>
+                          {agents.map((agent) => {
+                            const isSelected = selectedAgents.has(agent.id);
+                            const breakdown = activeBreakdowns.find((b) => b.agentId === agent.id);
+                            const isExpanded = expandedBreakdown === agent.id;
+                            return (
+                              <div key={agent.id} className="border-b border-border/50 last:border-0">
+                                <div
+                                  className={`flex items-center justify-between py-[5px] cursor-pointer transition-colors ${isSelected ? "" : "opacity-40"}`}
+                                  onClick={() => { if (breakdown) setExpandedBreakdown(isExpanded ? null : agent.id); }}
+                                >
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); toggleAgent(agent.id); }}
+                                      className={`w-3.5 h-3.5 border flex items-center justify-center text-[8px] transition-colors ${isSelected ? "border-accent bg-accent/20 text-accent" : "border-muted-foreground/50"}`}
+                                    >
+                                      {isSelected && "✓"}
+                                    </button>
+                                    <span className="text-xs">{agent.emoji}</span>
+                                    <span className={`font-mono text-[10px] font-semibold ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
+                                      {agent.name}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-1.5">
+                                    {breakdown && <span className="font-mono text-[8px] text-accent px-1 border border-accent/30">DATA</span>}
+                                    <span className={`w-[6px] h-[6px] rounded-full ${agent.status !== "idle" ? "bg-status-active" : "bg-muted-foreground/40"}`} />
+                                  </div>
                                 </div>
-                                <div className="flex items-center gap-1.5">
-                                  {breakdown && <span className="font-mono text-[8px] text-accent px-1 border border-accent/30">DATA</span>}
-                                  <span className={`w-[6px] h-[6px] rounded-full ${agent.status !== "idle" ? "bg-status-active" : "bg-muted-foreground/40"}`} />
-                                </div>
+                                {isExpanded && breakdown && (
+                                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="pb-1.5 overflow-hidden">
+                                    <p className="text-[11px] leading-snug text-foreground/80 mb-1.5">{breakdown.summary}</p>
+                                    {breakdown.keyData.map((d, i) => (
+                                      <div key={i} className="flex justify-between py-[2px] text-[10px]">
+                                        <span className="text-muted-foreground">{d.label}</span>
+                                        <span className="font-mono text-accent font-medium">{d.value}</span>
+                                      </div>
+                                    ))}
+                                  </motion.div>
+                                )}
                               </div>
-                              {isExpanded && breakdown && (
-                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="pb-1.5 overflow-hidden">
-                                  <p className="text-[11px] leading-snug text-foreground/80 mb-1.5">{breakdown.summary}</p>
-                                  {breakdown.keyData.map((d, i) => (
-                                    <div key={i} className="flex justify-between py-[2px] text-[10px]">
-                                      <span className="text-muted-foreground">{d.label}</span>
-                                      <span className="font-mono text-accent font-medium">{d.value}</span>
-                                    </div>
-                                  ))}
-                                </motion.div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
+                            );
+                          })}
+                        </div>
+                      </ResizablePanel>
+
+                      <ResizableHandle />
 
                       {/* Unified Intelligence */}
-                      <div className="px-2.5 py-2 bg-[hsl(45_90%_55%/0.06)] border-t border-[hsl(45_90%_55%/0.15)]">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-mono text-[9px] text-muted-foreground tracking-[2px]">UNIFIED INTELLIGENCE</span>
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-status-active animate-pulse" />
-                            <span className="font-mono text-[10px] font-bold tracking-[1px]">LONG</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="relative w-[80px] h-[40px] shrink-0">
-                            <svg viewBox="0 0 120 60" className="w-full h-full overflow-visible">
-                              <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(var(--border))" strokeWidth="7" strokeLinecap="round" />
-                              <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(45 90% 55%)" strokeWidth="7" strokeLinecap="round" strokeDasharray={`${Math.PI * 50 * 0.73} ${Math.PI * 50}`} />
-                              {(() => {
-                                const angle = Math.PI - (73 / 100) * Math.PI;
-                                const nx = 60 + 36 * Math.cos(angle);
-                                const ny = 55 - 36 * Math.sin(angle);
-                                return <line x1="60" y1="55" x2={nx} y2={ny} stroke="hsl(45 90% 55%)" strokeWidth="2" strokeLinecap="round" />;
-                              })()}
-                              <circle cx="60" cy="55" r="3" fill="hsl(45 90% 55%)" />
-                            </svg>
-                            <div className="absolute bottom-[-2px] left-1/2 -translate-x-1/2">
-                              <span className="font-mono text-[18px] font-black">73</span>
+                      <ResizablePanel defaultSize={40} minSize={15}>
+                        <div className="h-full overflow-y-auto border-l border-border px-2.5 py-2 bg-[hsl(45_90%_55%/0.06)] border-t border-[hsl(45_90%_55%/0.15)]">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-mono text-[9px] text-muted-foreground tracking-[2px]">UNIFIED INTELLIGENCE</span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-status-active animate-pulse" />
+                              <span className="font-mono text-[10px] font-bold tracking-[1px]">LONG</span>
                             </div>
                           </div>
-                          <div className="flex-1 space-y-[4px]">
-                            {[
-                              { emoji: "📐", name: "CHART", score: 88, color: "268 35% 72%" },
-                              { emoji: "⛓", name: "CHAIN", score: 65, color: "142 70% 45%" },
-                              { emoji: "📡", name: "DERIV", score: 78, color: "0 84% 60%" },
-                              { emoji: "💬", name: "SOCIAL", score: 72, color: "280 60% 65%" },
-                            ].map((a) => (
-                              <div key={a.name} className="flex items-center gap-1">
-                                <span className="font-mono text-[8px] w-8 text-muted-foreground">{a.name}</span>
-                                <div className="flex-1 h-[4px] bg-border overflow-hidden">
-                                  <div className="h-full" style={{ width: `${a.score}%`, backgroundColor: `hsl(${a.color})` }} />
-                                </div>
-                                <span className="font-mono text-[9px] w-5 text-right font-medium">{a.score}</span>
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="relative w-[80px] h-[40px] shrink-0">
+                              <svg viewBox="0 0 120 60" className="w-full h-full overflow-visible">
+                                <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(var(--border))" strokeWidth="7" strokeLinecap="round" />
+                                <path d="M 10 55 A 50 50 0 0 1 110 55" fill="none" stroke="hsl(45 90% 55%)" strokeWidth="7" strokeLinecap="round" strokeDasharray={`${Math.PI * 50 * 0.73} ${Math.PI * 50}`} />
+                                {(() => {
+                                  const angle = Math.PI - (73 / 100) * Math.PI;
+                                  const nx = 60 + 36 * Math.cos(angle);
+                                  const ny = 55 - 36 * Math.sin(angle);
+                                  return <line x1="60" y1="55" x2={nx} y2={ny} stroke="hsl(45 90% 55%)" strokeWidth="2" strokeLinecap="round" />;
+                                })()}
+                                <circle cx="60" cy="55" r="3" fill="hsl(45 90% 55%)" />
+                              </svg>
+                              <div className="absolute bottom-[-2px] left-1/2 -translate-x-1/2">
+                                <span className="font-mono text-[18px] font-black">73</span>
                               </div>
-                            ))}
+                            </div>
+                            <div className="flex-1 space-y-[4px]">
+                              {[
+                                { emoji: "📐", name: "CHART", score: 88, color: "268 35% 72%" },
+                                { emoji: "⛓", name: "CHAIN", score: 65, color: "142 70% 45%" },
+                                { emoji: "📡", name: "DERIV", score: 78, color: "0 84% 60%" },
+                                { emoji: "💬", name: "SOCIAL", score: 72, color: "280 60% 65%" },
+                              ].map((a) => (
+                                <div key={a.name} className="flex items-center gap-1">
+                                  <span className="font-mono text-[8px] w-8 text-muted-foreground">{a.name}</span>
+                                  <div className="flex-1 h-[4px] bg-border overflow-hidden">
+                                    <div className="h-full" style={{ width: `${a.score}%`, backgroundColor: `hsl(${a.color})` }} />
+                                  </div>
+                                  <span className="font-mono text-[9px] w-5 text-right font-medium">{a.score}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between pt-1.5 border-t border-[hsl(45_90%_55%/0.12)]">
+                            <span className="text-[9px] font-mono text-muted-foreground">COMPOSITE <span className="text-foreground font-bold">73</span></span>
+                            <span className="text-[9px] font-mono text-status-active font-bold">BULLISH</span>
                           </div>
                         </div>
-                        <div className="flex items-center justify-between pt-1.5 border-t border-[hsl(45_90%_55%/0.12)]">
-                          <span className="text-[9px] font-mono text-muted-foreground">COMPOSITE <span className="text-foreground font-bold">73</span></span>
-                          <span className="text-[9px] font-mono text-status-active font-bold">BULLISH</span>
-                        </div>
-                      </div>
-                    </div>
+                      </ResizablePanel>
+                    </ResizablePanelGroup>
                   </ResizablePanel>
                 </ResizablePanelGroup>
               </ResizablePanel>
