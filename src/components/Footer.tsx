@@ -18,7 +18,13 @@ const Footer = () => {
     >
       <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 sm:gap-8 mb-8">
         <div>
-          <span className="text-xl sm:text-2xl font-bold tracking-tight">STOCKCLAW.</span>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-accent" />
+            <span className="text-xl sm:text-2xl font-bold tracking-tight">STOCKCLAW.</span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2 max-w-xs">
+            AI-powered trading intelligence. Non-custodial state analysis engine.
+          </p>
           <div className="flex items-center gap-4 sm:gap-6 mt-4 text-xs font-mono tracking-wider text-muted-foreground">
             <span onClick={() => handleSocial("Twitter / X")} className="hover:text-foreground cursor-pointer transition-colors">TWITTER / X</span>
             <span onClick={() => handleSocial("Discord")} className="hover:text-foreground cursor-pointer transition-colors">DISCORD</span>
@@ -26,7 +32,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="flex flex-col items-start md:items-end gap-2">
-          <span className="text-xs font-mono tracking-wider text-muted-foreground">© 2024 STOCKCLAW</span>
+          <span className="text-xs font-mono tracking-wider text-muted-foreground">© 2025 STOCKCLAW</span>
           <div className="border border-border p-3 flex items-center gap-4">
             <div className="text-[10px] font-mono tracking-wider text-muted-foreground space-y-0.5">
               <div>ENTRY_SCORE</div>

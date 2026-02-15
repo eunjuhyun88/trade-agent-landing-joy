@@ -15,10 +15,17 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur-md">
       <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center gap-4 sm:gap-8">
-          <span className="text-lg sm:text-xl font-bold tracking-tight cursor-pointer" onClick={() => navigate("/")}>STOCKCLAW.</span>
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
+            <motion.div
+              className="w-2 h-2 rounded-full bg-accent"
+              animate={{ opacity: [1, 0.4, 1], scale: [1, 0.85, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <span className="text-lg sm:text-xl font-bold tracking-tight">STOCKCLAW.</span>
+          </div>
           <div className="hidden md:flex items-center gap-1 text-sm font-mono tracking-wide">
             <span
               onClick={() => navigate("/agents")}
@@ -33,12 +40,16 @@ const Navbar = () => {
         </div>
         <div className="flex items-center gap-3 sm:gap-6">
           <div className="hidden sm:flex items-center gap-2 text-xs font-mono">
-            <span className="text-muted-foreground">LATENCY_MS:</span>
-            <span className="text-foreground">1.2ms</span>
+            <span className="text-muted-foreground">STATUS:</span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--status-active))] animate-pulse-dot" />
+              <span className="text-[hsl(var(--status-active))]">ONLINE</span>
+            </span>
           </div>
           <button
             onClick={() => navigate("/agents")}
-            className="hidden sm:block bg-primary text-primary-foreground px-4 sm:px-5 py-2 text-xs sm:text-sm font-mono tracking-wider hover:opacity-90 transition-opacity"
+            className="hidden sm:block bg-accent text-accent-foreground px-5 py-2 text-xs sm:text-sm font-mono tracking-wider hover:opacity-90 transition-all"
+            style={{ boxShadow: "0 0 20px hsl(268 50% 72% / 0.15)" }}
           >
             INITIALIZE
           </button>
@@ -71,7 +82,7 @@ const Navbar = () => {
             </button>
             <button
               onClick={() => { navigate("/agents"); setMenuOpen(false); }}
-              className="w-full bg-primary text-primary-foreground px-5 py-2.5 text-xs font-mono tracking-wider"
+              className="w-full bg-accent text-accent-foreground px-5 py-2.5 text-xs font-mono tracking-wider"
             >
               INITIALIZE
             </button>

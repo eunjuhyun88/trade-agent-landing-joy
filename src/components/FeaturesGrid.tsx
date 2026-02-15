@@ -1,8 +1,30 @@
 import { motion } from "framer-motion";
+import { Layers, Split, Target } from "lucide-react";
+
+const features = [
+  {
+    id: "01",
+    label: "SPECIALIZED",
+    description: "BTC chart structure model. On-chain flow model. Derivatives structure model. Sentiment NLP model.",
+    Icon: Layers,
+  },
+  {
+    id: "02",
+    label: "INDEPENDENT",
+    description: "Each model analyzes without referencing the others. Zero cross-contamination. Parallel, unbiased.",
+    Icon: Split,
+  },
+  {
+    id: "03",
+    label: "CONVERGED",
+    description: "Agreement raises signal strength. Conflict triggers priority rules. Output: Entry Score (0–100).",
+    Icon: Target,
+  },
+];
 
 const FeaturesGrid = () => {
   return (
-    <section className="px-4 sm:px-6 md:px-12 py-12 sm:py-16">
+    <section className="px-4 sm:px-6 md:px-12 py-16 sm:py-20">
       {/* Section tag */}
       <motion.div
         className="mb-4"
@@ -43,37 +65,26 @@ const FeaturesGrid = () => {
       </motion.p>
 
       {/* 3 Feature Blocks */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-border pt-8">
-        {[
-          {
-            id: "01",
-            label: "SPECIALIZED",
-            description: "BTC chart structure model. On-chain flow model. Derivatives structure model. Sentiment NLP model.",
-          },
-          {
-            id: "02",
-            label: "INDEPENDENT",
-            description: "Each model analyzes without referencing the others. Zero cross-contamination. Parallel, unbiased.",
-          },
-          {
-            id: "03",
-            label: "CONVERGED",
-            description: "Agreement raises signal strength. Conflict triggers priority rules. Output: Entry Score (0–100).",
-          },
-        ].map((f, i) => (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-border">
+        {features.map((f, i) => (
           <motion.div
             key={f.id}
-            className="space-y-4"
+            className="border border-border p-6 sm:p-8 bg-card hover:bg-secondary/50 transition-colors group"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5, delay: i * 0.15 }}
           >
-            <div className="flex items-center gap-2 text-xs font-mono tracking-wider">
-              <span className="text-accent">{f.id}</span>
-              <span className="text-accent">/ {f.label}</span>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 border border-accent/30 bg-accent/5 flex items-center justify-center group-hover:border-accent/60 transition-colors">
+                <f.Icon size={18} className="text-accent" />
+              </div>
+              <div className="text-xs font-mono tracking-wider">
+                <span className="text-accent">{f.id}</span>
+                <span className="text-accent"> / {f.label}</span>
+              </div>
             </div>
-            <p className="text-sm leading-relaxed text-foreground max-w-sm">{f.description}</p>
+            <p className="text-sm leading-relaxed text-foreground/80 max-w-sm">{f.description}</p>
           </motion.div>
         ))}
       </div>
