@@ -895,6 +895,21 @@ const Agents = () => {
                   </button>
                 </div>
 
+                {/* Headlines */}
+                <div className="shrink-0 border-t border-border flex flex-col max-h-[25%] overflow-hidden">
+                  <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
+                    <span className="font-mono text-[10px] tracking-wider text-muted-foreground font-semibold">HEADLINES</span>
+                  </div>
+                  <div className="flex-1 overflow-y-auto px-2.5 py-1.5 space-y-[4px]">
+                    {agents.flatMap((a) => a.headlines.map((h) => ({ ...h, agentEmoji: a.emoji, agentColor: a.color }))).slice(0, 8).map((h, i) => (
+                      <div key={i} className="flex gap-1.5 group cursor-pointer">
+                        <span className="text-[9px] font-mono text-muted-foreground shrink-0 w-8">{h.time}</span>
+                        <p className={`text-[10px] leading-tight group-hover:underline line-clamp-1 ${h.sentiment === "bull" ? "text-status-active font-medium" : (h.sentiment as string) === "bear" ? "text-status-hot font-medium" : "text-foreground/60"}`}>{h.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Alerts */}
                 <div className="shrink-0 border-t border-border flex flex-col max-h-[45%] overflow-hidden">
                   <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
@@ -1127,23 +1142,9 @@ const Agents = () => {
 
                   <ResizableHandle withHandle />
 
-                  {/* RIGHT: Headlines + Agent Analysis + Unified Intelligence */}
+                  {/* RIGHT: Agent Analysis + Unified Intelligence */}
                   <ResizablePanel defaultSize={42} minSize={20} maxSize={55}>
                     <div className="h-full overflow-y-auto border-l border-border">
-                      {/* Headlines */}
-                      <div className="px-2.5 py-2 border-b border-border">
-                        <div className="mb-1">
-                          <span className="font-mono text-[10px] tracking-wider text-muted-foreground font-semibold">HEADLINES</span>
-                        </div>
-                        <div className="space-y-[4px]">
-                          {agents.flatMap((a) => a.headlines.map((h) => ({ ...h, agentEmoji: a.emoji, agentColor: a.color }))).slice(0, 5).map((h, i) => (
-                            <div key={i} className="flex gap-1.5 group cursor-pointer">
-                              <span className="text-[9px] font-mono text-muted-foreground shrink-0 w-8">{h.time}</span>
-                              <p className={`text-[10px] leading-tight group-hover:underline line-clamp-1 ${h.sentiment === "bull" ? "text-status-active font-medium" : (h.sentiment as string) === "bear" ? "text-status-hot font-medium" : "text-foreground/60"}`}>{h.text}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
 
                       {/* Agent Breakdowns */}
                       <div className="px-2.5 py-2 border-b border-border">
