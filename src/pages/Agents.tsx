@@ -525,6 +525,26 @@ const Agents = () => {
             </div>
           </div>
 
+          {/* Coin selector bar — between chart and content */}
+          <div className="shrink-0 flex items-center gap-0 px-1 border-b border-border bg-card/30 overflow-x-auto scrollbar-hide">
+            {sharedWatchlist.map((item, idx) => (
+              <button
+                key={item.ticker}
+                onClick={() => setSelectedTickerIndex(idx)}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 text-[9px] font-mono font-semibold whitespace-nowrap transition-colors border-b-2 ${
+                  idx === selectedTickerIndex
+                    ? "text-accent border-accent"
+                    : "text-muted-foreground border-transparent hover:text-foreground"
+                }`}
+              >
+                <span>{item.ticker}</span>
+                <span className={`text-[8px] font-normal ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                  {item.change > 0 ? "+" : ""}{item.change.toFixed(1)}%
+                </span>
+              </button>
+            ))}
+          </div>
+
           {/* Tab content — fills remaining space */}
           <div className="flex-1 overflow-hidden flex flex-col">
             {/* CHAT TAB */}
