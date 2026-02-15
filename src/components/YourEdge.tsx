@@ -40,13 +40,13 @@ const YourEdge = () => {
         </p>
       </motion.div>
 
-      {/* Mobile: stacked cards, Desktop: grid table */}
+      {/* Desktop grid table */}
       <div className="hidden sm:grid grid-cols-2 gap-0 border border-border">
         <div className="border-b border-border px-5 py-3 bg-card">
           <span className="text-xs font-mono tracking-wider text-muted-foreground">BEFORE</span>
         </div>
         <div className="border-b border-border px-5 py-3 bg-card">
-          <span className="text-xs font-mono tracking-wider text-accent">AFTER</span>
+          <span className="text-xs font-mono tracking-wider text-accent">AFTER — STOCKCLAW</span>
         </div>
         {comparisons.map((row, i) => (
           <motion.div
@@ -57,10 +57,11 @@ const YourEdge = () => {
             viewport={{ once: true }}
             transition={{ delay: i * 0.08 }}
           >
-            <div className="border-b border-border px-5 py-4 text-sm text-muted-foreground">
+            <div className="border-b border-border px-5 py-4 text-sm text-muted-foreground line-through decoration-muted-foreground/30">
               {row.before}
             </div>
-            <div className="border-b border-border px-5 py-4 text-sm font-semibold text-foreground">
+            <div className="border-b border-border px-5 py-4 text-sm font-semibold text-foreground flex items-center gap-2">
+              <span className="w-1 h-1 rounded-full bg-accent shrink-0" />
               {row.after}
             </div>
           </motion.div>
@@ -78,7 +79,7 @@ const YourEdge = () => {
             viewport={{ once: true }}
             transition={{ delay: i * 0.08 }}
           >
-            <p className="text-xs text-muted-foreground mb-2 line-through">{row.before}</p>
+            <p className="text-xs text-muted-foreground mb-2 line-through decoration-muted-foreground/30">{row.before}</p>
             <p className="text-sm font-semibold text-accent">{row.after}</p>
           </motion.div>
         ))}
