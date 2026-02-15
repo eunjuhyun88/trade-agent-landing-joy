@@ -325,6 +325,23 @@ const Agents = () => {
     { id: "c8", user: "moon_trader", avatar: "🌙", text: "AVAX bullish divergence — hidden gem", time: "8:15 PM", badge: null },
   ]);
   const communityScrollRef = useRef<HTMLDivElement>(null);
+  const [predictions, setPredictions] = useState([
+    { id: "p1", question: "BTC hits $110K by Feb 28?", yesPercent: 68, pool: 2450, closes: "13d 4h", myVote: null as "yes" | "no" | null },
+    { id: "p2", question: "ETH flips $4K before March?", yesPercent: 42, pool: 1820, closes: "18d 11h", myVote: null as "yes" | "no" | null },
+    { id: "p3", question: "SOL breaks $300 this week?", yesPercent: 55, pool: 980, closes: "5d 2h", myVote: null as "yes" | "no" | null },
+  ]);
+  const handleVote = useCallback((predId: string, vote: "yes" | "no") => {
+    setPredictions((prev) =>
+      prev.map((p) => {
+        if (p.id !== predId) return p;
+        if (p.myVote === vote) return p; // already voted same
+        const shift = vote === "yes" ? 3 : -3;
+        const newYes = Math.max(5, Math.min(95, p.yesPercent + (p.myVote ? shift * 2 : shift)));
+        return { ...p, yesPercent: newYes, pool: p.pool + 50, myVote: vote };
+      })
+    );
+    toast({ title: `🎯 Bet placed: ${vote.toUpperCase()}`, description: "Your prediction has been recorded!" });
+  }, [toast]);
   const [selectedTickerIndex, setSelectedTickerIndex] = useState(0);
   const timeframes = ["1H", "4H", "1D", "1W"] as const;
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("4H");
@@ -914,28 +931,37 @@ const Agents = () => {
                     <span className="text-[9px] font-mono font-semibold tracking-[1px] text-[hsl(45_90%_55%)]">PREDICTION BETS</span>
                     <span className="text-[7px] font-mono text-muted-foreground">🔒 $CLAWHOO</span>
                   </div>
-                  <div className="border border-border bg-card/50 p-2 mb-1.5">
-                    <p className="text-[10px] font-mono font-semibold text-foreground mb-2">BTC hits $110K by Feb 28?</p>
-                    <div className="flex gap-1.5 mb-1.5">
-                      <button className="flex-1 py-1.5 border border-status-active/50 bg-status-active/10 text-status-active text-[10px] font-mono font-bold hover:bg-status-active/20 transition-colors">YES (68%)</button>
-                      <button className="flex-1 py-1.5 border border-status-hot/50 bg-status-hot/10 text-status-hot text-[10px] font-mono font-bold hover:bg-status-hot/20 transition-colors">NO (32%)</button>
+                  {predictions.map((pred, i) => (
+                    <div key={pred.id} className={`border border-border bg-card/50 p-2 ${i < predictions.length - 1 ? "mb-1.5" : ""}`}>
+                      <p className="text-[10px] font-mono font-semibold text-foreground mb-2">{pred.question}</p>
+                      <div className="h-1 bg-border overflow-hidden mb-1.5 flex">
+                        <div className="h-full bg-status-active transition-all duration-500" style={{ width: `${pred.yesPercent}%` }} />
+                        <div className="h-full bg-status-hot transition-all duration-500" style={{ width: `${100 - pred.yesPercent}%` }} />
+                      </div>
+                      <div className="flex gap-1.5 mb-1.5">
+                        <button
+                          onClick={() => handleVote(pred.id, "yes")}
+                          className={`flex-1 py-1.5 border text-[10px] font-mono font-bold transition-colors ${
+                            pred.myVote === "yes"
+                              ? "border-status-active bg-status-active/30 text-status-active ring-1 ring-status-active/50"
+                              : "border-status-active/50 bg-status-active/10 text-status-active hover:bg-status-active/20"
+                          }`}
+                        >YES ({pred.yesPercent}%)</button>
+                        <button
+                          onClick={() => handleVote(pred.id, "no")}
+                          className={`flex-1 py-1.5 border text-[10px] font-mono font-bold transition-colors ${
+                            pred.myVote === "no"
+                              ? "border-status-hot bg-status-hot/30 text-status-hot ring-1 ring-status-hot/50"
+                              : "border-status-hot/50 bg-status-hot/10 text-status-hot hover:bg-status-hot/20"
+                          }`}
+                        >NO ({100 - pred.yesPercent}%)</button>
+                      </div>
+                      <div className="flex items-center justify-between text-[8px] font-mono text-muted-foreground">
+                        <span>Pool: <span className="text-accent font-semibold">{pred.pool.toLocaleString()} CLAW</span></span>
+                        <span>Closes in <span className="text-foreground font-semibold">{pred.closes}</span></span>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between text-[8px] font-mono text-muted-foreground">
-                      <span>Pool: <span className="text-accent font-semibold">2,450 CLAW</span></span>
-                      <span>Closes in <span className="text-foreground font-semibold">13d 4h</span></span>
-                    </div>
-                  </div>
-                  <div className="border border-border bg-card/50 p-2">
-                    <p className="text-[10px] font-mono font-semibold text-foreground mb-2">ETH flips $4K before March?</p>
-                    <div className="flex gap-1.5 mb-1.5">
-                      <button className="flex-1 py-1.5 border border-status-active/50 bg-status-active/10 text-status-active text-[10px] font-mono font-bold hover:bg-status-active/20 transition-colors">YES (42%)</button>
-                      <button className="flex-1 py-1.5 border border-status-hot/50 bg-status-hot/10 text-status-hot text-[10px] font-mono font-bold hover:bg-status-hot/20 transition-colors">NO (58%)</button>
-                    </div>
-                    <div className="flex items-center justify-between text-[8px] font-mono text-muted-foreground">
-                      <span>Pool: <span className="text-accent font-semibold">1,820 CLAW</span></span>
-                      <span>Closes in <span className="text-foreground font-semibold">18d 11h</span></span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
 
                 <div className="flex-1 overflow-y-auto px-2.5 py-2 space-y-1.5" ref={communityScrollRef}>
@@ -1500,84 +1526,98 @@ const Agents = () => {
                 ))}
               </div>
 
-              {/* PREDICTION BETS */}
-              <div className="shrink-0 border-b border-border px-2 py-2">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[9px] font-mono font-semibold tracking-[1px] text-[hsl(45_90%_55%)]">PREDICTION BETS</span>
-                  <span className="text-[7px] font-mono text-muted-foreground">🔒 $CLAWHOO</span>
-                </div>
-                <p className="text-[8px] font-mono text-muted-foreground/70 mb-2">Bet on agent performance predictions. Hold $CLAWHOO to unlock.</p>
-                <div className="border border-border bg-card/50 p-2 mb-1.5">
-                  <div className="flex items-center gap-1 mb-1">
-                    <span className="text-[7px] font-mono text-muted-foreground tracking-wider">NEXT PREDICTION</span>
-                  </div>
-                  <p className="text-[10px] font-mono font-semibold text-foreground mb-2">BTC hits $110K by Feb 28?</p>
-                  <div className="flex gap-1.5 mb-2">
-                    <button className="flex-1 py-1.5 border border-status-active/50 bg-status-active/10 text-status-active text-[10px] font-mono font-bold hover:bg-status-active/20 transition-colors">
-                      YES (68%)
-                    </button>
-                    <button className="flex-1 py-1.5 border border-status-hot/50 bg-status-hot/10 text-status-hot text-[10px] font-mono font-bold hover:bg-status-hot/20 transition-colors">
-                      NO (32%)
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between text-[8px] font-mono text-muted-foreground">
-                    <span>Pool: <span className="text-accent font-semibold">2,450 CLAW</span></span>
-                    <span>Closes in <span className="text-foreground font-semibold">13d 4h</span></span>
-                  </div>
-                </div>
-                <div className="border border-border bg-card/50 p-2">
-                  <p className="text-[10px] font-mono font-semibold text-foreground mb-2">ETH flips $4K before March?</p>
-                  <div className="flex gap-1.5 mb-2">
-                    <button className="flex-1 py-1.5 border border-status-active/50 bg-status-active/10 text-status-active text-[10px] font-mono font-bold hover:bg-status-active/20 transition-colors">
-                      YES (42%)
-                    </button>
-                    <button className="flex-1 py-1.5 border border-status-hot/50 bg-status-hot/10 text-status-hot text-[10px] font-mono font-bold hover:bg-status-hot/20 transition-colors">
-                      NO (58%)
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between text-[8px] font-mono text-muted-foreground">
-                    <span>Pool: <span className="text-accent font-semibold">1,820 CLAW</span></span>
-                    <span>Closes in <span className="text-foreground font-semibold">18d 11h</span></span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto px-2 py-1.5 space-y-1.5" ref={communityScrollRef}>
-                {communityMessages.map((msg) => (
-                  <div key={msg.id} className={`${msg.user === "You" ? "bg-accent/10 border border-accent/20" : "hover:bg-card/50"} px-2 py-1 transition-colors`}>
-                    <div className="flex items-center gap-1.5 mb-0.5">
-                      <span className="text-[10px]">{msg.avatar}</span>
-                      <span className={`font-mono text-[9px] font-semibold ${msg.user === "You" ? "text-accent" : "text-foreground"}`}>{msg.user}</span>
-                      {msg.badge && (
-                        <span className="text-[7px] font-mono font-bold px-1 py-[1px] bg-accent/20 text-accent border border-accent/30">{msg.badge}</span>
-                      )}
-                      <span className="text-[7px] font-mono text-muted-foreground ml-auto">{msg.time}</span>
+              <ResizablePanelGroup direction="vertical" className="flex-1">
+                {/* PREDICTION BETS */}
+                <ResizablePanel defaultSize={45} minSize={20}>
+                  <div className="h-full overflow-y-auto px-2 py-2">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[9px] font-mono font-semibold tracking-[1px] text-[hsl(45_90%_55%)]">PREDICTION BETS</span>
+                      <span className="text-[7px] font-mono text-muted-foreground">🔒 $CLAWHOO</span>
                     </div>
-                    <p className="text-[10px] leading-snug text-foreground/80">{msg.text}</p>
+                    <p className="text-[8px] font-mono text-muted-foreground/70 mb-2">Bet on agent performance predictions. Hold $CLAWHOO to unlock.</p>
+                    {predictions.map((pred, i) => (
+                      <div key={pred.id} className={`border border-border bg-card/50 p-2 ${i < predictions.length - 1 ? "mb-1.5" : ""}`}>
+                        {i === 0 && <span className="text-[7px] font-mono text-muted-foreground tracking-wider">NEXT PREDICTION</span>}
+                        <p className="text-[10px] font-mono font-semibold text-foreground mb-2">{pred.question}</p>
+                        {/* Progress bar */}
+                        <div className="h-1 bg-border overflow-hidden mb-1.5 flex">
+                          <div className="h-full bg-status-active transition-all duration-500" style={{ width: `${pred.yesPercent}%` }} />
+                          <div className="h-full bg-status-hot transition-all duration-500" style={{ width: `${100 - pred.yesPercent}%` }} />
+                        </div>
+                        <div className="flex gap-1.5 mb-2">
+                          <button
+                            onClick={() => handleVote(pred.id, "yes")}
+                            className={`flex-1 py-1.5 border text-[10px] font-mono font-bold transition-colors ${
+                              pred.myVote === "yes"
+                                ? "border-status-active bg-status-active/30 text-status-active ring-1 ring-status-active/50"
+                                : "border-status-active/50 bg-status-active/10 text-status-active hover:bg-status-active/20"
+                            }`}
+                          >
+                            YES ({pred.yesPercent}%)
+                          </button>
+                          <button
+                            onClick={() => handleVote(pred.id, "no")}
+                            className={`flex-1 py-1.5 border text-[10px] font-mono font-bold transition-colors ${
+                              pred.myVote === "no"
+                                ? "border-status-hot bg-status-hot/30 text-status-hot ring-1 ring-status-hot/50"
+                                : "border-status-hot/50 bg-status-hot/10 text-status-hot hover:bg-status-hot/20"
+                            }`}
+                          >
+                            NO ({100 - pred.yesPercent}%)
+                          </button>
+                        </div>
+                        <div className="flex items-center justify-between text-[8px] font-mono text-muted-foreground">
+                          <span>Pool: <span className="text-accent font-semibold">{pred.pool.toLocaleString()} CLAW</span></span>
+                          <span>Closes in <span className="text-foreground font-semibold">{pred.closes}</span></span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </ResizablePanel>
 
-              {/* Input */}
-              <div className="shrink-0 border-t border-border p-1.5">
-                <form onSubmit={(e) => { e.preventDefault(); handleSendCommunityMsg(); }} className="flex items-center gap-2 border border-border bg-card px-2 py-1.5">
-                  <input
-                    type="text"
-                    value={communityInput}
-                    onChange={(e) => setCommunityInput(e.target.value)}
-                    placeholder="Message..."
-                    className="bg-transparent text-[10px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
-                  />
-                  <button type="submit" className="text-accent hover:text-foreground transition-colors">
-                    <Send size={11} />
-                  </button>
-                </form>
-                <div className="flex items-center justify-between mt-0.5 px-1">
-                  <span className="text-[7px] font-mono text-muted-foreground">#{selectedTicker?.ticker || "GENERAL"}</span>
-                  <span className="text-[7px] font-mono text-muted-foreground">🔒 PRO: voice chat</span>
-                </div>
-              </div>
+                <ResizableHandle />
+
+                {/* Messages */}
+                <ResizablePanel defaultSize={55} minSize={20}>
+                  <div className="h-full flex flex-col overflow-hidden">
+                    <div className="flex-1 overflow-y-auto px-2 py-1.5 space-y-1.5" ref={communityScrollRef}>
+                      {communityMessages.map((msg) => (
+                        <div key={msg.id} className={`${msg.user === "You" ? "bg-accent/10 border border-accent/20" : "hover:bg-card/50"} px-2 py-1 transition-colors`}>
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                            <span className="text-[10px]">{msg.avatar}</span>
+                            <span className={`font-mono text-[9px] font-semibold ${msg.user === "You" ? "text-accent" : "text-foreground"}`}>{msg.user}</span>
+                            {msg.badge && (
+                              <span className="text-[7px] font-mono font-bold px-1 py-[1px] bg-accent/20 text-accent border border-accent/30">{msg.badge}</span>
+                            )}
+                            <span className="text-[7px] font-mono text-muted-foreground ml-auto">{msg.time}</span>
+                          </div>
+                          <p className="text-[10px] leading-snug text-foreground/80">{msg.text}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Input */}
+                    <div className="shrink-0 border-t border-border p-1.5">
+                      <form onSubmit={(e) => { e.preventDefault(); handleSendCommunityMsg(); }} className="flex items-center gap-2 border border-border bg-card px-2 py-1.5">
+                        <input
+                          type="text"
+                          value={communityInput}
+                          onChange={(e) => setCommunityInput(e.target.value)}
+                          placeholder="Message..."
+                          className="bg-transparent text-[10px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
+                        />
+                        <button type="submit" className="text-accent hover:text-foreground transition-colors">
+                          <Send size={11} />
+                        </button>
+                      </form>
+                      <div className="flex items-center justify-between mt-0.5 px-1">
+                        <span className="text-[7px] font-mono text-muted-foreground">#{selectedTicker?.ticker || "GENERAL"}</span>
+                        <span className="text-[7px] font-mono text-muted-foreground">🔒 PRO: voice chat</span>
+                      </div>
+                    </div>
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
             </div>
           )}
         </div>
