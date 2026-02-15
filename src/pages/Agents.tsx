@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   BarChart3, Link2, TrendingUp, MessageSquare, Clock, Bell,
   ExternalLink, Search, Send, Settings, Plus, ChevronDown, ArrowDownUp, X,
-  LineChart, List, Activity, PanelLeftClose, PanelLeftOpen, Sun, Moon, Lock, Zap,
+  LineChart, List, Activity, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Sun, Moon, Lock, Zap, Users,
 } from "lucide-react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import AppNav from "@/components/AppNav";
@@ -290,6 +290,19 @@ const Agents = () => {
   const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
   const [alertFilter, setAlertFilter] = useState<"all" | "mine">("all");
   const [watchlistCollapsed, setWatchlistCollapsed] = useState(false);
+  const [communityCollapsed, setCommunityCollapsed] = useState(true);
+  const [communityInput, setCommunityInput] = useState("");
+  const [communityMessages, setCommunityMessages] = useState([
+    { id: "c1", user: "Whale_0x7F", avatar: "🐋", text: "BTC 102K 돌파하면 108K까지 열릴 듯", time: "8:45 PM", badge: "PRO" },
+    { id: "c2", user: "degen_sol", avatar: "🔥", text: "SOL cup & handle 완성됨 — 285 타겟", time: "8:42 PM", badge: null },
+    { id: "c3", user: "ChartMaster", avatar: "📐", text: "ETH/BTC 0.032 지지선 바운스 확률 78%", time: "8:38 PM", badge: "PRO" },
+    { id: "c4", user: "alpha_hunter", avatar: "🎯", text: "Funding rate 마이너스 전환 — 숏 스퀴즈 주의", time: "8:35 PM", badge: null },
+    { id: "c5", user: "0xSentiment", avatar: "💬", text: "소셜 그리드 극단치 — 반전 시그널 가능성", time: "8:30 PM", badge: "PRO" },
+    { id: "c6", user: "onchain_spy", avatar: "⛓", text: "15K BTC 콜드월렛→거래소 이동 감지", time: "8:25 PM", badge: null },
+    { id: "c7", user: "derivatives_pro", avatar: "📡", text: "OI 12% 급등 — $103K 청산 클러스터 주의", time: "8:20 PM", badge: "PRO" },
+    { id: "c8", user: "moon_trader", avatar: "🌙", text: "AVAX 강세 다이버전스 — 숨은 강자", time: "8:15 PM", badge: null },
+  ]);
+  const communityScrollRef = useRef<HTMLDivElement>(null);
   const [selectedTickerIndex, setSelectedTickerIndex] = useState(0);
   const timeframes = ["1H", "4H", "1D", "1W"] as const;
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("4H");
@@ -345,6 +358,23 @@ const Agents = () => {
     const period = h >= 12 ? "PM" : "AM";
     return `${h > 12 ? h - 12 : h}:${m} ${period}`;
   };
+
+  const handleSendCommunityMsg = useCallback(() => {
+    if (!communityInput.trim()) return;
+    const newMsg = {
+      id: `cm-${Date.now()}`,
+      user: "You",
+      avatar: "👤",
+      text: communityInput.trim(),
+      time: getTimeNow(),
+      badge: isPro ? "PRO" : null,
+    };
+    setCommunityMessages((prev) => [...prev, newMsg]);
+    setCommunityInput("");
+    setTimeout(() => {
+      if (communityScrollRef.current) communityScrollRef.current.scrollTop = communityScrollRef.current.scrollHeight;
+    }, 50);
+  }, [communityInput, isPro]);
 
   const handleSendMessage = useCallback(() => {
     if (!chatInput.trim()) return;
@@ -1219,6 +1249,79 @@ const Agents = () => {
             </ResizablePanelGroup>
           </ResizablePanel>
         </ResizablePanelGroup>
+
+          {/* Community toggle button (when collapsed) */}
+          {communityCollapsed && (
+            <div className="shrink-0 border-l border-border flex flex-col items-center pt-2">
+              <button onClick={() => setCommunityCollapsed(false)} className="p-1.5 hover:bg-card/50 transition-colors" title="Show Community">
+                <PanelRightOpen size={14} className="text-muted-foreground hover:text-foreground" />
+              </button>
+              <Users size={12} className="text-muted-foreground mt-2" />
+            </div>
+          )}
+
+          {/* Community Sidebar */}
+          {!communityCollapsed && (
+            <div className="shrink-0 w-[280px] border-l border-border flex flex-col overflow-hidden bg-background">
+              <div className="p-2.5 border-b border-border flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-1.5">
+                  <Users size={12} className="text-accent" />
+                  <span className="text-[11px] font-mono font-semibold tracking-[1px] text-accent">COMMUNITY</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-status-active animate-pulse" />
+                  <span className="text-[9px] font-mono text-muted-foreground">142 online</span>
+                </div>
+                <button onClick={() => setCommunityCollapsed(true)} className="hover:bg-card/50 p-0.5 transition-colors" title="Hide Community">
+                  <PanelRightClose size={12} className="text-muted-foreground hover:text-foreground" />
+                </button>
+              </div>
+
+              {/* Channel selector */}
+              <div className="shrink-0 flex items-center gap-[2px] px-2 py-1.5 border-b border-border">
+                {["GENERAL", "BTC", "ETH", "SOL"].map((ch, i) => (
+                  <button key={ch} className={`text-[9px] font-mono px-2 py-[2px] transition-colors ${i === 0 ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                    {ch}
+                  </button>
+                ))}
+              </div>
+
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto px-2.5 py-2 space-y-2" ref={communityScrollRef}>
+                {communityMessages.map((msg) => (
+                  <div key={msg.id} className={`${msg.user === "You" ? "bg-accent/10 border border-accent/20" : "hover:bg-card/50"} px-2 py-1.5 transition-colors`}>
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <span className="text-xs">{msg.avatar}</span>
+                      <span className={`font-mono text-[10px] font-semibold ${msg.user === "You" ? "text-accent" : "text-foreground"}`}>{msg.user}</span>
+                      {msg.badge && (
+                        <span className="text-[7px] font-mono font-bold px-1 py-[1px] bg-accent/20 text-accent border border-accent/30">{msg.badge}</span>
+                      )}
+                      <span className="text-[8px] font-mono text-muted-foreground ml-auto">{msg.time}</span>
+                    </div>
+                    <p className="text-[11px] leading-snug text-foreground/80">{msg.text}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Input */}
+              <div className="shrink-0 border-t border-border p-2">
+                <form onSubmit={(e) => { e.preventDefault(); handleSendCommunityMsg(); }} className="flex items-center gap-2 border border-border bg-card px-2.5 py-2">
+                  <input
+                    type="text"
+                    value={communityInput}
+                    onChange={(e) => setCommunityInput(e.target.value)}
+                    placeholder="Message..."
+                    className="bg-transparent text-[11px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40"
+                  />
+                  <button type="submit" className="text-accent hover:text-foreground transition-colors">
+                    <Send size={12} />
+                  </button>
+                </form>
+                <div className="flex items-center justify-between mt-1 px-1">
+                  <span className="text-[8px] font-mono text-muted-foreground">#{selectedTicker?.ticker || "GENERAL"}</span>
+                  <span className="text-[8px] font-mono text-muted-foreground">🔒 PRO: voice chat</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       )}
