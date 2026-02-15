@@ -795,24 +795,58 @@ const Agents = () => {
                 </div>
               </div>
             )}
+
+            {/* COMMUNITY TAB */}
+            {mobileTab === "community" && (
+              <div className="flex-1 flex flex-col overflow-hidden">
+                <div className="shrink-0 flex items-center gap-[2px] px-2 py-1.5 border-b border-border">
+                  {["GENERAL", "BTC", "ETH", "SOL"].map((ch, i) => (
+                    <button key={ch} className={`text-[9px] font-mono px-2 py-[2px] transition-colors ${i === 0 ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                      {ch}
+                    </button>
+                  ))}
+                  <span className="ml-auto text-[8px] font-mono text-muted-foreground flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-status-active animate-pulse" />142
+                  </span>
+                </div>
+                <div className="flex-1 overflow-y-auto px-2.5 py-2 space-y-1.5" ref={communityScrollRef}>
+                  {communityMessages.map((msg) => (
+                    <div key={msg.id} className={`${msg.user === "You" ? "bg-accent/10 border border-accent/20" : "hover:bg-card/50"} px-2 py-1.5 transition-colors`}>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className="text-[10px]">{msg.avatar}</span>
+                        <span className={`font-mono text-[9px] font-semibold ${msg.user === "You" ? "text-accent" : "text-foreground"}`}>{msg.user}</span>
+                        {msg.badge && <span className="text-[7px] font-mono font-bold px-1 py-[1px] bg-accent/20 text-accent border border-accent/30">{msg.badge}</span>}
+                        <span className="text-[8px] font-mono text-muted-foreground ml-auto">{msg.time}</span>
+                      </div>
+                      <p className="text-[10px] leading-snug text-foreground/80">{msg.text}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="shrink-0 border-t border-border p-2">
+                  <form onSubmit={(e) => { e.preventDefault(); handleSendCommunityMsg(); }} className="flex items-center gap-2 border border-border bg-card px-2.5 py-2">
+                    <input type="text" value={communityInput} onChange={(e) => setCommunityInput(e.target.value)} placeholder="Message..." className="bg-transparent text-[10px] font-mono outline-none flex-1 min-w-0 placeholder:text-muted-foreground/40" />
+                    <button type="submit" className="text-accent hover:text-foreground transition-colors"><Send size={12} /></button>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Mobile bottom tabs */}
           <div className="shrink-0 border-t border-border bg-background flex">
             {([
-              { id: "chat" as const, icon: MessageSquare, label: "Chat" },
+              { id: "chat" as const, icon: MessageSquare, label: "AiChat" },
+              { id: "community" as const, icon: Users, label: "Community" },
               { id: "market" as const, icon: Activity, label: "Market" },
               { id: "watchlist" as const, icon: List, label: "Watch" },
             ]).map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setMobileTab(tab.id)}
-                className={`flex-1 flex flex-col items-center gap-0.5 py-2 transition-colors ${
-                  mobileTab === tab.id ? "text-accent" : "text-muted-foreground"
-                }`}
+                className={`flex-1 flex flex-col items-center gap-0.5 py-2 transition-colors ${mobileTab === tab.id ? "text-accent" : "text-muted-foreground"}`}
               >
-                <tab.icon size={16} />
-                <span className="text-[8px] font-mono tracking-wider">{tab.label}</span>
+                <tab.icon size={15} />
+                <span className="text-[7px] font-mono tracking-wider">{tab.label}</span>
               </button>
             ))}
           </div>
