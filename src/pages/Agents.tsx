@@ -23,6 +23,26 @@ const sharedWatchlist = [
   { ticker: "XRP", name: "Ripple", price: "2.41", change: 1.05 },
 ];
 
+const allMarkets = [
+  { ticker: "BTC", name: "Bitcoin", price: "101,890", change: 2.41, active: true },
+  { ticker: "ETH", name: "Ethereum", price: "3,842", change: -1.32, active: true },
+  { ticker: "SOL", name: "Solana", price: "248.50", change: 5.67, active: true },
+  { ticker: "AVAX", name: "Avalanche", price: "42.18", change: -0.89, active: false },
+  { ticker: "DOGE", name: "Dogecoin", price: "0.182", change: 3.12, active: true },
+  { ticker: "XRP", name: "Ripple", price: "2.41", change: 1.05, active: false },
+  { ticker: "LINK", name: "Chainlink", price: "18.42", change: 1.8, active: false },
+  { ticker: "DOT", name: "Polkadot", price: "7.23", change: -2.1, active: false },
+  { ticker: "MATIC", name: "Polygon", price: "0.92", change: 0.5, active: false },
+  { ticker: "ADA", name: "Cardano", price: "0.68", change: -0.7, active: false },
+  { ticker: "ATOM", name: "Cosmos", price: "9.14", change: 3.2, active: false },
+  { ticker: "UNI", name: "Uniswap", price: "12.31", change: 1.1, active: false },
+  { ticker: "APT", name: "Aptos", price: "8.90", change: -1.4, active: false },
+  { ticker: "ARB", name: "Arbitrum", price: "1.18", change: 2.9, active: false },
+  { ticker: "PEPE", name: "Pepe", price: "0.00001842", change: 12.44, active: false },
+  { ticker: "WIF", name: "dogwifhat", price: "2.4100", change: -5.23, active: false },
+  { ticker: "BONK", name: "Bonk", price: "0.00003150", change: 8.91, active: false },
+];
+
 const agents = [
   {
     id: "chart",
@@ -501,94 +521,98 @@ const Agents = () => {
       {/* === MOBILE LAYOUT === */}
       {isMobile ? (
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Chart — always visible at top */}
-          <div className="shrink-0 h-[30vh] min-h-[140px] flex flex-col overflow-hidden border-b border-border">
-            <div className="px-3 py-1.5 flex items-center justify-between shrink-0 border-b border-border">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-[10px] text-accent">{selectedTicker?.ticker}</span>
-                <span className="text-[8px] font-mono text-muted-foreground">{selectedTicker?.name}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className={`text-[9px] font-mono font-semibold ${selectedTicker.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                  {selectedTicker.change > 0 ? "+" : ""}{selectedTicker.change}%
-                </span>
-                <div className="flex gap-[1px] ml-1">
-                  {timeframes.map((tf) => (
-                    <button key={tf} onClick={() => setSelectedTimeframe(tf)} className={`font-mono text-[8px] px-1.5 py-[1px] transition-colors ${selectedTimeframe === tf ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
-                      {tf}
-                    </button>
-                  ))}
+        <ResizablePanelGroup direction="vertical" className="flex-1">
+          {/* Chart — resizable top panel */}
+          <ResizablePanel defaultSize={35} minSize={20} maxSize={60}>
+            <div className="h-full flex flex-col overflow-hidden">
+              <div className="px-3 py-1.5 flex items-center justify-between shrink-0 border-b border-border">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-[10px] text-accent">{selectedTicker?.ticker}</span>
+                  <span className="text-[8px] font-mono text-muted-foreground">{selectedTicker?.name}</span>
                 </div>
-              </div>
-            </div>
-            <div className="flex-1 min-h-0">
-              <TradingViewChart symbol={selectedTicker?.ticker || "BTC"} fillHeight />
-            </div>
-          </div>
-
-          {/* Coin selector bar — between chart and content */}
-          <div className="shrink-0 flex items-center border-b border-border bg-card/30 relative">
-            {/* Dropdown for more coins */}
-            <div className="relative shrink-0">
-              <button
-                onClick={() => setCoinDropdownOpen((p) => !p)}
-                className="flex items-center gap-0.5 px-2 py-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors border-r border-border"
-              >
-                <Plus size={10} />
-                <ChevronDown size={8} className={`transition-transform ${coinDropdownOpen ? "rotate-180" : ""}`} />
-              </button>
-              {coinDropdownOpen && (
-                <div className="absolute top-full left-0 z-50 bg-background border border-border shadow-lg min-w-[160px] max-h-[200px] overflow-y-auto">
-                  {[
-                    { ticker: "LINK", name: "Chainlink", change: 1.8 },
-                    { ticker: "DOT", name: "Polkadot", change: -2.1 },
-                    { ticker: "MATIC", name: "Polygon", change: 0.5 },
-                    { ticker: "ADA", name: "Cardano", change: -0.7 },
-                    { ticker: "ATOM", name: "Cosmos", change: 3.2 },
-                    { ticker: "UNI", name: "Uniswap", change: 1.1 },
-                    { ticker: "APT", name: "Aptos", change: -1.4 },
-                    { ticker: "ARB", name: "Arbitrum", change: 2.9 },
-                  ].map((coin) => (
-                    <button
-                      key={coin.ticker}
-                      onClick={() => {
-                        setCoinDropdownOpen(false);
-                        toast({ title: `${coin.ticker} added`, description: `${coin.name} added to watchlist` });
-                      }}
-                      className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-mono hover:bg-accent/10 transition-colors"
-                    >
-                      <span className="font-semibold text-foreground">{coin.ticker}</span>
-                      <span className={`text-[9px] ${coin.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                        {coin.change > 0 ? "+" : ""}{coin.change}%
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-            {/* Scrollable coin tabs */}
-            <div className="flex-1 flex items-center gap-0 overflow-x-auto scrollbar-hide">
-              {sharedWatchlist.map((item, idx) => (
-                <button
-                  key={item.ticker}
-                  onClick={() => setSelectedTickerIndex(idx)}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 text-[9px] font-mono font-semibold whitespace-nowrap transition-colors border-b-2 ${
-                    idx === selectedTickerIndex
-                      ? "text-accent border-accent"
-                      : "text-muted-foreground border-transparent hover:text-foreground"
-                  }`}
-                >
-                  <span>{item.ticker}</span>
-                  <span className={`text-[8px] font-normal ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                    {item.change > 0 ? "+" : ""}{item.change.toFixed(1)}%
+                <div className="flex items-center gap-1.5">
+                  <span className={`text-[9px] font-mono font-semibold ${selectedTicker.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                    {selectedTicker.change > 0 ? "+" : ""}{selectedTicker.change}%
                   </span>
-                </button>
-              ))}
+                  <div className="flex gap-[1px] ml-1">
+                    {timeframes.map((tf) => (
+                      <button key={tf} onClick={() => setSelectedTimeframe(tf)} className={`font-mono text-[8px] px-1.5 py-[1px] transition-colors ${selectedTimeframe === tf ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                        {tf}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 min-h-0">
+                <TradingViewChart symbol={selectedTicker?.ticker || "BTC"} fillHeight />
+              </div>
             </div>
-          </div>
+          </ResizablePanel>
 
-          {/* Tab content — fills remaining space */}
-          <div className="flex-1 overflow-hidden flex flex-col">
+          <ResizableHandle withHandle />
+
+          {/* Bottom: coin bar + tab content */}
+          <ResizablePanel defaultSize={65} minSize={30}>
+            <div className="h-full flex flex-col overflow-hidden">
+              {/* Coin selector bar */}
+              <div className="shrink-0 flex items-center border-b border-border bg-card/30 relative">
+                <div className="relative shrink-0">
+                  <button
+                    onClick={() => setCoinDropdownOpen((p) => !p)}
+                    className="flex items-center gap-0.5 px-2 py-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors border-r border-border"
+                  >
+                    <Plus size={10} />
+                    <ChevronDown size={8} className={`transition-transform ${coinDropdownOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  {coinDropdownOpen && (
+                    <div className="absolute top-full left-0 z-50 bg-background border border-border shadow-lg min-w-[160px] max-h-[200px] overflow-y-auto">
+                      {allMarkets.filter((m) => !sharedWatchlist.some((w) => w.ticker === m.ticker)).map((coin) => (
+                        <button
+                          key={coin.ticker}
+                          onClick={() => {
+                            setCoinDropdownOpen(false);
+                            toast({ title: `${coin.ticker} added`, description: `${coin.name} added to watchlist` });
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-mono hover:bg-accent/10 transition-colors"
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <span className={`w-1.5 h-1.5 rounded-full ${coin.active ? "bg-status-active" : "bg-muted-foreground/30"}`} />
+                            <span className="font-semibold text-foreground">{coin.ticker}</span>
+                          </div>
+                          <span className={`text-[9px] ${coin.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                            {coin.change > 0 ? "+" : ""}{coin.change}%
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 flex items-center gap-0 overflow-x-auto scrollbar-hide">
+                  {sharedWatchlist.map((item, idx) => {
+                    const marketItem = allMarkets.find((m) => m.ticker === item.ticker);
+                    return (
+                      <button
+                        key={item.ticker}
+                        onClick={() => setSelectedTickerIndex(idx)}
+                        className={`flex items-center gap-1 px-2.5 py-1.5 text-[9px] font-mono font-semibold whitespace-nowrap transition-colors border-b-2 ${
+                          idx === selectedTickerIndex
+                            ? "text-accent border-accent"
+                            : "text-muted-foreground border-transparent hover:text-foreground"
+                        }`}
+                      >
+                        <span className={`w-1 h-1 rounded-full ${marketItem?.active ? "bg-status-active" : "bg-muted-foreground/30"}`} />
+                        <span>{item.ticker}</span>
+                        <span className={`text-[8px] font-normal ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                          {item.change > 0 ? "+" : ""}{item.change.toFixed(1)}%
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Tab content — fills remaining space */}
+              <div className="flex-1 overflow-hidden flex flex-col">
             {/* CHAT TAB */}
             {mobileTab === "chat" && (
               <div className="flex-1 flex flex-col overflow-hidden">
@@ -795,7 +819,7 @@ const Agents = () => {
               </div>
             )}
 
-            {/* WATCHLIST TAB — Watchlist + Alerts */}
+            {/* WATCHLIST TAB — Watchlist + All Markets + Alerts */}
             {mobileTab === "watchlist" && (
               <div className="flex-1 flex flex-col overflow-hidden">
                 <div className="px-3 py-1.5 border-b border-border flex items-center justify-between shrink-0">
@@ -808,32 +832,44 @@ const Agents = () => {
                   <span className="w-16 text-right">Price</span>
                 </div>
                 <div className="flex-1 overflow-y-auto">
-                  <div className="px-3 py-[2px] border-b border-border bg-card/50">
-                    <span className="text-[8px] font-mono font-semibold text-muted-foreground tracking-wider">CRYPTO</span>
+                  {sharedWatchlist.map((item, idx) => {
+                    const marketItem = allMarkets.find((m) => m.ticker === item.ticker);
+                    const isActive = marketItem?.active ?? false;
+                    return (
+                      <div key={item.ticker} onClick={() => setSelectedTickerIndex(idx)} className={`flex items-center px-3 py-[6px] border-b border-border/30 cursor-pointer transition-colors ${idx === selectedTickerIndex ? "bg-accent/10" : "hover:bg-card/50"}`}>
+                        <div className="flex items-center gap-1.5 flex-1">
+                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isActive ? "bg-status-active" : "bg-muted-foreground/30"}`} />
+                          <span className="font-mono text-[11px] font-semibold text-accent">{item.ticker}</span>
+                        </div>
+                        <span className={`w-14 text-right font-mono text-[10px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                          {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
+                        </span>
+                        <span className="w-16 text-right font-mono text-[10px] text-foreground/70">{item.price}</span>
+                      </div>
+                    );
+                  })}
+
+                  {/* ALL MARKETS */}
+                  <div className="px-3 py-1.5 border-t border-border bg-card/50 flex items-center justify-between">
+                    <span className="text-[8px] font-mono font-semibold text-muted-foreground tracking-wider">ALL MARKETS</span>
+                    <span className="text-[8px] font-mono text-muted-foreground">{allMarkets.length}</span>
                   </div>
-                  {sharedWatchlist.map((item, idx) => (
-                    <div key={item.ticker} onClick={() => setSelectedTickerIndex(idx)} className={`flex items-center px-3 py-[6px] border-b border-border/30 cursor-pointer transition-colors ${idx === selectedTickerIndex ? "bg-accent/10" : "hover:bg-card/50"}`}>
-                      <span className="flex-1 font-mono text-[11px] font-semibold text-accent">{item.ticker}</span>
-                      <span className={`w-14 text-right font-mono text-[10px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                  {allMarkets.filter((m) => !sharedWatchlist.some((w) => w.ticker === m.ticker)).map((item) => (
+                    <div key={item.ticker} className="flex items-center px-3 py-[5px] border-b border-border/30 cursor-pointer hover:bg-card/50 transition-colors">
+                      <div className="flex items-center gap-1.5 flex-1">
+                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${item.active ? "bg-status-active animate-pulse" : "bg-muted-foreground/30"}`} />
+                        <span className="font-mono text-[10px] font-semibold text-foreground/60">{item.ticker}</span>
+                      </div>
+                      <span className={`w-14 text-right font-mono text-[9px] ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
                         {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
                       </span>
-                      <span className="w-16 text-right font-mono text-[10px] text-foreground/70">{item.price}</span>
-                    </div>
-                  ))}
-                  <div className="px-3 py-[2px] border-b border-border bg-card/50 border-t">
-                    <span className="text-[8px] font-mono font-semibold text-muted-foreground tracking-wider">MOST ACTIVE</span>
-                  </div>
-                  {[
-                    { ticker: "PEPE", change: 12.44, price: "0.00001842" },
-                    { ticker: "WIF", change: -5.23, price: "2.4100" },
-                    { ticker: "BONK", change: 8.91, price: "0.00003150" },
-                  ].map((item) => (
-                    <div key={item.ticker} className="flex items-center px-3 py-[6px] border-b border-border/30 cursor-pointer hover:bg-card/50 transition-colors">
-                      <span className="flex-1 font-mono text-[11px] font-semibold text-accent">{item.ticker}</span>
-                      <span className={`w-14 text-right font-mono text-[10px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                        {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
+                      <span className="w-16 text-right">
+                        {item.active ? (
+                          <span className="text-[7px] font-mono font-bold px-1 py-[1px] bg-status-active/20 text-status-active border border-status-active/30">LIVE</span>
+                        ) : (
+                          <span className="text-[8px] font-mono text-muted-foreground/50">{item.price}</span>
+                        )}
                       </span>
-                      <span className="w-16 text-right font-mono text-[10px] text-foreground/70">{item.price}</span>
                     </div>
                   ))}
 
@@ -893,6 +929,9 @@ const Agents = () => {
               </div>
             )}
           </div>
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
 
           {/* Mobile bottom tabs */}
           <div className="shrink-0 border-t border-border bg-background flex">
@@ -961,35 +1000,22 @@ const Agents = () => {
                     </div>
 
                     <div className="flex-1 overflow-y-auto">
-                      <div className="px-2.5 py-[2px] border-b border-border bg-card/50">
-                        <span className="text-[8px] font-mono font-semibold text-muted-foreground tracking-wider">CRYPTO</span>
-                      </div>
-                      {sharedWatchlist.map((item, idx) => (
-                        <div key={item.ticker} onClick={() => setSelectedTickerIndex(idx)} className={`flex items-center px-2.5 py-[5px] cursor-pointer transition-colors border-b border-border/30 ${idx === selectedTickerIndex ? "bg-accent/10" : "hover:bg-card/50"}`}>
-                          <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
-                          <span className={`w-12 text-right font-mono text-[10px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                            {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
-                          </span>
-                          <span className="w-14 text-right font-mono text-[10px] text-foreground/70">{item.price}</span>
-                        </div>
-                      ))}
-
-                      <div className="px-2.5 py-[2px] border-b border-border bg-card/50 border-t">
-                        <span className="text-[8px] font-mono font-semibold text-muted-foreground tracking-wider">MOST ACTIVE</span>
-                      </div>
-                      {[
-                        { ticker: "PEPE", change: 12.44, price: "0.00001842" },
-                        { ticker: "WIF", change: -5.23, price: "2.4100" },
-                        { ticker: "BONK", change: 8.91, price: "0.00003150" },
-                      ].map((item) => (
-                        <div key={item.ticker} className="flex items-center px-2.5 py-[5px] cursor-pointer hover:bg-card/50 transition-colors border-b border-border/30">
-                          <span className="flex-1 font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
-                          <span className={`w-12 text-right font-mono text-[10px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                            {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
-                          </span>
-                          <span className="w-14 text-right font-mono text-[10px] text-foreground/70">{item.price}</span>
-                        </div>
-                      ))}
+                      {sharedWatchlist.map((item, idx) => {
+                        const marketItem = allMarkets.find((m) => m.ticker === item.ticker);
+                        const isActive = marketItem?.active ?? false;
+                        return (
+                          <div key={item.ticker} onClick={() => setSelectedTickerIndex(idx)} className={`flex items-center px-2.5 py-[5px] cursor-pointer transition-colors border-b border-border/30 ${idx === selectedTickerIndex ? "bg-accent/10" : "hover:bg-card/50"}`}>
+                            <div className="flex items-center gap-1.5 flex-1">
+                              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isActive ? "bg-status-active" : "bg-muted-foreground/30"}`} />
+                              <span className="font-mono text-[10px] font-semibold text-accent">{item.ticker}</span>
+                            </div>
+                            <span className={`w-12 text-right font-mono text-[10px] font-semibold ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                              {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%
+                            </span>
+                            <span className="w-14 text-right font-mono text-[10px] text-foreground/70">{item.price}</span>
+                          </div>
+                        );
+                      })}
                     </div>
 
                     <div className="border-t border-border p-1 shrink-0">
@@ -1002,8 +1028,48 @@ const Agents = () => {
 
                 <ResizableHandle />
 
+                {/* ALL MARKETS */}
+                <ResizablePanel defaultSize={30} minSize={15}>
+                  <div className="h-full flex flex-col overflow-hidden">
+                    <div className="p-2 border-b border-border flex items-center justify-between shrink-0">
+                      <span className="text-[10px] font-mono font-semibold tracking-[1px] text-muted-foreground">ALL MARKETS</span>
+                      <span className="text-[8px] font-mono text-muted-foreground">{allMarkets.length}</span>
+                    </div>
+                    <div className="shrink-0 flex items-center px-2.5 py-[2px] border-b border-border text-[8px] font-mono text-muted-foreground tracking-wider">
+                      <span className="flex-1">Ticker</span>
+                      <span className="w-12 text-right">%</span>
+                      <span className="w-10 text-right">Status</span>
+                    </div>
+                    <div className="flex-1 overflow-y-auto">
+                      {allMarkets.map((item) => {
+                        const isInWatchlist = sharedWatchlist.some((w) => w.ticker === item.ticker);
+                        return (
+                          <div key={item.ticker} className={`flex items-center px-2.5 py-[4px] cursor-pointer transition-colors border-b border-border/30 hover:bg-card/50 ${isInWatchlist ? "bg-accent/5" : ""}`}>
+                            <div className="flex items-center gap-1.5 flex-1">
+                              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${item.active ? "bg-status-active animate-pulse" : "bg-muted-foreground/30"}`} />
+                              <span className={`font-mono text-[10px] font-semibold ${isInWatchlist ? "text-accent" : "text-foreground/60"}`}>{item.ticker}</span>
+                            </div>
+                            <span className={`w-12 text-right font-mono text-[9px] ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                              {item.change > 0 ? "+" : ""}{item.change.toFixed(1)}%
+                            </span>
+                            <span className="w-10 text-right">
+                              {item.active ? (
+                                <span className="text-[7px] font-mono font-bold px-1 py-[1px] bg-status-active/20 text-status-active border border-status-active/30">LIVE</span>
+                              ) : (
+                                <span className="text-[7px] font-mono text-muted-foreground/50">—</span>
+                              )}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </ResizablePanel>
+
+                <ResizableHandle />
+
                 {/* Headlines */}
-                <ResizablePanel defaultSize={25} minSize={12}>
+                <ResizablePanel defaultSize={15} minSize={10}>
                   <div className="h-full flex flex-col overflow-hidden">
                     <div className="p-2 border-b border-border flex items-center justify-between shrink-0">
                       <span className="font-mono text-[9px] tracking-wider text-muted-foreground font-semibold">HEADLINES</span>
