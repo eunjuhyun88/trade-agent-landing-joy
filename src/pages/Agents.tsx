@@ -282,6 +282,7 @@ const Agents = () => {
   const { toast } = useToast();
   const [mobileTab, setMobileTab] = useState<"chat" | "community" | "market" | "watchlist">("chat");
   const [mobileMarketSub, setMobileMarketSub] = useState<"headlines" | "intelligence" | "agents">("headlines");
+  const [coinDropdownOpen, setCoinDropdownOpen] = useState(false);
   const [selectedAgents, setSelectedAgents] = useState<Set<string>>(new Set(agents.map((a) => a.id)));
   const [swapFrom, setSwapFrom] = useState("ETH");
   const [swapTo, setSwapTo] = useState("BTC");
@@ -526,23 +527,64 @@ const Agents = () => {
           </div>
 
           {/* Coin selector bar — between chart and content */}
-          <div className="shrink-0 flex items-center gap-0 px-1 border-b border-border bg-card/30 overflow-x-auto scrollbar-hide">
-            {sharedWatchlist.map((item, idx) => (
+          <div className="shrink-0 flex items-center border-b border-border bg-card/30 relative">
+            {/* Dropdown for more coins */}
+            <div className="relative shrink-0">
               <button
-                key={item.ticker}
-                onClick={() => setSelectedTickerIndex(idx)}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 text-[9px] font-mono font-semibold whitespace-nowrap transition-colors border-b-2 ${
-                  idx === selectedTickerIndex
-                    ? "text-accent border-accent"
-                    : "text-muted-foreground border-transparent hover:text-foreground"
-                }`}
+                onClick={() => setCoinDropdownOpen((p) => !p)}
+                className="flex items-center gap-0.5 px-2 py-1.5 text-[9px] font-mono text-muted-foreground hover:text-foreground transition-colors border-r border-border"
               >
-                <span>{item.ticker}</span>
-                <span className={`text-[8px] font-normal ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
-                  {item.change > 0 ? "+" : ""}{item.change.toFixed(1)}%
-                </span>
+                <Plus size={10} />
+                <ChevronDown size={8} className={`transition-transform ${coinDropdownOpen ? "rotate-180" : ""}`} />
               </button>
-            ))}
+              {coinDropdownOpen && (
+                <div className="absolute top-full left-0 z-50 bg-background border border-border shadow-lg min-w-[160px] max-h-[200px] overflow-y-auto">
+                  {[
+                    { ticker: "LINK", name: "Chainlink", change: 1.8 },
+                    { ticker: "DOT", name: "Polkadot", change: -2.1 },
+                    { ticker: "MATIC", name: "Polygon", change: 0.5 },
+                    { ticker: "ADA", name: "Cardano", change: -0.7 },
+                    { ticker: "ATOM", name: "Cosmos", change: 3.2 },
+                    { ticker: "UNI", name: "Uniswap", change: 1.1 },
+                    { ticker: "APT", name: "Aptos", change: -1.4 },
+                    { ticker: "ARB", name: "Arbitrum", change: 2.9 },
+                  ].map((coin) => (
+                    <button
+                      key={coin.ticker}
+                      onClick={() => {
+                        setCoinDropdownOpen(false);
+                        toast({ title: `${coin.ticker} added`, description: `${coin.name} added to watchlist` });
+                      }}
+                      className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-mono hover:bg-accent/10 transition-colors"
+                    >
+                      <span className="font-semibold text-foreground">{coin.ticker}</span>
+                      <span className={`text-[9px] ${coin.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                        {coin.change > 0 ? "+" : ""}{coin.change}%
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {/* Scrollable coin tabs */}
+            <div className="flex-1 flex items-center gap-0 overflow-x-auto scrollbar-hide">
+              {sharedWatchlist.map((item, idx) => (
+                <button
+                  key={item.ticker}
+                  onClick={() => setSelectedTickerIndex(idx)}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 text-[9px] font-mono font-semibold whitespace-nowrap transition-colors border-b-2 ${
+                    idx === selectedTickerIndex
+                      ? "text-accent border-accent"
+                      : "text-muted-foreground border-transparent hover:text-foreground"
+                  }`}
+                >
+                  <span>{item.ticker}</span>
+                  <span className={`text-[8px] font-normal ${item.change > 0 ? "text-status-active" : "text-status-hot"}`}>
+                    {item.change > 0 ? "+" : ""}{item.change.toFixed(1)}%
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Tab content — fills remaining space */}
