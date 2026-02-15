@@ -325,23 +325,40 @@ const Agents = () => {
     { id: "c8", user: "moon_trader", avatar: "🌙", text: "AVAX bullish divergence — hidden gem", time: "8:15 PM", badge: null },
   ]);
   const communityScrollRef = useRef<HTMLDivElement>(null);
+  const [clawBalance, setClawBalance] = useState(5000);
   const [predictions, setPredictions] = useState([
-    { id: "p1", question: "BTC hits $110K by Feb 28?", yesPercent: 68, pool: 2450, closes: "13d 4h", myVote: null as "yes" | "no" | null },
-    { id: "p2", question: "ETH flips $4K before March?", yesPercent: 42, pool: 1820, closes: "18d 11h", myVote: null as "yes" | "no" | null },
-    { id: "p3", question: "SOL breaks $300 this week?", yesPercent: 55, pool: 980, closes: "5d 2h", myVote: null as "yes" | "no" | null },
+    { id: "p1", question: "BTC hits $110K by Feb 28?", yesPercent: 68, pool: 2450, closes: "13d 4h", myVote: null as "yes" | "no" | null, myBet: 0, betInput: "" },
+    { id: "p2", question: "ETH flips $4K before March?", yesPercent: 42, pool: 1820, closes: "18d 11h", myVote: null as "yes" | "no" | null, myBet: 0, betInput: "" },
+    { id: "p3", question: "SOL breaks $300 this week?", yesPercent: 55, pool: 980, closes: "5d 2h", myVote: null as "yes" | "no" | null, myBet: 0, betInput: "" },
   ]);
-  const handleVote = useCallback((predId: string, vote: "yes" | "no") => {
-    setPredictions((prev) =>
-      prev.map((p) => {
+  const [selectedSide, setSelectedSide] = useState<Record<string, "yes" | "no">>({});
+  const handleBetInputChange = useCallback((predId: string, value: string) => {
+    if (value && !/^\d*$/.test(value)) return;
+    setPredictions((prev) => prev.map((p) => p.id === predId ? { ...p, betInput: value } : p));
+  }, []);
+  const handleSelectSide = useCallback((predId: string, side: "yes" | "no") => {
+    setSelectedSide((prev) => ({ ...prev, [predId]: prev[predId] === side ? undefined as any : side }));
+  }, []);
+  const handlePlaceBet = useCallback((predId: string) => {
+    const side = selectedSide[predId];
+    if (!side) { toast({ title: "Select YES or NO first" }); return; }
+    setPredictions((prev) => {
+      const pred = prev.find((p) => p.id === predId);
+      if (!pred) return prev;
+      const amount = parseInt(pred.betInput) || 0;
+      if (amount < 10) { toast({ title: "Minimum bet is 10 CLAW" }); return prev; }
+      if (amount > clawBalance) { toast({ title: "Insufficient CLAW balance", description: `You have ${clawBalance.toLocaleString()} CLAW` }); return prev; }
+      setClawBalance((b) => b - amount);
+      const weight = Math.min(amount / (pred.pool + amount) * 30, 15);
+      const shift = side === "yes" ? weight : -weight;
+      return prev.map((p) => {
         if (p.id !== predId) return p;
-        if (p.myVote === vote) return p; // already voted same
-        const shift = vote === "yes" ? 3 : -3;
-        const newYes = Math.max(5, Math.min(95, p.yesPercent + (p.myVote ? shift * 2 : shift)));
-        return { ...p, yesPercent: newYes, pool: p.pool + 50, myVote: vote };
-      })
-    );
-    toast({ title: `🎯 Bet placed: ${vote.toUpperCase()}`, description: "Your prediction has been recorded!" });
-  }, [toast]);
+        const newYes = Math.max(5, Math.min(95, Math.round(p.yesPercent + shift)));
+        return { ...p, yesPercent: newYes, pool: p.pool + amount, myVote: side, myBet: p.myBet + amount, betInput: "" };
+      });
+    });
+    toast({ title: `🎯 Bet placed!`, description: `${selectedSide[predId]?.toUpperCase()} with ${predictions.find(p=>p.id===predId)?.betInput || 0} CLAW` });
+  }, [selectedSide, clawBalance, toast, predictions]);
   const [selectedTickerIndex, setSelectedTickerIndex] = useState(0);
   const timeframes = ["1H", "4H", "1D", "1W"] as const;
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("4H");
@@ -929,39 +946,63 @@ const Agents = () => {
                 <div className="shrink-0 border-b border-border px-2.5 py-2">
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[9px] font-mono font-semibold tracking-[1px] text-[hsl(45_90%_55%)]">PREDICTION BETS</span>
-                    <span className="text-[7px] font-mono text-muted-foreground">🔒 $CLAWHOO</span>
+                    <span className="text-[8px] font-mono text-accent font-semibold">{clawBalance.toLocaleString()} CLAW</span>
                   </div>
-                  {predictions.map((pred, i) => (
+                  {predictions.map((pred, i) => {
+                    const side = selectedSide[pred.id];
+                    return (
                     <div key={pred.id} className={`border border-border bg-card/50 p-2 ${i < predictions.length - 1 ? "mb-1.5" : ""}`}>
-                      <p className="text-[10px] font-mono font-semibold text-foreground mb-2">{pred.question}</p>
+                      <p className="text-[10px] font-mono font-semibold text-foreground mb-1.5">{pred.question}</p>
                       <div className="h-1 bg-border overflow-hidden mb-1.5 flex">
                         <div className="h-full bg-status-active transition-all duration-500" style={{ width: `${pred.yesPercent}%` }} />
                         <div className="h-full bg-status-hot transition-all duration-500" style={{ width: `${100 - pred.yesPercent}%` }} />
                       </div>
                       <div className="flex gap-1.5 mb-1.5">
                         <button
-                          onClick={() => handleVote(pred.id, "yes")}
-                          className={`flex-1 py-1.5 border text-[10px] font-mono font-bold transition-colors ${
-                            pred.myVote === "yes"
+                          onClick={() => handleSelectSide(pred.id, "yes")}
+                          className={`flex-1 py-1 border text-[10px] font-mono font-bold transition-colors ${
+                            side === "yes"
                               ? "border-status-active bg-status-active/30 text-status-active ring-1 ring-status-active/50"
                               : "border-status-active/50 bg-status-active/10 text-status-active hover:bg-status-active/20"
                           }`}
                         >YES ({pred.yesPercent}%)</button>
                         <button
-                          onClick={() => handleVote(pred.id, "no")}
-                          className={`flex-1 py-1.5 border text-[10px] font-mono font-bold transition-colors ${
-                            pred.myVote === "no"
+                          onClick={() => handleSelectSide(pred.id, "no")}
+                          className={`flex-1 py-1 border text-[10px] font-mono font-bold transition-colors ${
+                            side === "no"
                               ? "border-status-hot bg-status-hot/30 text-status-hot ring-1 ring-status-hot/50"
                               : "border-status-hot/50 bg-status-hot/10 text-status-hot hover:bg-status-hot/20"
                           }`}
                         >NO ({100 - pred.yesPercent}%)</button>
                       </div>
+                      {side && (
+                        <div className="flex gap-1 mb-1.5">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            placeholder="CLAW amount"
+                            value={pred.betInput}
+                            onChange={(e) => handleBetInputChange(pred.id, e.target.value)}
+                            className="flex-1 bg-background border border-border text-[10px] font-mono px-2 py-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent"
+                          />
+                          <button
+                            onClick={() => handlePlaceBet(pred.id)}
+                            className="px-2 py-1 bg-accent text-accent-foreground text-[9px] font-mono font-bold hover:bg-accent/80 transition-colors"
+                          >BET</button>
+                        </div>
+                      )}
+                      {pred.myBet > 0 && (
+                        <div className="text-[8px] font-mono text-accent mb-1">
+                          ✓ Your bet: {pred.myBet} CLAW on {pred.myVote?.toUpperCase()}
+                        </div>
+                      )}
                       <div className="flex items-center justify-between text-[8px] font-mono text-muted-foreground">
                         <span>Pool: <span className="text-accent font-semibold">{pred.pool.toLocaleString()} CLAW</span></span>
                         <span>Closes in <span className="text-foreground font-semibold">{pred.closes}</span></span>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <div className="flex-1 overflow-y-auto px-2.5 py-2 space-y-1.5" ref={communityScrollRef}>
@@ -1530,48 +1571,67 @@ const Agents = () => {
                 {/* PREDICTION BETS */}
                 <ResizablePanel defaultSize={45} minSize={20}>
                   <div className="h-full overflow-y-auto px-2 py-2">
-                    <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center justify-between mb-1">
                       <span className="text-[9px] font-mono font-semibold tracking-[1px] text-[hsl(45_90%_55%)]">PREDICTION BETS</span>
-                      <span className="text-[7px] font-mono text-muted-foreground">🔒 $CLAWHOO</span>
+                      <span className="text-[8px] font-mono text-accent font-semibold">{clawBalance.toLocaleString()} CLAW</span>
                     </div>
-                    <p className="text-[8px] font-mono text-muted-foreground/70 mb-2">Bet on agent performance predictions. Hold $CLAWHOO to unlock.</p>
-                    {predictions.map((pred, i) => (
+                    <p className="text-[8px] font-mono text-muted-foreground/70 mb-2">Polymarket-style bets. Min 10 CLAW per bet.</p>
+                    {predictions.map((pred, i) => {
+                      const side = selectedSide[pred.id];
+                      return (
                       <div key={pred.id} className={`border border-border bg-card/50 p-2 ${i < predictions.length - 1 ? "mb-1.5" : ""}`}>
                         {i === 0 && <span className="text-[7px] font-mono text-muted-foreground tracking-wider">NEXT PREDICTION</span>}
-                        <p className="text-[10px] font-mono font-semibold text-foreground mb-2">{pred.question}</p>
-                        {/* Progress bar */}
+                        <p className="text-[10px] font-mono font-semibold text-foreground mb-1.5">{pred.question}</p>
                         <div className="h-1 bg-border overflow-hidden mb-1.5 flex">
                           <div className="h-full bg-status-active transition-all duration-500" style={{ width: `${pred.yesPercent}%` }} />
                           <div className="h-full bg-status-hot transition-all duration-500" style={{ width: `${100 - pred.yesPercent}%` }} />
                         </div>
-                        <div className="flex gap-1.5 mb-2">
+                        <div className="flex gap-1.5 mb-1.5">
                           <button
-                            onClick={() => handleVote(pred.id, "yes")}
-                            className={`flex-1 py-1.5 border text-[10px] font-mono font-bold transition-colors ${
-                              pred.myVote === "yes"
+                            onClick={() => handleSelectSide(pred.id, "yes")}
+                            className={`flex-1 py-1 border text-[10px] font-mono font-bold transition-colors ${
+                              side === "yes"
                                 ? "border-status-active bg-status-active/30 text-status-active ring-1 ring-status-active/50"
                                 : "border-status-active/50 bg-status-active/10 text-status-active hover:bg-status-active/20"
                             }`}
-                          >
-                            YES ({pred.yesPercent}%)
-                          </button>
+                          >YES ({pred.yesPercent}%)</button>
                           <button
-                            onClick={() => handleVote(pred.id, "no")}
-                            className={`flex-1 py-1.5 border text-[10px] font-mono font-bold transition-colors ${
-                              pred.myVote === "no"
+                            onClick={() => handleSelectSide(pred.id, "no")}
+                            className={`flex-1 py-1 border text-[10px] font-mono font-bold transition-colors ${
+                              side === "no"
                                 ? "border-status-hot bg-status-hot/30 text-status-hot ring-1 ring-status-hot/50"
                                 : "border-status-hot/50 bg-status-hot/10 text-status-hot hover:bg-status-hot/20"
                             }`}
-                          >
-                            NO ({100 - pred.yesPercent}%)
-                          </button>
+                          >NO ({100 - pred.yesPercent}%)</button>
                         </div>
+                        {side && (
+                          <div className="flex gap-1 mb-1.5">
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              placeholder="CLAW amount (min 10)"
+                              value={pred.betInput}
+                              onChange={(e) => handleBetInputChange(pred.id, e.target.value)}
+                              className="flex-1 bg-background border border-border text-[10px] font-mono px-2 py-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent"
+                            />
+                            <button
+                              onClick={() => handlePlaceBet(pred.id)}
+                              className="px-2 py-1 bg-accent text-accent-foreground text-[9px] font-mono font-bold hover:bg-accent/80 transition-colors"
+                            >BET</button>
+                          </div>
+                        )}
+                        {pred.myBet > 0 && (
+                          <div className="text-[8px] font-mono text-accent mb-1">
+                            ✓ Your bet: {pred.myBet} CLAW on {pred.myVote?.toUpperCase()}
+                          </div>
+                        )}
                         <div className="flex items-center justify-between text-[8px] font-mono text-muted-foreground">
                           <span>Pool: <span className="text-accent font-semibold">{pred.pool.toLocaleString()} CLAW</span></span>
                           <span>Closes in <span className="text-foreground font-semibold">{pred.closes}</span></span>
                         </div>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </ResizablePanel>
 
