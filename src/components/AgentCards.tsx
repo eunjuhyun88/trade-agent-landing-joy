@@ -10,7 +10,7 @@ const agents = [
     status: "active",
     highlighted: false,
     color: "142 70% 45%",
-    role: "BTC price structure specialist model",
+    role: "Per-coin price structure model — BTC / ETH / SOL / ...",
     chartData: "0,60 30,55 60,40 90,45 120,30 150,35 180,20 210,25 240,15 270,30 300,20",
     analyzes: [
       "Pattern detection (Wedge, Triangle, H&S)",
@@ -34,7 +34,7 @@ const agents = [
     status: "active",
     highlighted: false,
     color: "200 80% 50%",
-    role: "On-chain fund flow specialist model",
+    role: "Per-coin on-chain flow model — BTC / ETH / SOL / ...",
     chartData: "0,40 30,42 60,38 90,50 120,45 150,55 180,50 210,60 240,55 270,65 300,50",
     analyzes: [
       "Exchange inflows/outflows (Binance, Coinbase, Kraken)",
@@ -56,7 +56,7 @@ const agents = [
     status: "hot",
     highlighted: true,
     color: "0 85% 55%",
-    role: "Derivatives structure specialist model",
+    role: "Per-coin derivatives model — BTC / ETH / SOL / ...",
     chartData: "0,70 30,60 60,65 90,40 120,50 150,30 180,35 210,20 240,40 270,25 300,10",
     analyzes: [
       "Open Interest rate of change",
@@ -78,7 +78,7 @@ const agents = [
     status: "active",
     highlighted: false,
     color: "270 70% 55%",
-    role: "Market sentiment specialist NLP model",
+    role: "Per-coin sentiment NLP model — BTC / ETH / SOL / ...",
     chartData: "0,50 30,45 60,55 90,60 120,50 150,65 180,60 210,70 240,65 270,55 300,60",
     analyzes: [
       "Twitter / Reddit / Telegram — 15+ channels",

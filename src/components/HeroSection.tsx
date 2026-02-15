@@ -131,9 +131,9 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
         >
-          A chart model. An on-chain model. A derivatives model. A sentiment model.
+          Not one generic AI — a dedicated model trained per coin, per domain.
           <br className="hidden sm:block" />
-          Each one specialized. Each one independent.
+          Chart · On-chain · Derivatives · Sentiment · Alert — 5 agents, each chain.
           <br className="hidden sm:block" />
           An orchestration engine converges them into a single signal.
         </motion.p>

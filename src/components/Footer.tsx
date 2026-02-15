@@ -32,7 +32,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="flex flex-col items-start md:items-end gap-2">
-          <span className="text-xs font-mono tracking-wider text-muted-foreground">© 2025 STOCKCLAW</span>
+          <span className="text-xs font-mono tracking-wider text-muted-foreground">© 2026 STOCKCLAW</span>
           <div className="border border-border p-3 flex items-center gap-4">
             <div className="text-[10px] font-mono tracking-wider text-muted-foreground space-y-0.5">
               <div>ENTRY_SCORE</div>
